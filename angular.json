@@ -26,7 +26,7 @@
             "allowedCommonJsDependencies": [
               "rxjs", "core-js", "simplebar", "ng5-slider", "apexcharts"
             ],
-            "outputPath": "dist/samply-v1",
+            "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -70,7 +70,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumError": "10mb"
                 },
                 {
                   "type": "anyComponentStyle",
