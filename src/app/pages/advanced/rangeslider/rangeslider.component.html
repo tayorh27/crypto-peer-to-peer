@@ -1,0 +1,105 @@
+<!-- start page title -->
+<app-pagetitle title="Range Slider" [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Range slider</h4>
+                <p class="card-title-desc">Cool, comfortable, responsive and easily customizable range slider</p>
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="p-3">
+                            <h5 class="font-size-14 mb-3 mt-0">Default</h5>
+                            <ng5-slider [(value)]="defaultVal" [options]="defaultOption"></ng5-slider>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="p-3">
+                            <h5 class="font-size-14 mb-3 mt-0">Min-Max</h5>
+                            <ng5-slider [(value)]="minValue" [options]="minOptions"></ng5-slider>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="p-3">
+                            <h5 class="font-size-14 mb-3 mt-0">Prefix</h5>
+                            <ng5-slider [(value)]="prefixValue" [(highValue)]="prefix" [options]="prefixOption">
+                            </ng5-slider>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="p-3">
+                            <h5 class="font-size-14 mb-3 mt-0">Range</h5>
+                            <ng5-slider [(value)]="rangValue" [(highValue)]="rang" [options]="rangOption"></ng5-slider>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="p-3">
+                            <h5 class="font-size-14 mb-3 mt-0">Step</h5>
+                            <ng5-slider [(value)]="stepValue" [(highValue)]="step" [options]="stepOption"></ng5-slider>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="p-3">
+                            <h5 class="font-size-14 mb-3 mt-0">Custom Values</h5>
+                            <ng5-slider [(value)]="tickValue" [options]="tickValueoptions"></ng5-slider>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="p-3">
+                            <h5 class="font-size-14 mb-3 mt-0">Prettify Numbers</h5>
+                            <ng5-slider [(value)]="prettifyValue" [options]="prettifyOption"></ng5-slider>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="p-3">
+                            <h5 class="font-size-14 mb-3 mt-0">Disabled</h5>
+                            <ng5-slider [(value)]="disabledValue" [options]="disabledOption"></ng5-slider>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="p-3">
+                            <h5 class="font-size-14 mb-3 mt-0">Extra Example</h5>
+                            <ng5-slider [(value)]="extraValue" [options]="extraOption"></ng5-slider>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="p-3">
+                            <h5 class="font-size-14 mb-3 mt-0">Use decorate_both option</h5>
+                            <ng5-slider [(value)]="decorateValue" [(highValue)]="decorate" [options]="decorateOption">
+                            </ng5-slider>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="p-3">
+                            <h5 class="font-size-14 mb-3 mt-0">Postfixes</h5>
+                            <ng5-slider [(value)]="postfixesValue" [options]="postfixesOption"></ng5-slider>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="p-3">
+                            <h5 class="font-size-14 mb-3 mt-0">Hide</h5>
+                            <ng5-slider [(value)]="hideValue" [(highValue)]="hide" [options]="hideOption"></ng5-slider>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- end col -->
+</div> <!-- end row -->

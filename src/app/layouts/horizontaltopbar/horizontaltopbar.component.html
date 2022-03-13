@@ -1,0 +1,67 @@
+<div class="topnav">
+    <div class="container-fluid">
+        <nav class="navbar navbar-light navbar-expand-lg topnav-menu active">
+            <div class="collapse navbar-collapse active" id="topnav-menu-content">
+                <ul class="navbar-nav">
+                    <ng-container *ngFor="let item of menuItems">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle arrow-none" *ngIf="!item.subItems" (click)="onMenuClick($event)"
+                                href="javascript: void(0);" id="topnav-components" [routerLink]="item.link"
+                                role="button">
+                                <i class="bx {{item.icon}} me-2"></i>{{ item.label | translate}} <div class="arrow-down"
+                                    *ngIf="hasItems(item)"></div>
+                            </a>
+
+                            <a *ngIf="item.subItems" class="nav-link dropdown-toggle arrow-none"
+                                (click)="onMenuClick($event)" href="javascript: void(0);" id="topnav-components"
+                                role="button">
+                                <i class="bx {{item.icon}} me-1"></i>
+                                {{item.label | translate }}
+                                <div class="arrow-down"></div>
+                            </a>
+
+                            <div class="dropdown-menu" aria-labelledby="topnav-dashboard" *ngIf="hasItems(item)">
+                                <ng-template ngFor let-i="index" let-subitem [ngForOf]="item.subItems">
+                                    <a class="col dropdown-item side-nav-link-ref" *ngIf="!hasItems(subitem)"
+                                        href="javascript: void(0);" [routerLink]="subitem.link"
+                                        routerLinkActive="active">{{subitem.label | translate }}</a>
+
+                                    <div class="dropdown" *ngIf="hasItems(subitem)">
+                                        <a class="dropdown-item dropdown-toggle" href="javascript: void(0);"
+                                            (click)="onMenuClick($event)">{{ subitem.label | translate }}
+                                            <div class="arrow-down"></div>
+                                        </a>
+                                        <div class="dropdown-menu">
+                                            <ng-template ngFor let-subSubitem [ngForOf]="subitem.subItems">
+                                                <a class="dropdown-item side-nav-link-ref" *ngIf="!hasItems(subSubitem)"
+                                                    href="javascript: void(0);" [routerLink]="subSubitem.link"
+                                                    routerLinkActive="active">{{ subSubitem.label | translate }}</a>
+                                                <div class="dropdown" *ngIf="hasItems(subSubitem)">
+
+                                                    <a class="dropdown-item dropdown-toggle" href="javascript: void(0);"
+                                                        (click)="onMenuClick($event)">{{ subSubitem.label | translate }}
+                                                        <div class="arrow-down"></div>
+                                                    </a>
+                                                    <div class="dropdown-menu">
+                                                        <ng-template ngFor let-subSubSubitem
+                                                            [ngForOf]="subSubitem.subItems">
+                                                            <a class="dropdown-item side-nav-link-ref"
+                                                                href="javascript: void(0);"
+                                                                [routerLink]="subSubSubitem.link"
+                                                                routerLinkActive="active">{{ subSubSubitem.label |
+                                                                translate }}</a>
+                                                        </ng-template>
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </div>
+                        </li>
+                    </ng-container>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>

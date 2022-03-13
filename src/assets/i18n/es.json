@@ -1,0 +1,209 @@
+{
+  "HEADER": {
+    "SEARCH": "Buscar...",
+    "WELCOME": "Bienvenida Peter",
+    "NOTIFICATIONS": {
+      "TITLE": "Notificaciones",
+      "VIEW_ALL": "Ver todo",
+      "LOAD_MORE": "Ver más..",
+      "FIRST": {
+        "TITLE": "Se realiza tu pedido",
+        "TEXT": "Si varios idiomas fusionan la gramática",
+        "TIME": "Hace 3 minutos"
+      },
+      "SECOND": {
+        "TITLE": "James Lemire",
+        "TEXT": "Parecerá un inglés simplificado.",
+        "TIME": "Hace 1 hora"
+      },
+      "THIRD": {
+        "TITLE": "Tu artículo es enviado",
+        "TEXT": "Si varios idiomas fusionan la gramática",
+        "TIME": "Hace 3 minutos"
+      },
+      "FOUR": {
+        "TITLE": "Salena Layfield",
+        "TEXT": "Como un escéptico amigo mío occidental de Cambridge.",
+        "TIME": "hace 10 horas"
+      }
+    },
+    "EXTRA_PAGES": {
+      "TITLE": "Páginas extra"
+    },
+    "LOGIN": {
+      "PROFILE": "Perfil",
+      "MESSAGES": "Mensajes",
+      "TASKBOARD": "Tablero de tareas",
+      "HELP": "Ayudar",
+      "BALANCE": "Equilibrio",
+      "SETTINGS": "Ajustes",
+      "LOCK_SCREEN": "Bloquear pantalla",
+      "LOGOUT": "Cerrar sesión"
+    }
+  }, 
+  "RIGHTSIDEBAR": {
+    "LAYOUT": {
+      "TEXT": "Diseño",
+      "LIST": {
+        "VERTICAL": "Vertical",
+        "HORIZONTAL": "Horizontal"
+      }
+    },
+    "LAYOUTMODE": {
+      "TEXT": "Modo de diseño",
+      "LIST": {
+        "LIGHT": "Ligero",
+        "DARK": "Oscuro"
+      }
+    },
+    "LAYOUTWIDTH": {
+      "TEXT": "Ancho de diseño",
+      "LIST": {
+        "FLUID": "Líquido",
+        "BOXED": "En caja"
+      }
+    },
+    "LAYOUTPOSITION": {
+      "TEXT": "Posición de diseño",
+      "LIST": {
+        "FIXED": "Reparado",
+        "SCROLLABLE": "Desplazable"
+      }
+    },
+    "TOPBARCOLOR": {
+      "TEXT": "Color de la barra superior",
+      "LIST": {
+        "LIGHT": "Ligero",
+        "DARK": "Oscuro"
+      }
+    },
+    "SIDEBARSIZE": {
+      "TEXT": "Tamaño de la barra lateral",
+      "LIST": {
+        "DEFAULT": "Defecto",
+        "COMPACT": "Compacto",
+        "SMALL": "Pequeño"
+      }
+    },
+    "SIDEBARCOLOR": {
+      "TEXT": "Color de la barra lateral",
+      "LIST": {
+        "LIGHT": "Ligero",
+        "DARK": "Oscuro",
+        "BRAND": "Marca"
+      }
+    }
+  },   
+  "MENUITEMS": {
+    "MENU": {
+      "TEXT": "Menú"
+    },
+    "DASHBOARDS": {
+      "TEXT": "Tablero"
+    },
+    "APPS": {
+      "TEXT": "Aplicaciones",
+      "LIST": {
+        "CALENDAR": "Calendario",
+        "CHAT": "Chat",
+        "EMAIL": "Correo electrónico",
+        "SUB": {
+          "INBOX": "Bandeja de entrada",
+          "READEMAIL": "Leer el correo electrónico"
+        }
+      }
+    },
+    "AUTHENTICATION": {
+      "TEXT": "Autenticación",
+      "BADGE": "Nuevo",
+      "LIST": {
+        "LOGIN": "Acceso",
+        "LOGIN1": "Iniciar sesión1",
+        "REGISTER": "Registrarse",
+        "REGISTER1": "Registrarse1",
+        "RECOVERPWD": "Recuperar contraseña",
+        "RECOVERPWD1": "Recuperar contraseña1",
+        "LOCKSCREEN": "Bloquear pantalla",
+        "CONFIRMMAIL": "Confirmar correo",
+        "EMAILVERIFICATION": "Verificacion de email",
+        "TWOSTEPVERIFICATION": "Verificación de dos pasos"
+      }
+    },
+    "PAGES": {
+      "TEXT": "Paginas",
+      "LIST": {
+        "STARTER": "Página de inicio",
+        "PROFILE": "Perfil",
+        "INVOICE": "Factura",
+        "MAINTENANCE": "Mantenimiento",
+        "COMINGSOON": "Próximamente, en breve, pronto",
+        "TIMELINE": "Cronología",
+        "PRICING": "Precios",
+        "ERROR404": "error 404",
+        "ERROR500": "Error 500"
+      }
+    },
+    "ADMINKIT": {
+      "TEXT": "KIT DE ADMINISTRADOR"
+    },
+    "UIELEMENTS": {
+      "TEXT": "Elementos de la interfaz de usuario"
+    },
+    "ADVANCEDKIT": {
+      "TEXT": "Kit avanzado",
+      "LIST": {
+        "SWEETALERT": "Alerta dulce",
+        "RANGESLIDER": "Control deslizante de rango",
+        "NOTIFICATIONS": "notificaciones",
+        "CAROUSEL": "carrusel"
+      }
+    },
+    "TYPOGRAPHY": {
+      "TEXT": "Tipografía"
+    },
+    "FORMS": {
+      "TEXT": "Formularios",
+      "BADGE": "nueve",
+      "LIST": {
+        "ELEMENTS": "Elementos de formulario",
+        "ADVANCED": "Formulario avanzado"
+      }
+    },
+    "TABLES": {
+      "TEXT": "Mesas",
+      "LIST": {
+        "BASIC": "Tablas de Bootstrap",
+        "ADVANCED": "Tabla de datos"
+      }
+    },
+    "CHARTS": {
+      "TEXT": "Gráficos"
+    },
+    "ICONS": {
+      "TEXT": "Iconos",
+      "LIST": {
+        "BOXICONS": "Boxicons",
+        "MATERIALDESIGN": "Diseño de materiales",
+        "DRIPICONS": "Dripicons",
+        "FONTAWESOME": "Fuente impresionante"
+      }
+    },
+    "MAPS": {
+      "TEXT": "Mapas"
+    },
+    "MULTILEVEL": {
+      "TEXT": "Multi nivel",
+      "LIST": {
+        "LEVEL1": {
+          "1": "Nivel 1.1",
+          "2": "Nivel 1.2",
+          "LEVEL2": {
+            "1": "Nivel 2.1",
+            "2": "Nivel 2.2"
+          }
+        }
+      }
+    }  
+    
+  }
+}

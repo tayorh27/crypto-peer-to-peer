@@ -1,0 +1,206 @@
+import * as functions from "firebase-functions";
+
+import * as admin from "firebase-admin";
+
+admin.initializeApp();
+
+
+export const flutterwave = functions.https.onRequest((request, response) => {
+  functions.logger.info(request.body, {structuredData: true});
+  functions.logger.info("Query Below", {structuredData: true});
+  functions.logger.info(request.query, {structuredData: true});
+  response.send({req: request.body, q: request.query, auth: request.headers});
+});
+
+export const onAuthCreated = functions.auth.user().onCreate(async (user, context) => {
+  functions.logger.info("User created", {structuredData: true});
+  // generate usdt address
+  // send welcome email
+  const subject = "WELCOME TO CRYPTO PEER";
+  const content = "";
+  const emailTemplate = getEmailTemplate(subject, content);
+
+  await admin.firestore().collection("mail").add({
+    to: user.email,
+    message: {
+      subject: subject,
+      html: emailTemplate,
+    },
+  });
+});
+
+
+function getEmailTemplate(header: string, message: string) {
+  return `
+  <div style="Margin:0;background:#f4f6f8!important;box-sizing:border-box;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0;min-width:100%;padding:0;text-align:left;width:100%!important"><span style="color:#f3f3f3;display:none!important;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden"></span>
+<table class="m_-2725247185578826516body" style="Margin:0;background:#f4f6f8!important;border-collapse:collapse;border-spacing:0;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;height:100%;line-height:1.3;margin:0;padding:0;text-align:left;vertical-align:top;width:100%">
+  <tbody><tr style="padding:0;text-align:left;vertical-align:top">
+      <td align="center" valign="top" style="Margin:0;border-collapse:collapse!important;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">
+          <center style="min-width:580px;width:100%">
+              <table style="Margin:0 auto;border-collapse:collapse;border-spacing:0;float:none;margin:0 auto;padding:0;text-align:center;vertical-align:top;width:100%">
+                  <tbody>
+                      <tr style="padding:0;text-align:left;vertical-align:top">
+                          <td height="60px" style="Margin:0;border-collapse:collapse!important;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:60px;font-weight:400;line-height:60px;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">&nbsp;</td>
+                      </tr>
+                  </tbody>
+              </table>
+              <table align="center" class="m_-2725247185578826516container" style="Margin:0 auto;background:0 0;border-collapse:collapse;border-spacing:0;color:#9b9b9b;float:none;margin:0 auto;padding:0;padding-bottom:0;text-align:center;vertical-align:top;width:509px">
+                  <tbody>
+                      <tr style="padding:0;text-align:left;vertical-align:top">
+                          <td style="Margin:0;border-collapse:collapse!important;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">
+                            
+                          </td>
+                      </tr>
+                  </tbody>
+              </table>
+              <table align="center" class="m_-2725247185578826516container" style="Margin:0 auto;background:#fefefe;background-color:#fff;border-collapse:collapse;border-spacing:0;border-top:6px solid #ff9b00;color:#9b9b9b;float:none;margin:0 auto;padding:0;text-align:center;vertical-align:top;width:509px">
+                  <tbody>
+                      <tr style="padding:0;text-align:left;vertical-align:top">
+                          <td style="Margin:0;border-collapse:collapse!important;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">
+                              <table style="border-collapse:collapse;border-spacing:0;display:table;padding:0;text-align:left;vertical-align:top;width:100%">
+                                  <tbody>
+                                      <tr style="padding:0;text-align:left;vertical-align:top">
+                                          <th class="m_-2725247185578826516small-12 m_-2725247185578826516columns" style="Margin:0 auto;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0 auto;padding:0;padding-bottom:16px;padding-left:26px;padding-right:26px;text-align:left;width:554px">
+                                              <table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%">
+                                                  <tbody><tr style="padding:0;text-align:left;vertical-align:top">
+                                                      <th style="Margin:0;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0;padding:0;text-align:left">
+                                                          <table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%">
+                                                              <tbody>
+                                                                  <tr style="padding:0;text-align:left;vertical-align:top">
+                                                                      <td height="31px" style="Margin:0;border-collapse:collapse!important;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:31px;font-weight:400;line-height:31px;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">&nbsp;</td>
+                                                                  </tr>
+                                                              </tbody>
+                                                          </table>
+                                                          <p style="Margin:0;Margin-bottom:10px;color:#12122c;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:16px;font-weight:600!important;letter-spacing:0;line-height:normal;margin:0;margin-bottom:10px;padding:0;text-align:center">${header}
+                                                          </p>
+                                                          <table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%">
+                                                              <tbody>
+                                                                  <tr style="padding:0;text-align:left;vertical-align:top">
+                                                                      <td height="14px" style="Margin:0;border-collapse:collapse!important;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:14px;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">&nbsp;</td>
+                                                                  </tr>
+                                                              </tbody>
+                                                          </table>
+                                                          <p class="m_-2725247185578826516nomText" style="Margin:0;Margin-bottom:10px;color:#4a4a4a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:500!important;letter-spacing:0;line-height:normal;margin:0;margin-bottom:10px;padding:0;text-align:center">${message}</p>
+                                                       
+                                                           
+                                                          
+                                                      </th>
+                                                      <th style="Margin:0;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0;padding:0!important;text-align:left;width:0"></th>
+                                                  </tr>
+                                              </tbody></table>
+                                          </th>
+                                      </tr>
+                                  </tbody>
+                              </table>
+                          </td>
+                      </tr>
+                  </tbody>
+              </table>
+   
+              <table align="center" class="m_-2725247185578826516container" style="Margin:0 auto;background:#fefefe;border-collapse:collapse;border-spacing:0;color:#9b9b9b;float:none;margin:0 auto;padding:0;text-align:center;vertical-align:top;width:509px">
+                  <tbody>
+                      <tr style="padding:0;text-align:left;vertical-align:top">
+                          <td style="Margin:0;border-collapse:collapse!important;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">
+                              <table style="border-collapse:collapse;border-spacing:0;display:table;padding:0;text-align:left;vertical-align:top;width:100%">
+                                  <tbody>
+                                      <tr style="padding:0;text-align:left;vertical-align:top">
+                                          <th class="m_-2725247185578826516small-12 m_-2725247185578826516columns" style="Margin:0 auto;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0 auto;padding:0;padding-bottom:37px;padding-left:26px;padding-right:26px;text-align:left;width:554px">
+                                              <table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%">
+                                                  <tbody><tr style="padding:0;text-align:left;vertical-align:top">
+                                                      <th style="Margin:0;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0;padding:0;text-align:left">
+                                                         
+                                                          <table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%">
+                                                              <tbody>
+                                                                  <tr style="padding:0;text-align:left;vertical-align:top">
+                                                                      <td height="12.5px" style="Margin:0;border-collapse:collapse!important;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:12.5px;font-weight:400;line-height:12.5px;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">&nbsp;</td>
+                                                                  </tr>
+                                                              </tbody>
+                                                          </table>
+                                                          <hr style="border-top:solid 0 #dedddd;margin-left:20px;margin-right:20px">
+                                                          <table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%">
+                                                              <tbody>
+                                                                  <tr style="padding:0;text-align:left;vertical-align:top">
+                                                                      <td height="12.5px" style="Margin:0;border-collapse:collapse!important;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:12.5px;font-weight:400;line-height:12.5px;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">&nbsp;</td>
+                                                                  </tr>
+                                                              </tbody>
+                                                          </table>
+                                                           
+                                                      </th>
+                                                      <th style="Margin:0;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0;padding:0!important;text-align:left;width:0"></th>
+                                                  </tr>
+                                              </tbody></table>
+                                          </th>
+                                      </tr>
+                                  </tbody>
+                              </table>
+                          </td>
+                      </tr>
+                  </tbody>
+              </table>
+              <table align="center" class="m_-2725247185578826516container" style="Margin:0 auto;background:0 0!important;border-collapse:collapse;border-spacing:0;color:#9b9b9b;float:none;margin:0 auto;padding:0;text-align:center;vertical-align:top;width:509px">
+                  <tbody>
+                      <tr style="padding:0;text-align:left;vertical-align:top">
+                          <td style="Margin:0;border-collapse:collapse!important;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">
+                              <table style="border-collapse:collapse;border-spacing:0;display:table;padding:0;text-align:left;vertical-align:top;width:100%">
+                                  <tbody>
+                                      <tr style="padding:0;text-align:left;vertical-align:top">
+                                          <th class="m_-2725247185578826516small-2 m_-2725247185578826516columns" style="Margin:0 auto;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0 auto;padding:0;padding-bottom:16px;padding-left:26px;padding-right:13px;text-align:left;width:70.67px">
+                                              <table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%">
+                                                  <tbody><tr style="padding:0;text-align:left;vertical-align:top">
+                                                      <th style="Margin:0;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0;padding:0;text-align:left"></th>
+                                                  </tr>
+                                              </tbody></table>
+                                          </th>
+                                          <th class="m_-2725247185578826516small-8 m_-2725247185578826516columns" style="Margin:0 auto;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0 auto;padding:0;padding-bottom:16px;padding-left:13px;padding-right:13px;text-align:left;width:360.67px">
+                                              <table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%">
+                                                  <tbody><tr style="padding:0;text-align:left;vertical-align:top">
+                                                      <th style="Margin:0;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0;padding:0;text-align:left">
+                                                          <table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%">
+                                                              <tbody>
+                                                                  <tr style="padding:0;text-align:left;vertical-align:top">
+                                                                      <td height="12px" style="Margin:0;border-collapse:collapse!important;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:12px;font-weight:400;line-height:12px;margin:0;padding:0;text-align:left;vertical-align:top;word-wrap:break-word">&nbsp;</td>
+                                                                  </tr>
+                                                              </tbody>
+                                                          </table> </th>
+                                                  </tr>
+                                              </tbody></table>
+                                          </th>
+                                          <th class="m_-2725247185578826516small-2 m_-2725247185578826516columns" style="Margin:0 auto;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0 auto;padding:0;padding-bottom:16px;padding-left:13px;padding-right:26px;text-align:left;width:70.67px">
+                                              <table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%">
+                                                  <tbody><tr style="padding:0;text-align:left;vertical-align:top">
+                                                      <th style="Margin:0;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0;padding:0;text-align:left"></th>
+                                                  </tr>
+                                              </tbody></table>
+                                          </th>
+                                      </tr>
+                                  </tbody>
+                              </table>
+                          </td>
+                      </tr>
+                  </tbody>
+              </table>
+              <table align="center" style="Margin:0 auto;border-collapse:collapse;border-spacing:0;float:none;margin:0 auto;padding:0;text-align:center;vertical-align:top;width:100%">
+                  <tbody>
+                      <tr style="padding:0;text-align:left;vertical-align:top">
+                          <th class="m_-2725247185578826516small-12 m_-2725247185578826516columns" style="Margin:0 auto;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0 auto;padding:0;padding-bottom:16px;padding-left:26px;padding-right:26px;text-align:left;width:554px">
+                              <table style="border-collapse:collapse;border-spacing:0;padding:0;text-align:left;vertical-align:top;width:100%">
+                                  <tbody><tr style="padding:0;text-align:left;vertical-align:top">
+                                      <th style="Margin:0;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0;padding:0;text-align:left">
+                                          <p style="Margin:0;Margin-bottom:10px;color:rgba(74,82,106,.99);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:13px!important;font-weight:400;letter-spacing:0;line-height:normal;margin:0;margin-bottom:10px;padding:0;text-align:center">2022 TagDev Technologies Ltd</p>
+                                      </th>
+                                      <th style="Margin:0;color:#9b9b9b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;font-size:14px;font-weight:400;line-height:1.3;margin:0;padding:0!important;text-align:left;width:0"></th>
+                                  </tr>
+                              </tbody></table>
+                          </th>
+                      </tr>
+                  </tbody>
+              </table>
+          </center>
+      </td>
+  </tr>
+</tbody></table>
+
+<div style="display:none;white-space:nowrap;font:15px courier;line-height:0">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+<img src="https://ci4.googleusercontent.com/proxy/cwMCrUYF6OF7OnUX-fNxoficQ1f-BOL9oyNOKGiJNUkEkVspo4Pud8Hs04iTg20ZSfXkovO6RTQ3nCIKyd1lugCkYKgz5D8DLQHFLIv1ZRL6P_A8UGjZBOHv5FDD-cCyOpq90GyDThn7-sJKgqmXBdJ8jfYW9Bxy64GNbyHwfTODj-ystQ8ObCa5GF1RSfWwf3C83TQU3TUPD_wP5gi3iXjL8rYEgKkxtbYMJXG5mcAZt4O9cIxQkRYUji-s9vlr3kKrH2p5iPlUoHaaho17m7qxG0Yr9go-D5KgTaMfAcpr1HxBl1ld4pBBeqzsqMN7_lsO9r8GAw9jIbD8haWXvHoLkIZ6wT4z9boVlkse4SbrU5GTqMEG986uR-Gafy-LFpITGTmIZVVhm6DIJDAe00zlENmXcdWnE8FFyyqKCKLxKJJdJoCld7rZkfJ8Inp5OA=s0-d-e1-ft#https://u6765830.ct.sendgrid.net/wf/open?upn=PL2pL6nzGKueW4CldqT4njE0NGk-2BFLf39nvYwxRFc8G8DAJCY-2ByBSWyI9Rve1xbAesA4-2BayL5ULhBHI1nGarJD340bI5eD7MOeyVYXIle5tuymNHtEEoTtwHQZ-2Fxj2RNCiG7VluHbo-2FDK-2FW8Jl6wBhi044mH1UQYUhpP0OlBQb1Jd9iuvsWywfwWxXAdKIAHcJs-2BA6jiJ3Fo0nHVPdIQKEcMfV7PfzZsNMjMKNeEjIscvfcPBSsQ-2FshVHC9DeMzr" alt="" width="1" height="1" border="0" style="height:1px!important;width:1px!important;border-width:0!important;margin-top:0!important;margin-bottom:0!important;margin-right:0!important;margin-left:0!important;padding-top:0!important;padding-bottom:0!important;padding-right:0!important;padding-left:0!important" class="CToWUd"></div>
+  `;
+}

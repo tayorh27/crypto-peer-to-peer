@@ -1,0 +1,401 @@
+<!-- start page title -->
+<app-pagetitle title="Dashboard" [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-md-6 col-xl-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="float-end">
+                    <div class="avatar-sm mx-auto mb-4">
+                        <span class="avatar-title rounded-circle bg-light font-size-24">
+                            <i class="mdi mdi-cash-multiple text-primary"></i>
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-muted text-uppercase fw-semibold">Total USDT</p>
+                    <h4 class="mb-1 mt-1">
+                        {{total_usdt_bal | currency:'USD':'symbol'}}
+                        <!-- $<span [CountTo]="58425" class="counter-value" [from]="0" [duration]="1"></span> -->
+                    </h4>
+                </div>
+                <p class="text-muted mt-3 mb-0">
+                    <a href="javascript:void(0);" (click)="receiveUSDT()"><span class="badge badge-soft-success me-1"><i
+                                class="mdi mdi-arrow-up-bold me-1"></i>Receive</span></a>
+                    <a href="javascript:void(0);" (click)="sendUSDT()"><span class="badge badge-soft-danger me-1"><i
+                                class="mdi mdi-arrow-down-bold me-1"></i>Send</span></a>
+                </p>
+            </div>
+        </div>
+    </div> <!-- end col-->
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="float-end">
+                    <div class="avatar-sm mx-auto mb-4">
+                        <span class="avatar-title rounded-circle bg-light font-size-24">
+                            <i class="mdi mdi-refresh-circle text-success"></i>
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-muted text-uppercase fw-semibold">Total NGN</p>
+                    <h4 class="mb-1 mt-1">
+                        {{total_ngn_bal | currency:'₦':'symbol'}}
+                        <!-- ₦<span [CountTo]="total_ngn_bal" class="counter-value" [from]="0" [duration]="1"></span> -->
+                    </h4>
+                </div>
+                <p class="text-muted mt-3 mb-0">
+                    <a href="javascript:void(0);" (click)="addFunds()"><span class="badge badge-soft-success me-1"><i
+                                class="mdi mdi-arrow-up-bold me-1"></i>Add funds</span></a>
+                    <a href="javascript:void(0);" (click)="withdrawFunds()"><span
+                            class="badge badge-soft-danger me-1"><i
+                                class="mdi mdi-arrow-down-bold me-1"></i>Withdraw</span></a>
+                </p>
+            </div>
+        </div>
+    </div> <!-- end col-->
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="float-end">
+                    <div class="avatar-sm mx-auto mb-4">
+                        <span class="avatar-title rounded-circle bg-light font-size-24">
+                            <!-- <i class="mdi mdi-account-group text-primary"></i> -->
+                            <i class="mdi mdi-cart-check text-success"></i>
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-muted text-uppercase fw-semibold">Processed Orders</p>
+                    <h4 *ngIf="proccess_orders === 0">0</h4>
+                    <h4 class="mb-1 mt-1"><span class="counter-value" [CountTo]="proccess_orders" [from]="0"
+                            [duration]="1"></span></h4>
+                </div>
+                <p class="text-muted mt-3 mb-0">
+                    <a href="javascript:void(0);" (click)="viewOrders()"><span
+                            class="badge badge-soft-success me-1">View all</span></a>
+                    <a href="javascript:void(0);" (click)="createOrder()"><span
+                            class="badge badge-soft-success me-1">Create new order</span></a>
+                </p>
+            </div>
+        </div>
+    </div> <!-- end col-->
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="float-end">
+                    <div class="avatar-sm mx-auto mb-4">
+                        <span class="avatar-title rounded-circle bg-light font-size-24">
+                            <i class="mdi mdi-cart-check text-success"></i>
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-muted text-uppercase fw-semibold">All Time Orders</p>
+                    <h4 class="mb-1 mt-1"><span class="counter-value" [CountTo]="9582" [from]="0" [duration]="1"></span>
+                    </h4>
+                </div>
+                <p class="text-muted mt-3 mb-0"><span class="badge badge-soft-warning me-1"><i
+                            class="mdi mdi-arrow-up-bold me-1"></i>0.55%</span> since last week
+                </p>
+            </div>
+        </div>
+    </div> <!-- end col-->
+</div> <!-- end row-->
+
+<div class="row">
+    <div class="col-xl-8" *ngIf="show">
+        <div class="card card-height-100">
+            <div class="card-body pb-0">
+                <div class="float-end">
+                    <div class="dropdown" ngbDropdown>
+                        <a class="dropdown-toggle text-reset" href="javascript:void(0);" ngbDropdownToggle
+                            id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                            <span class="fw-semibold">Sort By:</span> <span class="text-muted">Yearly<i
+                                    class="mdi mdi-chevron-down ms-1"></i></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1"
+                            ngbDropdownMenu>
+                            <a class="dropdown-item" href="javascript:void(0);">Yearly</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Monthly</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Weekly</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Today</a>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="card-title mb-4">Sales Analytics</h4>
+
+                <div class="mt-1">
+                    <ul class="list-inline main-chart mb-0">
+                        <li class="list-inline-item chart-border-left me-0 border-0">
+                            <h3 class="text-primary">$<span data-plugin="counterup">2,371</span><span
+                                    class="text-muted d-inline-block fw-normal font-size-15 ms-3">Income</span></h3>
+                        </li>
+                        <li class="list-inline-item chart-border-left me-0">
+                            <h3><span data-plugin="counterup">258</span><span
+                                    class="text-muted d-inline-block fw-normal font-size-15 ms-3">Sales</span>
+                            </h3>
+                        </li>
+                        <li class="list-inline-item chart-border-left me-0">
+                            <h3><span data-plugin="counterup">3.6</span>%<span
+                                    class="text-muted d-inline-block fw-normal font-size-15 ms-3">Conversation
+                                    Ratio</span></h3>
+                        </li>
+                        <li class="list-inline-item chart-border-left me-0">
+                            <h3><span data-plugin="counterup">52</span>k<span
+                                    class="text-muted d-inline-block fw-normal font-size-15 ms-3">Users</span></h3>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mt-3">
+                    <apx-chart dir="ltr" class="apex-charts" [chart]="emailSentBarChart.chart"
+                        [series]="emailSentBarChart.series" [legend]="emailSentBarChart.legend"
+                        [stroke]="emailSentBarChart.stroke" [colors]="emailSentBarChart.colors"
+                        [fill]="emailSentBarChart.fill" [dataLabels]="emailSentBarChart.dataLabels"
+                        [xaxis]="emailSentBarChart.xaxis" [markers]="emailSentBarChart.markers"
+                        [plotOptions]="emailSentBarChart.plotOptions" [yaxis]="emailSentBarChart.yaxis"
+                        [tooltip]="emailSentBarChart.tooltip" [grid]="emailSentBarChart.grid"
+                        [labels]="emailSentBarChart.labels">
+                    </apx-chart>
+                </div>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col-->
+
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="float-end">
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item mr-2">
+                            <div class="dropdown d-inline-block" ngbDropdown>
+                                <a class="dropdown-toggle text-reset" href="javascript:void(0);"
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                    ngbDropdownToggle>
+                                    <span class="text-muted">Sort By:</span> <span class="fw-semibold">Active<i
+                                            class="mdi mdi-chevron-down ms-1"></i></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                                    <!-- item-->
+                                    <a class="dropdown-item" href="javascript:void(0);">Active</a>
+                                    <a class="dropdown-item" href="javascript:void(0);">Blocked</a>
+                                    <!-- item-->
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-inline-item">
+                            <div class="dropdown d-inline-block" ngbDropdown>
+                                <a class="dropdown-toggle text-reset" href="javascript:void(0);"
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                    ngbDropdownToggle>
+                                    <span class="text-muted">Sort By:</span> <span class="fw-semibold">Name<i
+                                            class="mdi mdi-chevron-down ms-1"></i></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                                    <!-- item-->
+                                    <a class="dropdown-item" href="javascript:void(0);">ID</a>
+                                    <a class="dropdown-item" href="javascript:void(0);">Job title</a>
+                                    <a class="dropdown-item" href="javascript:void(0);">Name</a>
+                                    <a class="dropdown-item" href="javascript:void(0);">Location</a>
+                                    <a class="dropdown-item" href="javascript:void(0);">Email</a>
+                                    <a class="dropdown-item" href="javascript:void(0);">Phone</a>
+                                    <!-- item-->
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <h4 class="card-title mb-4">Recent Users</h4>
+                <div class="table-responsive">
+                    <app-user [users]="users"></app-user>
+                </div>
+                <!--end table-responsive-->
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4" *ngIf="show">
+        <div class="card bg-pattern">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-sm-8">
+                        <div class="avatar-xs mb-3">
+                            <span class="avatar-title rounded-circle bg-light font-size-24">
+                                <i class="mdi mdi-bullhorn-outline text-primary"></i>
+                            </span>
+                        </div>
+                        <p class="font-size-18">Enhance your <b>Campaign</b> for better outreach <i
+                                class="mdi mdi-arrow-right"></i></p>
+                        <div class="mt-4">
+                            <a href="javascript: void(0);" class="btn btn-success waves-effect waves-light">Upgrade
+                                Account!</a>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="mt-4 mt-sm-0">
+                            <img src="assets/images/widget-img.png" class="img-fluid" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- end card-body-->
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="float-end">
+                    <div class="dropdown" ngbDropdown>
+                        <a class="dropdown-toggle text-reset" href="javascript:void(0);" ngbDropdownToggle
+                            id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                            <span class="fw-semibold">Report By:</span> <span class="text-muted">Monthly<i
+                                    class="mdi mdi-chevron-down ms-1"></i></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton2"
+                            ngbDropdownMenu>
+                            <a class="dropdown-item" href="javascript:void(0);">Yearly</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Monthly</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Weekly</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Today</a>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="card-title mb-4">Earning Reports</h4>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <p class="text-muted mb-1">This Month</p>
+                                <h5 class="mt-0">$12,582<small class="badge badge-light-success font-13">+15%</small>
+                                </h5>
+                            </div>
+                            <div class="col-6">
+                                <p class="text-muted mb-1">Last Month</p>
+                                <h5 class="mt-0">$98,741 <small class="badge badge-light-danger font-13">-5%</small>
+                                </h5>
+                            </div>
+                        </div>
+                        <p class="text-muted"><span class="text-success me-1"> 12%<i
+                                    class="mdi mdi-arrow-up"></i></span>From previous period</p>
+
+                        <div class="mt-4">
+                            <a href="" class="btn btn-primary waves-effect waves-light btn-sm">Generate Reports <i
+                                    class="mdi mdi-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <apx-chart dir="ltr" class="apex-charts" [series]="monthlyEarningChart.series"
+                            [chart]="monthlyEarningChart.chart" [legend]="monthlyEarningChart.legend"
+                            [colors]="monthlyEarningChart.colors" [labels]="monthlyEarningChart.labels"
+                            [stroke]="monthlyEarningChart.stroke" [plotOptions]="monthlyEarningChart.plotOptions">
+                        </apx-chart>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- end card -->
+
+    </div>
+</div>
+<!-- end row -->
+
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="float-end">
+                    <div class="dropdown" ngbDropdown>
+                        <a class="dropdown-toggle text-reset" href="javascript:void(0);" ngbDropdownToggle
+                            id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                            <span class="fw-semibold">Sort By:</span> <span class="text-muted">Recent<i
+                                    class="mdi mdi-chevron-down ms-1"></i></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton3"
+                            ngbDropdownMenu>
+                            <a class="dropdown-item" href="javascript:void(0);">Maximum</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Recent</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Minimum</a>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="card-title mb-4">Latest Transactions</h4>
+                <div class="table-responsive">
+                    <app-transaction [transactions]="transactions"></app-transaction>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="float-end">
+                    <div class="dropdown" ngbDropdown>
+                        <a class="dropdown-toggle text-reset" href="javascript:void(0);" ngbDropdownToggle
+                            id="dropdownMenuButton4" data-bs-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                            <span class="text-muted">Status:</span> <span class="fw-semibold">All<i
+                                    class="mdi mdi-chevron-down ms-1"></i></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton4"
+                            ngbDropdownMenu>
+                            <a class="dropdown-item" href="javascript:void(0);">All</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Delivered</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Shipped</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Cancelled</a>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="card-title mb-4">Latest Orders</h4>
+                <div class="table-responsive">
+                    <app-order [orders]="orders"></app-order>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end row -->
+
+
+<!-- end row -->
+
+<ng-template #content let-modal>
+    <div class="modal-header border-bottom-0">
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"> </button>
+    </div>
+    <div class="modal-body">
+        <div class="text-center mb-4">
+            <div class="avatar-md mx-auto mb-4">
+                <div class="avatar-title bg-light rounded-circle text-primary h1">
+                    <i class="mdi mdi-email-open"></i>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-xl-10">
+                    <h4 class="text-primary">Add Funds !</h4>
+                    <p class="text-muted font-size-14 mb-4">Enter the amount you want to fund your wallet with below.
+                        Minimum amount is ₦1,000
+                    </p>
+                    <div class="input-group bg-light rounded">
+                        <input type="number" [(ngModel)]="fundingAmount" name="fundAmt"
+                            class="form-control bg-transparent border-0" placeholder="Enter amount" aria-label="Recipient's username"
+                            aria-describedby="button-addon2">
+
+                        <button class="btn btn-primary" type="button" (click)="openFlutterwave()" id="button-addon2">
+                            <i class="bx bxs-paper-plane"></i>
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

@@ -1,0 +1,384 @@
+<!-- start page title -->
+<app-pagetitle title="Charts" [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body pb-0">
+                <h4 class="card-title mb-4">Apex Charts</h4>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Line with Data Labels</h4>
+                                <apx-chart class="apex-charts" dir="ltr" [series]="linewithDataChart.series"
+                                    [chart]="linewithDataChart.chart" [colors]="linewithDataChart.colors"
+                                    [stroke]="linewithDataChart.stroke" [dataLabels]="linewithDataChart.dataLabels"
+                                    [responsive]="linewithDataChart.responsive" [legend]="linewithDataChart.legend"
+                                    [xaxis]="linewithDataChart.xaxis" [yaxis]="linewithDataChart.yaxis"
+                                    [stroke]="linewithDataChart.stroke" [markers]="linewithDataChart.markers">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Dashed Line</h4>
+                                <apx-chart class="apex-charts" dir="ltr" [series]="dashedLineChart.series"
+                                    [chart]="dashedLineChart.chart" [dataLabels]="dashedLineChart.dataLabels"
+                                    [stroke]="dashedLineChart.stroke" [colors]="dashedLineChart.colors"
+                                    [xaxis]="dashedLineChart.xaxis" [grid]="dashedLineChart.grid"
+                                    [tooltip]="dashedLineChart.tooltip" [plotOptions]="dashedLineChart.plotOptions"
+                                    [fill]="dashedLineChart.fill" [markers]="dashedLineChart.markers"
+                                    [legend]="dashedLineChart.legend" [yaxis]="dashedLineChart.yaxis"
+                                    [tooltip]="dashedLineChart.tooltip">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+                </div>
+                <!-- end row -->
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Spline Area</h4>
+
+                                <apx-chart class="apex-charts" dir="ltr" [series]="splineAreaChart.series"
+                                    [chart]="splineAreaChart.chart" [dataLabels]="splineAreaChart.dataLabels"
+                                    [stroke]="splineAreaChart.stroke" [colors]="splineAreaChart.colors"
+                                    [xaxis]="splineAreaChart.xaxis" [grid]="splineAreaChart.grid"
+                                    [tooltip]="splineAreaChart.tooltip">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Column Charts</h4>
+
+                                <apx-chart class="apex-charts" dir="ltr" [series]="basicColumChart.series"
+                                    [chart]="basicColumChart.chart" [plotOptions]="basicColumChart.plotOptions"
+                                    [yaxis]="basicColumChart.yaxis" [grid]="basicColumChart.grid"
+                                    [tooltip]="basicColumChart.tooltip" [stroke]="basicColumChart.stroke"
+                                    [dataLabels]="basicColumChart.dataLabels" [xaxis]="basicColumChart.xaxis"
+                                    [colors]="basicColumChart.colors" [fill]="basicColumChart.fill">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+                </div>
+                <!-- end row -->
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Column with Data Labels</h4>
+                                <apx-chart class="apex-charts" dir="ltr" [series]="columnlabelChart.series"
+                                    [chart]="columnlabelChart.chart" [plotOptions]="columnlabelChart.plotOptions"
+                                    [yaxis]="columnlabelChart.yaxis" [title]="columnlabelChart.title"
+                                    [stroke]="columnlabelChart.stroke" [dataLabels]="columnlabelChart.dataLabels"
+                                    [xaxis]="columnlabelChart.xaxis" [legend]="columnlabelChart.legend"
+                                    [colors]="columnlabelChart.colors" [fill]="columnlabelChart.fill">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Bar Chart</h4>
+                                <apx-chart class="apex-charts" dir="ltr" [series]="barChart.series"
+                                    [chart]="barChart.chart" [plotOptions]="barChart.plotOptions"
+                                    [dataLabels]="barChart.dataLabels" [xaxis]="barChart.xaxis"
+                                    [colors]="barChart.colors" [grid]="barChart.grid">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+                </div>
+                <!-- end row -->
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Line, Column & Area Chart</h4>
+                                <apx-chart class="apex-charts" dir="ltr" [series]="lineColumAreaChart.series"
+                                    [chart]="lineColumAreaChart.chart" [tooltip]="lineColumAreaChart.tooltip"
+                                    [yaxis]="lineColumAreaChart.yaxis" [legend]="lineColumAreaChart.legend"
+                                    [plotOptions]="lineColumAreaChart.plotOptions" [grid]="lineColumAreaChart.grid"
+                                    [stroke]="lineColumAreaChart.stroke" [xaxis]="lineColumAreaChart.xaxis"
+                                    [colors]="lineColumAreaChart.colors" [fill]="lineColumAreaChart.fill"
+                                    [labels]="lineColumAreaChart.labels" [markers]="lineColumAreaChart.markers">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Candlestick Chart</h4>
+                                <apx-chart class="apex-charts" dir="ltr" [series]="candlestickChart.series"
+                                    [chart]="candlestickChart.chart" [tooltip]="candlestickChart.tooltip"
+                                    [yaxis]="candlestickChart.yaxis" [legend]="candlestickChart.legend"
+                                    [plotOptions]="candlestickChart.plotOptions" [grid]="candlestickChart.grid"
+                                    [stroke]="candlestickChart.stroke" [xaxis]="candlestickChart.xaxis"
+                                    [colors]="candlestickChart.colors" [fill]="candlestickChart.fill"
+                                    [labels]="candlestickChart.labels" [markers]="candlestickChart.markers">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+
+                </div>
+                <!-- end row -->
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Basic Timeline Chart</h4>
+                                <apx-chart class="apex-charts" dir="ltr" [series]="basictimelinechart.series"
+                                    [chart]="basictimelinechart.chart" [plotOptions]="basictimelinechart.plotOptions"
+                                    [xaxis]="basictimelinechart.xaxis" [colors]="basictimelinechart.colors">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Timeline Distributed</h4>
+                                <apx-chart class="apex-charts" dir="ltr" [series]="timelinechart.series"
+                                    [chart]="timelinechart.chart" [legend]="timelinechart.legend"
+                                    [plotOptions]="timelinechart.plotOptions" [stroke]="timelinechart.stroke"
+                                    [xaxis]="timelinechart.xaxis" [fill]="timelinechart.fill">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+                </div>
+                <!-- end row -->
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Bubble Chart</h4>
+                                <apx-chart [series]="simpleBubbleChart.series" [chart]="simpleBubbleChart.chart"
+                                    [xaxis]="simpleBubbleChart.xaxis" [fill]="simpleBubbleChart.fill"
+                                    [dataLabels]="simpleBubbleChart.dataLabels" [yaxis]="simpleBubbleChart.yaxis"
+                                    [colors]="simpleBubbleChart.colors"></apx-chart>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Scatter Chart</h4>
+                                <apx-chart [series]="basicScatterChart.series" [chart]="basicScatterChart.chart"
+                                    [xaxis]="basicScatterChart.xaxis" [yaxis]="basicScatterChart.yaxis"
+                                    [colors]="basicScatterChart.colors"></apx-chart>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Heatmap Chart</h4>
+                                <apx-chart [series]="basicHeatmapChart.series" [chart]="basicHeatmapChart.chart"
+                                    [dataLabels]="basicHeatmapChart.dataLabels" [colors]="basicHeatmapChart.colors">
+                                </apx-chart>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Treemap Chart</h4>
+                                <apx-chart [series]="basicTreemapChart.series" [chart]="basicTreemapChart.chart"
+                                    [colors]="basicTreemapChart.colors" [legend]="basicTreemapChart.legend"></apx-chart>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Pie Chart</h4>
+                                <apx-chart class="apex-charts" dir="ltr" [series]="piechart.series"
+                                    [colors]="piechart.colors" [responsive]="piechart.responsive"
+                                    [chart]="piechart.chart" [legend]="piechart.legend" [labels]="piechart.labels">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Donut Chart</h4>
+                                <apx-chart class="apex-charts" dir="ltr" [series]="donutchart.series"
+                                    [colors]="donutchart.colors" [responsive]="donutchart.responsive"
+                                    [chart]="donutchart.chart" [legend]="donutchart.legend"
+                                    [labels]="donutchart.labels">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+                </div>
+                <!-- end row -->
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Radial Chart</h4>
+                                <apx-chart class="apex-charts" dir="ltr" [series]="radialchart.series"
+                                    [chart]="radialchart.chart" [plotOptions]="radialchart.plotOptions"
+                                    [labels]="radialchart.labels" [colors]="radialchart.colors">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Timeline Distributed Radial Chart</h4>
+                                <apx-chart class="apex-charts" dir="ltr" [series]="radialbarchart.series"
+                                    [chart]="radialbarchart.chart" [legend]="radialbarchart.legend"
+                                    [plotOptions]="radialbarchart.plotOptions" [colors]="radialbarchart.colors"
+                                    [labels]="radialbarchart.labels" [responsive]="radialbarchart.responsive">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+                </div>
+                <!-- end row -->
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Radar Chart</h4>
+                                <apx-chart class="apex-charts" dir="ltr" [series]="radarchart.series"
+                                    [chart]="radarchart.chart" [xaxis]="radarchart.xaxis" [colors]="radarchart.colors">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Radar multiple Chart</h4>
+                                <apx-chart class="apex-charts" dir="ltr" [series]="multipleradarchart.series"
+                                    [chart]="multipleradarchart.chart" [stroke]="multipleradarchart.stroke"
+                                    [xaxis]="multipleradarchart.xaxis" [colors]="multipleradarchart.colors"
+                                    [fill]="multipleradarchart.fill" [markers]="multipleradarchart.markers">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+                </div>
+                <!-- end row -->
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Polar Area Chart</h4>
+                                <apx-chart class="apex-charts" dir="ltr" [series]="basicpolarchart.series"
+                                    [chart]="basicpolarchart.chart" [legend]="basicpolarchart.legend"
+                                    [fill]="basicpolarchart.fill">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="font-size-14 mb-4">Polar Area Monochrome Chart</h4>
+                                <apx-chart class="apex-charts" dir="ltr" [series]="polarchart.series"
+                                    [chart]="polarchart.chart" [yaxis]="polarchart.yaxis" [legend]="polarchart.legend"
+                                    [plotOptions]="polarchart.plotOptions" [stroke]="polarchart.stroke"
+                                    [xaxis]="polarchart.xaxis" [colors]="polarchart.colors" [fill]="polarchart.fill"
+                                    [labels]="polarchart.labels" [theme]="polarchart.theme">
+                                </apx-chart>
+                            </div>
+                            <!-- end card body -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+                </div>
+                <!-- end row -->
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,536 @@
+<!-- start page title -->
+<app-pagetitle title="Profile" [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
+<!-- end page title -->
+
+<div class="row mb-4">
+    <div class="col-xl-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="">
+                    <div class="dropdown float-end" ngbDropdown>
+                        <a class="text-body dropdown-toggle font-size-18" href="javascript: void(0);" role="button"
+                            data-bs-toggle="dropdown" aria-haspopup="true" ngbDropdownToggle>
+                            <i class="mdi mdi-dots-vertical"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                            <a class="dropdown-item" href="javascript: void(0);">Edit</a>
+                            <a class="dropdown-item" href="javascript: void(0);">Action</a>
+                            <a class="dropdown-item" href="javascript: void(0);">Remove</a>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="text-center bg-pattern">
+                        <img src="assets/images/users/avatar-4.jpg" alt=""
+                            class="avatar-xl img-thumbnail rounded-circle mb-3">
+                        <h4 class="text-primary mb-2">Marcus Johne</h4>
+                        <h5 class="text-muted font-size-13 mb-3">UI/UX Designer</h5>
+                        <div class="text-center">
+                            <a href="" class="btn btn-success me-2 waves-effect waves-light btn-sm"><i
+                                    class="mdi mdi-email-outline me-1"></i>Send Mail</a>
+                            <a href="" class="btn btn-primary waves-effect waves-light btn-sm"><i
+                                    class="mdi mdi-phone-outline me-1"></i>PhoneCall</a>
+                        </div>
+                    </div>
+                    <hr class="my-4">
+                    <h5 class="font-size-16">About</h5>
+                    <p class="">Hi I'm Marcus,has been the industry's standard dummy text To an English person, it will
+                        seem like
+                        simplified.</p>
+                    <ul class="ps-3">
+                        <li>it will seem like simplified.</li>
+                        <li>To achieve this, it would be necessary to have uniform pronunciation</li>
+                    </ul>
+                </div>
+                <hr class="my-4">
+                <div class="">
+                    <h5 class="font-size-16">My Skills</h5>
+                    <div class="mt-3">
+                        <span class="badge badge-soft-dark font-size-12 me-2">Javascript</span>
+                        <span class="badge badge-soft-dark font-size-12 me-2">HTML</span>
+                        <span class="badge badge-soft-dark font-size-12 me-2">Laravel</span>
+                        <span class="badge badge-soft-dark font-size-12 me-2">Angular</span>
+                        <span class="badge badge-soft-dark font-size-12 me-2">Android</span>
+                        <span class="badge badge-soft-dark font-size-12 me-2">Bootstrap</span>
+                    </div>
+                </div>
+                <hr class="my-4">
+                <div class="table-responsive">
+                    <h5 class="font-size-16">Personal Information</h5>
+                    <div>
+                        <p class="mb-1 text-muted">Mobile :</p>
+                        <h5 class="font-size-14">012-234-5678</h5>
+                    </div>
+                    <div class="mt-3">
+                        <p class="mb-1 text-muted">E-mail :</p>
+                        <h5 class="font-size-14">marcus@samply.com</h5>
+                    </div>
+                    <div class="mt-3">
+                        <p class="mb-1 text-muted">Location :</p>
+                        <h5 class="font-size-14">California, United States</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-8">
+        <div class="card mb-0">
+            <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav nav-tabs nav-tabs-custom nav-justified">
+                <li [ngbNavItem]="1">
+                    <a ngbNavLink>
+                        <i class="mdi mdi-account-circle-outline font-size-20"></i>
+                        <span class="d-none d-sm-block">About</span>
+                    </a>
+                    <ng-template ngbNavContent>
+                        <div>
+                            <div>
+                                <h5 class="font-size-16 mb-4">Experience</h5>
+                                <ul class="activity-feed mb-0 ps-2">
+                                    <li class="feed-item">
+                                        <div class="feed-item-list">
+                                            <p class="text-muted mb-1">2019 - 2021</p>
+                                            <h5 class="font-size-16">UI/UX Designer</h5>
+                                            <p>Abc Company</p>
+                                            <p class="text-muted">To achieve this, it would be necessary to have uniform
+                                                grammar, pronunciation and more common words. If several languages
+                                                coalesce,
+                                                the grammar of the resulting language is more simple and regular than
+                                                that
+                                                of the individual</p>
+                                        </div>
+                                    </li>
+                                    <li class="feed-item">
+                                        <div class="feed-item-list">
+                                            <p class="text-muted mb-1">2017 - 2019</p>
+                                            <h5 class="font-size-16">Graphic Designer</h5>
+                                            <p>Xyz Company</p>
+                                            <p class="text-muted">It will be as simple as occidental in fact, it will be
+                                                Occidental. To an English person, it will seem like simplified English,
+                                                as a
+                                                skeptical Cambridge friend of mine told me what Occidental </p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-size-16 mb-4">Projects</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-nowrap table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Projects</th>
+                                                <th scope="col">Date</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col" style="width: 120px;">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row">01</th>
+                                                <td><a href="javascript: void(0);" class="text-dark">Brand Logo
+                                                        Design</a></td>
+                                                <td>
+                                                    18 Jan, 2021
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-soft-primary font-size-12">Open</span>
+                                                </td>
+                                                <td>
+                                                    <div class="dropdown" ngbDropdown>
+                                                        <a class="text-muted dropdown-toggle font-size-18 px-2"
+                                                            href="javascript:void(0);" role="button"
+                                                            data-bs-toggle="dropdown" ngbDropdownToggle
+                                                            aria-haspopup="true">
+                                                            <i class="mdi mdi-dots-vertical"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                                                            <a class="dropdown-item"
+                                                                href="javascript: void(0);">Action</a>
+                                                            <a class="dropdown-item" href="javascript: void(0);">Another
+                                                                action</a>
+                                                            <a class="dropdown-item"
+                                                                href="javascript: void(0);">Something else here</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">02</th>
+                                                <td><a href="javascript: void(0);" class="text-dark">Samply Admin</a>
+                                                </td>
+                                                <td>
+                                                    06 Jan, 2021
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-soft-primary font-size-12">Open</span>
+                                                </td>
+                                                <td>
+                                                    <div class="dropdown" ngbDropdown>
+                                                        <a class="text-muted dropdown-toggle font-size-18 px-2"
+                                                            href="javascript:void(0);" role="button"
+                                                            data-bs-toggle="dropdown" ngbDropdownToggle
+                                                            aria-haspopup="true">
+                                                            <i class="mdi mdi-dots-vertical"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                                                            <a class="dropdown-item"
+                                                                href="javascript: void(0);">Action</a>
+                                                            <a class="dropdown-item" href="javascript: void(0);">Another
+                                                                action</a>
+                                                            <a class="dropdown-item"
+                                                                href="javascript: void(0);">Something else here</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">03</th>
+                                                <td><a href="javascript: void(0);" class="text-dark">Chat app Design</a>
+                                                </td>
+                                                <td>
+                                                    28 Feb, 2021
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-soft-success font-size-12">Complete</span>
+                                                </td>
+                                                <td>
+                                                    <div class="dropdown" ngbDropdown>
+                                                        <a class="text-muted dropdown-toggle font-size-18 px-2"
+                                                            href="javascript:void(0);" role="button"
+                                                            data-bs-toggle="dropdown" ngbDropdownToggle
+                                                            aria-haspopup="true">
+                                                            <i class="mdi mdi-dots-vertical"></i>
+                                                        </a>
+
+                                                        <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                                                            <a class="dropdown-item"
+                                                                href="javascript: void(0);">Action</a>
+                                                            <a class="dropdown-item" href="javascript: void(0);">Another
+                                                                action</a>
+                                                            <a class="dropdown-item"
+                                                                href="javascript: void(0);">Something else here</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">04</th>
+                                                <td><a href="javascript: void(0);" class="text-dark">Samply Landing</a>
+                                                </td>
+                                                <td>
+                                                    13 Feb, 2021
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-soft-success font-size-12">Complete</span>
+                                                </td>
+                                                <td>
+                                                    <div class="dropdown" ngbDropdown>
+                                                        <a class="text-muted dropdown-toggle font-size-18 px-2"
+                                                            href="javascript:void(0);" role="button"
+                                                            data-bs-toggle="dropdown" ngbDropdownToggle
+                                                            aria-haspopup="true">
+                                                            <i class="mdi mdi-dots-vertical"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                                                            <a class="dropdown-item"
+                                                                href="javascript: void(0);">Action</a>
+                                                            <a class="dropdown-item" href="javascript: void(0);">Another
+                                                                action</a>
+                                                            <a class="dropdown-item"
+                                                                href="javascript: void(0);">Something else here</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">05</th>
+                                                <td><a href="javascript: void(0);" class="text-dark">Authentication
+                                                        Pages</a></td>
+                                                <td>
+                                                    06 Feb, 2021
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-soft-success font-size-12">Complete</span>
+                                                </td>
+                                                <td>
+                                                    <div class="dropdown" ngbDropdown>
+                                                        <a class="text-muted dropdown-toggle font-size-18 px-2"
+                                                            href="javascript:void(0);" role="button"
+                                                            data-bs-toggle="dropdown" ngbDropdownToggle
+                                                            aria-haspopup="true">
+                                                            <i class="mdi mdi-dots-vertical"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                                                            <a class="dropdown-item"
+                                                                href="javascript: void(0);">Action</a>
+                                                            <a class="dropdown-item" href="javascript: void(0);">Another
+                                                                action</a>
+                                                            <a class="dropdown-item"
+                                                                href="javascript: void(0);">Something else here</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </li>
+
+                <li [ngbNavItem]="2">
+                    <a ngbNavLink>
+                        <i class="mdi mdi-clipboard-text-outline font-size-20"></i>
+                        <span class="d-none d-sm-block">Tasks</span>
+                    </a>
+                    <ng-template ngbNavContent>
+                        <div>
+                            <h5 class="font-size-16 mb-3">Active</h5>
+                            <div class="table-responsive">
+                                <table class="table table-nowrap table-centered">
+                                    <tbody>
+                                        <tr>
+                                            <td style="width: 60px;">
+                                                <div class="form-check font-size-16 text-center">
+                                                    <input type="checkbox" class="form-check-input"
+                                                        id="tasks-activeCheck2">
+                                                    <label class="form-check-label" for="tasks-activeCheck2"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a href="javascript: void(0);" class="fw-bold text-dark">Ecommerce
+                                                    Product Detail</a>
+                                            </td>
+                                            <td>27 Feb, 2021</td>
+                                            <td style="width: 160px;"><span
+                                                    class="badge badge-soft-primary font-size-12">Active</span></td>
+
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="form-check font-size-16 text-center">
+                                                    <input type="checkbox" class="form-check-input"
+                                                        id="tasks-activeCheck1">
+                                                    <label class="form-check-label" for="tasks-activeCheck1"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a href="javascript: void(0);" class="fw-bold text-dark">Ecommerce
+                                                    Product</a>
+                                            </td>
+                                            <td>26 Feb, 2021</td>
+                                            <td><span class="badge badge-soft-primary font-size-12">Active</span></td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h5 class="font-size-16 my-3">Upcoming</h5>
+                            <div class="table-responsive">
+                                <table class="table table-nowrap table-centered">
+                                    <tbody>
+                                        <tr>
+                                            <td style="width: 60px;">
+                                                <div class="form-check font-size-16 text-center">
+                                                    <input type="checkbox" class="form-check-input"
+                                                        id="tasks-upcomingCheck3">
+                                                    <label class="form-check-label" for="tasks-upcomingCheck3"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a href="javascript: void(0);" class="fw-bold text-dark">Chat app
+                                                    Page</a>
+                                            </td>
+                                            <td>-</td>
+                                            <td style="width: 160px;"><span
+                                                    class="badge badge-soft-secondary font-size-12">Waiting</span></td>
+
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="form-check font-size-16 text-center">
+                                                    <input type="checkbox" class="form-check-input"
+                                                        id="tasks-upcomingCheck2">
+                                                    <label class="form-check-label" for="tasks-upcomingCheck2"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a href="javascript: void(0);" class="fw-bold text-dark">Email Pages</a>
+                                            </td>
+                                            <td>04 Jan, 2021</td>
+                                            <td><span class="badge badge-soft-primary font-size-12">Approved</span></td>
+
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="form-check font-size-16 text-center">
+                                                    <input type="checkbox" class="form-check-input"
+                                                        id="tasks-upcomingCheck1">
+                                                    <label class="form-check-label" for="tasks-upcomingCheck1"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a href="javascript: void(0);" class="fw-bold text-dark">Contacts
+                                                    Profile Page</a>
+                                            </td>
+                                            <td>-</td>
+                                            <td><span class="badge badge-soft-secondary font-size-12">Waiting</span>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h5 class="font-size-16 my-3">Complete</h5>
+                            <div class="table-responsive">
+                                <table class="table table-nowrap table-centered">
+                                    <tbody>
+                                        <tr>
+                                            <td style="width: 60px;">
+                                                <div class="form-check font-size-16 text-center">
+                                                    <input type="checkbox" class="form-check-input"
+                                                        id="tasks-completeCheck3">
+                                                    <label class="form-check-label" for="tasks-completeCheck3"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a href="javascript: void(0);" class="fw-bold text-dark">UI Elements</a>
+                                            </td>
+                                            <td>27 Feb, 2021</td>
+                                            <td style="width: 160px;"><span
+                                                    class="badge badge-soft-success font-size-12">Complete</span></td>
+
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="form-check font-size-16 text-center">
+                                                    <input type="checkbox" class="form-check-input"
+                                                        id="tasks-completeCheck2">
+                                                    <label class="form-check-label" for="tasks-completeCheck2"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a href="javascript: void(0);" class="fw-bold text-dark">Authentication
+                                                    Pages</a>
+                                            </td>
+                                            <td>27 Feb, 2021</td>
+                                            <td><span class="badge badge-soft-success font-size-12">Complete</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="form-check font-size-16 text-center">
+                                                    <input type="checkbox" class="form-check-input"
+                                                        id="tasks-completeCheck1">
+                                                    <label class="form-check-label" for="tasks-completeCheck1"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a href="javascript: void(0);" class="fw-bold text-dark">Admin
+                                                    Layout</a>
+                                            </td>
+                                            <td>26 Feb, 2021</td>
+                                            <td><span class="badge badge-soft-success font-size-12">Complete</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </ng-template>
+                </li>
+
+                <li [ngbNavItem]="3">
+                    <a ngbNavLink>
+                        <i class="mdi mdi-email-outline font-size-20"></i>
+                        <span class="d-none d-sm-block">Messages</span>
+                    </a>
+                    <ng-template ngbNavContent>
+                        <div>
+                            <ngx-simplebar style="max-height: 430px;">
+                                <div class="me-3">
+                                    <div class="d-flex align-items-start border-bottom py-4">
+                                        <img class="me-2 rounded-circle avatar-xs"
+                                            src="assets/images/users/avatar-3.jpg" alt="">
+                                        <div class="flex-1">
+                                            <h5 class="font-size-15 mt-0 mb-1">Marion Walker <small
+                                                    class="text-muted float-end">1 hr ago</small></h5>
+                                            <p class="text-muted">If several languages coalesce, the grammar of the
+                                                resulting .</p>
+
+                                            <a href="javascript: void(0);" class="text-muted font-13 d-inline-block"><i
+                                                    class="mdi mdi-reply"></i> Reply</a>
+                                            <div class="d-flex align-items-start mt-4">
+                                                <img class="me-2 rounded-circle avatar-xs"
+                                                    src="assets/images/users/avatar-4.jpg" alt="">
+                                                <div class="flex-1">
+                                                    <h5 class="font-size-15 mt-0 mb-1">Shanon Marvin <small
+                                                            class="text-muted float-end">1 hr ago</small></h5>
+                                                    <p class="text-muted">It will be as simple as in fact, it will be
+                                                        Occidental. To it will seem like simplified .</p>
+                                                    <a href="javascript: void(0);"
+                                                        class="text-muted font-13 d-inline-block">
+                                                        <i class="mdi mdi-reply"></i> Reply
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-start border-bottom py-4">
+                                        <img class="me-2 rounded-circle avatar-xs"
+                                            src="assets/images/users/avatar-5.jpg" alt="">
+                                        <div class="flex-1">
+                                            <h5 class="font-size-15 mt-0 mb-1">Janice Morgan <small
+                                                    class="text-muted float-end">2 hrs ago</small></h5>
+                                            <p class="text-muted">To achieve this, it would be necessary to have uniform
+                                                pronunciation.</p>
+                                            <a href="javascript: void(0);" class="text-muted font-13 d-inline-block"><i
+                                                    class="mdi mdi-reply"></i> Reply</a>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-start border-bottom py-4">
+                                        <img class="me-2 rounded-circle avatar-xs"
+                                            src="assets/images/users/avatar-7.jpg" alt="">
+                                        <div class="flex-1">
+                                            <h5 class="font-size-15 mt-0 mb-1">Patrick Petty <small
+                                                    class="text-muted float-end">3 hrs ago</small></h5>
+                                            <p class="text-muted">Sed ut perspiciatis unde omnis iste natus error sit
+                                            </p>
+                                            <a href="javascript: void(0);" class="text-muted font-13 d-inline-block"><i
+                                                    class="mdi mdi-reply"></i> Reply</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ngx-simplebar>
+
+                            <div class="border rounded mt-4">
+                                <form action="#">
+                                    <div class="px-2 py-1 bg-light">
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-sm btn-link text-dark"><i
+                                                    class="mdi mdi-link-variant"></i></button>
+                                            <button type="button" class="btn btn-sm btn-link text-dark"><i
+                                                    class="mdi mdi-emoticon-excited-outline"></i></button>
+                                            <button type="button" class="btn btn-sm btn-link text-dark"><i
+                                                    class="mdi mdi-at"></i></button>
+                                        </div>
+                                        <div class="float-end">
+                                            <button type="button" class="btn btn-sm btn-link text-dark"><i
+                                                    class="mdi mdi-send"></i></button>
+                                        </div>
+                                    </div>
+                                    <textarea rows="3" class="form-control border-0 resize-none"
+                                        placeholder="Your Message..."></textarea>
+                                </form>
+                            </div> <!-- end .border-->
+                        </div>
+                    </ng-template>
+                </li>
+            </ul>
+            <div [ngbNavOutlet]="nav" class="p-4"></div>
+        </div>
+    </div>
+</div>
+<!-- end row -->

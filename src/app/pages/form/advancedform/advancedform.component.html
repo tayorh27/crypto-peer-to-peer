@@ -1,0 +1,695 @@
+<!-- start page title -->
+<app-pagetitle title="Form Advanced" [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
+<!-- end page title -->
+
+<!-- Start Select row -->
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Select2</h4>
+        <p class="card-title-desc">
+          A mobile and touch friendly input spinner component for Bootstrap
+        </p>
+
+        <form>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="mb-3">
+                <label class="form-label">Single Select</label>
+                <select2 [data]="data"></select2>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Multiple Select</label>
+                <select2 [data]="data" [multiple]="true" displaySearchStatus="hidden"></select2>
+              </div>
+
+              <div>
+                <label class="form-label">Search Disable</label>
+                <select2 [data]="data" displaySearchStatus="hidden"></select2>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="mb-3 ajax-select mt-3 mt-lg-0">
+                <label class="form-label">Ajax (remote data)</label>
+                <select2 [data]="data"></select2>
+              </div>
+              <div class="templating-select">
+                <label class="form-label">Templating</label>
+                <select2 [data]="data" value="alaska"></select2>
+              </div>
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+    <!-- end select2 -->
+  </div>
+</div>
+<!-- end row -->
+
+<!-- Start color/date-picker row -->
+<div class="row">
+  <div class="col-xl-6">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Colorpicker</h4>
+        <p class="card-title-desc">Examples of Spectrum Colorpicker.</p>
+
+        <form action="#">
+          <div class="mb-3">
+            <label class="form-label">Simple input field</label>
+            <div id="component-colorpicker" class="input-group" title="Using format option">
+              <span class="input-group-text">
+                <span class="input-group-text colorpicker-input-addon" [style.background]="color"><i></i></span>
+              </span>
+              <input type="text" class="form-control input-lg" [(colorPicker)]="color" [cpPosition]="'bottom'"
+                [value]="color" [cpDisableInput]="true" />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Show Alpha</label>
+            <div id="component-colorpicker" class="input-group" title="Using format option">
+              <span class="input-group-text">
+                <span class="input-group-text colorpicker-input-addon" [style.background]="rgbcolor"><i></i></span>
+              </span>
+              <input type="text" class="form-control" id="colorpicker-showalpha" [value]="rgbcolor"
+                [(colorPicker)]="rgbcolor" [cpOutputFormat]="'rgba'" [cpPosition]="'bottom'" [cpDisableInput]="true" />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Show Palette Only</label>
+            <div id="component-colorpicker" class="input-group" title="Using format option">
+              <span class="input-group-text">
+                <span class="input-group-text colorpicker-input-addon" [style.background]="palettecolor"><i></i></span>
+              </span>
+              <input type="text" class="form-control" id="colorpicker-showpaletteonly2" [(colorPicker)]="palettecolor"
+                [cpPosition]="'bottom'" [value]="palettecolor" [cpDisableInput]="true" [cpPresetColors]="[
+                  '#fff',
+                  '#000',
+                  '#2889e9',
+                  '#e920e9',
+                  '#fff500',
+                  'rgb(236,64,64)'
+                ]" />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Toggle Palette Only</label>
+            <div id="component-colorpicker" class="input-group" title="Using format option">
+              <span class="input-group-text">
+                <span class="input-group-text colorpicker-input-addon"
+                  [style.background]="togglepalettecolor"><i></i></span>
+              </span>
+              <input type="text" class="form-control" id="colorpicker-showpaletteonly"
+                [(colorPicker)]="togglepalettecolor" [cpPosition]="'bottom'" [value]="togglepalettecolor"
+                [cpDisableInput]="true" [cpPresetColors]="[
+                  '#fff',
+                  '#000',
+                  '#2889e9',
+                  '#e920e9',
+                  '#fff500',
+                  'rgb(236,64,64)'
+                ]" />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Show Initial</label>
+            <div id="component-colorpicker" class="input-group" title="Using format option">
+              <span class="input-group-text">
+                <span class="input-group-text colorpicker-input-addon" [style.background]="initialcolor"><i></i></span>
+              </span>
+              <input type="text" class="form-control input-lg" [(colorPicker)]="initialcolor" [cpPosition]="'bottom'"
+                [value]="initialcolor" />
+            </div>
+          </div>
+          <div>
+            <label class="form-label">Show Input And Initial</label>
+            <div id="component-colorpicker" class="input-group" title="Using format option">
+              <span class="input-group-text">
+                <span class="input-group-text colorpicker-input-addon" [style.background]="inputcolor"><i></i></span>
+              </span>
+              <input type="text" class="form-control input-lg" [(colorPicker)]="inputcolor" [cpPosition]="'bottom'"
+                [value]="inputcolor" />
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Css Switch</h4>
+        <p class="card-title-desc">Here are a few types of switches.</p>
+
+        <div class="row">
+          <div class="col-lg-12">
+            <h5 class="font-size-14 mb-3">Example switch</h5>
+            <div class="d-flex">
+              <input type="checkbox" id="switch1" switch="none" checked />
+              <label class="me-1" for="switch1"></label>
+
+              <input type="checkbox" id="switch2" switch="default" checked />
+              <label class="me-1" for="switch2"></label>
+
+              <input type="checkbox" id="switch3" switch="bool" checked />
+              <label class="me-1" for="switch3"></label>
+
+              <input type="checkbox" id="switch6" switch="primary" checked />
+              <label class="me-1" for="switch6"></label>
+
+              <input type="checkbox" id="switch4" switch="success" checked />
+              <label class="me-1" for="switch4"></label>
+
+              <input type="checkbox" id="switch7" switch="info" checked />
+              <label class="me-1" for="switch7"></label>
+
+              <input type="checkbox" id="switch5" switch="warning" checked />
+              <label class="me-1" for="switch5"></label>
+
+              <input type="checkbox" id="switch8" switch="danger" checked />
+              <label class="me-1" for="switch8"></label>
+
+              <input type="checkbox" id="switch9" switch="dark" checked />
+              <label class="me-1" for="switch9"></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="mt-4">
+              <h5 class="font-size-14 mb-3">Square switch</h5>
+              <div class="d-flex">
+                <div class="square-switch">
+                  <input type="checkbox" id="square-switch1" switch="none" checked />
+                  <label for="square-switch1" data-off-label="Off"></label>
+                </div>
+                <div class="square-switch">
+                  <input type="checkbox" id="square-switch2" switch="info" checked />
+                  <label for="square-switch2" data-off-label="No"></label>
+                </div>
+                <div class="square-switch">
+                  <input type="checkbox" id="square-switch3" switch="bool" checked />
+                  <label for="square-switch3" data-off-label="No"></label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+
+        <h4 class="card-title">Bootstrap Datepicker</h4>
+        <p class="card-title-desc">Examples of twitter bootstrap datepicker.</p>
+
+        <form action="#">
+          <div class="mb-4">
+            <label>Default Functionality</label>
+            <div class="input-group clockpicker">
+              <input ngbDatepicker class="form-control" autoClose="false" placeholder="yyyy-mm-dd"
+                #date="ngbDatepicker" />
+              <div class="input-group-append" (click)="date.toggle()">
+                <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+              </div>
+            </div>
+          </div>
+          <div class="mb-4">
+            <label>Auto Close</label>
+            <div class="input-group clockpicker">
+              <input ngbDatepicker class="form-control" placeholder="yyyy-mm-dd" #d="ngbDatepicker" />
+              <div class="input-group-append" (click)="d.toggle()">
+                <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-6">
+    <div class="card">
+      <div class="card-body">
+
+        <h4 class="card-title">Datepicker</h4>
+        <div class="mb-3">
+          <label class="form-label">Basic</label>
+          <input class="form-control flatpickr-input" type="text" mwlFlatpickr>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">DateTime</label>
+          <input class="form-control flatpickr-input" type="text" mwlFlatpickr [enableTime]="true"
+            dateFormat="Y-m-dTH:i">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Human-friendly Dates</label>
+          <input class="form-control flatpickr-input" type="text" mwlFlatpickr [altInput]="true"
+            [convertModelValue]="true">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Disabling Dates</label>
+          <input class="form-control flatpickr-input" type="text" mwlFlatpickr [disable]="disabledDate">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Selecting multiple dates</label>
+          <input class="form-control flatpickr-input" type="text" id="example-week-input" mwlFlatpickr mode="multiple">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Range</label>
+          <input class="form-control flatpickr-input" type="text" mwlFlatpickr mode="range">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Timepicker</label>
+          <input class="form-control flatpickr-input" type="text" mwlFlatpickr [noCalendar]="true" [enableTime]="true"
+            [dateFormat]="'H:i'">
+        </div>
+        <div>
+          <label class="form-label">Inline</label>
+          <input class="form-control flatpickr-input" type="text" mwlFlatpickr [altInput]="true"
+            [convertModelValue]="true" [inline]="true">
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end row -->
+
+<!-- Start Form validation row -->
+<div class="row">
+  <div class="col-xl-6">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Bootstrap Validation - Normal</h4>
+        <p class="card-title-desc">
+          Provide valuable, actionable feedback to your users with HTML5 form
+          validation–available in all our supported browsers.
+        </p>
+        <form class="needs-validation" (ngSubmit)="validSubmit()" [formGroup]="validationform" novalidate>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="validationCustom01">First name</label>
+                <input type="text" class="form-control" id="validationCustom01" formControlName="firstName"
+                  placeholder="First name" [ngClass]="{ 'is-valid': submit && form.firstName.errors }" />
+                <div *ngIf="submit && form.firstName.errors" class="valid-feedback">
+                  <span *ngIf="form.firstName.errors.required">Looks good!</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="validationCustom02">Last name</label>
+                <input type="text" class="form-control" id="validationCustom02" formControlName="lastName"
+                  placeholder="Last name" value="Otto" [ngClass]="{ 'is-valid': submit && form.lastName.errors }" />
+                <div *ngIf="submit && form.lastName.errors" class="valid-feedback">
+                  <span *ngIf="form.lastName.errors.required">Looks good!</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="validationCustom03">City</label>
+                <input type="text" class="form-control" id="validationCustom03" formControlName="city"
+                  placeholder="City" [ngClass]="{ 'is-invalid': submit && form.city.errors }" />
+                <div *ngIf="submit && form.city.errors" class="invalid-feedback">
+                  <span *ngIf="form.city.errors.required">Please provide a valid city.</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="validationCustom04">State</label>
+                <input type="text" class="form-control" id="validationCustom04" formControlName="state"
+                  placeholder="State" [ngClass]="{ 'is-invalid': submit && form.state.errors }" />
+                <div *ngIf="submit && form.state.errors" class="invalid-feedback">
+                  <span *ngIf="form.state.errors.required">Please provide a valid state.</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="validationCustom05">Zip</label>
+                <input type="text" class="form-control" id="validationCustom05" formControlName="zip" placeholder="Zip"
+                  [ngClass]="{ 'is-invalid': submit && form.zip.errors }" />
+                <div *ngIf="submit && form.zip.errors" class="invalid-feedback">
+                  <span *ngIf="form.zip.errors.required">Please provide a valid zip.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required />
+            <label class="form-check-label" for="invalidCheck">
+              Agree to terms and conditions
+            </label>
+            <div class="invalid-feedback">
+              You must agree before submitting.
+            </div>
+          </div>
+          <div>
+            <button class="btn btn-primary" type="submit">Submit form</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- end card -->
+  </div>
+  <!-- end col -->
+
+  <div class="col-xl-6">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Bootstrap Validation (Tooltips)</h4>
+        <p class="card-title-desc">
+          If your form layout allows it, you can swap the classes for classes to
+          display validation feedback in a styled tooltip.
+        </p>
+
+        <form class="needs-validation" novalidate (ngSubmit)="formSubmit()" [formGroup]="tooltipvalidationform">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="mb-3 position-relative">
+                <label for="validationTooltip01">First name</label>
+                <input type="text" class="form-control" formControlName="firstName" id="validationTooltip01"
+                  placeholder="First name" value="Mark" [ngClass]="{
+                    'is-valid': formsubmit && formData.firstName.errors
+                  }" />
+                <div *ngIf="formsubmit && formData.firstName.errors" class="valid-tooltip">
+                  <span *ngIf="formData.firstName.errors.required">Looks good!</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3 position-relative">
+                <label for="validationTooltip02">Last name</label>
+                <input type="text" class="form-control" id="validationTooltip02" formControlName="lastName"
+                  placeholder="Last name" value="Otto" [ngClass]="{
+                    'is-valid': formsubmit && formData.lastName.errors
+                  }" />
+                <div *ngIf="formsubmit && formData.lastName.errors" class="valid-tooltip">
+                  <span *ngIf="formData.lastName.errors.required">Looks good!</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3 position-relative">
+                <label for="validationTooltipUsername">Username</label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="validationTooltipUsernamePrepend">@</span>
+                  </div>
+                  <input type="text" class="form-control" id="validationTooltipUsername" formControlName="userName"
+                    placeholder="Username" aria-describedby="validationTooltipUsernamePrepend" [ngClass]="{
+                      'is-invalid': formsubmit && formData.userName.errors
+                    }" />
+
+                  <div *ngIf="formsubmit && formData.userName.errors" class="invalid-tooltip">
+                    <span *ngIf="formData.userName.errors.required">Please choose a unique and valid username.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3 position-relative">
+                <label for="validationTooltip03">City</label>
+                <input type="text" class="form-control" id="validationTooltip03" placeholder="City"
+                  formControlName="city" [ngClass]="{
+                    'is-invalid': formsubmit && formData.city.errors
+                  }" />
+                <div *ngIf="formsubmit && formData.city.errors" class="invalid-tooltip">
+                  <span *ngIf="formData.city.errors.required">Please provide a valid city.</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3 position-relative">
+                <label for="validationTooltip04">State</label>
+                <input type="text" class="form-control" id="validationTooltip04" placeholder="State"
+                  formControlName="state" [ngClass]="{
+                    'is-invalid': formsubmit && formData.state.errors
+                  }" />
+                <div *ngIf="formsubmit && formData.state.errors" class="invalid-tooltip">
+                  <span *ngIf="formData.state.errors.required">Please provide a valid state.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <button class="btn btn-primary" type="submit">Submit form</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+    <!-- end card -->
+  </div>
+  <!-- end col -->
+</div>
+<!-- end row -->
+
+<!-- Start Form Editor row -->
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Forms Editors</h4>
+        <p class="card-title-desc">
+          Bootstrap-wysihtml5 is a javascript plugin that makes it easy to
+          create simple, beautiful wysiwyg editors with the help of wysihtml5
+          and Twitter Bootstrap.
+        </p>
+        <ckeditor [editor]="Editor" data="<p>Content of the editor.</p>"></ckeditor>
+      </div>
+    </div>
+  </div>
+  <!-- end col -->
+</div>
+<!-- end row -->
+
+<!-- Start File Upload Form row -->
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">File Upload Form - Dropzone</h4>
+        <p class="card-title-desc">
+          DropzoneJS is an open source library that provides drag’n’drop file
+          uploads with image previews.
+        </p>
+
+        <div>
+          <form action="#">
+            <ngx-dropzone (change)="onSelect($event)">
+              <ngx-dropzone-label><i class="display-4 text-muted bx bxs-cloud-upload"></i>
+                <h4>Drop files here or click to upload.</h4>
+              </ngx-dropzone-label>
+              <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)">
+                <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+              </ngx-dropzone-preview>
+            </ngx-dropzone>
+          </form>
+        </div>
+
+        <div class="text-center mt-4">
+          <button type="button" class="btn btn-primary waves-effect waves-light">
+            Send Files
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- end col -->
+</div>
+<!-- end row -->
+
+<!-- Start Form Wizard Basic row -->
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title mb-4">Basic Wizard</h4>
+
+        <div id="basic-example">
+          <!-- Seller Details -->
+          <ng-wizard [config]="config">
+
+            <ng-wizard-step [title]="'1'" [description]="'Seller Details'"
+              [canExit]="isValidFunctionReturnsBoolean.bind(this)">
+              <form>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="basicpill-firstname-input">First name</label>
+                      <input type="text" class="form-control" id="basicpill-firstname-input">
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="basicpill-lastname-input">Last name</label>
+                      <input type="text" class="form-control" id="basicpill-lastname-input">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="basicpill-phoneno-input">Phone</label>
+                      <input type="text" class="form-control" id="basicpill-phoneno-input">
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="basicpill-email-input">Email</label>
+                      <input type="email" class="form-control" id="basicpill-email-input">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="mb-3">
+                      <label for="basicpill-address-input">Address</label>
+                      <textarea id="basicpill-address-input" class="form-control" rows="2"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </ng-wizard-step>
+
+            <ng-wizard-step [title]="'2'" [description]="'Company Document'">
+              <form>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="basicpill-pancard-input">PAN Card</label>
+                      <input type="text" class="form-control" id="basicpill-pancard-input">
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="basicpill-vatno-input">VAT/TIN No.</label>
+                      <input type="text" class="form-control" id="basicpill-vatno-input">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="basicpill-cstno-input">CST No.</label>
+                      <input type="text" class="form-control" id="basicpill-cstno-input">
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="basicpill-servicetax-input">Service Tax No.</label>
+                      <input type="text" class="form-control" id="basicpill-servicetax-input">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="basicpill-companyuin-input">Company UIN</label>
+                      <input type="text" class="form-control" id="basicpill-companyuin-input">
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="basicpill-declaration-input">Declaration</label>
+                      <input type="text" class="form-control" id="basicpill-declaration-input">
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </ng-wizard-step>
+
+            <ng-wizard-step [title]="'3'" [description]="'Bank Details'"
+              [canExit]="isValidFunctionReturnsBoolean.bind(this)">
+
+              <form>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="basicpill-namecard-input">Name on Card</label>
+                      <input type="text" class="form-control" id="basicpill-namecard-input">
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label>Credit Card Type</label>
+                      <select class="form-select">
+                        <option selected>Select Card Type</option>
+                        <option value="AE">American Express</option>
+                        <option value="VI">Visa</option>
+                        <option value="MC">MasterCard</option>
+                        <option value="DI">Discover</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="basicpill-cardno-input">Credit Card Number</label>
+                      <input type="text" class="form-control" id="basicpill-cardno-input">
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="basicpill-card-verification-input">Card Verification Number</label>
+                      <input type="text" class="form-control" id="basicpill-card-verification-input">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="basicpill-expiration-input">Expiration Date</label>
+                      <input type="text" class="form-control" id="basicpill-expiration-input">
+                    </div>
+                  </div>
+                </div>
+              </form>
+
+            </ng-wizard-step>
+
+            <ng-wizard-step [title]="'4'" [description]="'Confirm Detail'">
+              <div class="row justify-content-center">
+                <div class="col-lg-6">
+                  <div class="text-center">
+                    <div class="mb-4">
+                      <i class="mdi mdi-check-circle-outline text-success display-4"></i>
+                    </div>
+                    <div>
+                      <h5>Confirm Detail</h5>
+                      <p class="text-muted">If several languages coalesce, the grammar of the resulting</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-wizard-step>
+
+          </ng-wizard>
+        </div>
+      </div>
+      <!-- end card body -->
+    </div>
+    <!-- end card -->
+  </div>
+  <!-- end col -->
+</div>
+<!-- end row -->

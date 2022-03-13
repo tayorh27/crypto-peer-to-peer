@@ -1,0 +1,209 @@
+{
+  "HEADER": {
+    "SEARCH": "Cerca...",
+    "WELCOME": "Benvenuto Peter!",
+    "NOTIFICATIONS": {
+      "TITLE": "Notifiche",
+      "VIEW_ALL": "Mostra tutto",
+      "LOAD_MORE": "Visualizza altro ..",
+      "FIRST": {
+        "TITLE": "Il tuo ordine è stato effettuato",
+        "TEXT": "Se più lingue fondono la grammatica",
+        "TIME": "3 minuti fa"
+      },
+      "SECOND": {
+        "TITLE": "James Lemire",
+        "TEXT": "Sembrerà un inglese semplificato.",
+        "TIME": "1 ora fa"
+      },
+      "THIRD": {
+        "TITLE": "Il tuo articolo viene spedito",
+        "TEXT": "Se più lingue fondono la grammatica",
+        "TIME": "3 minuti fa"
+      },
+      "FOUR": {
+        "TITLE": "Salena Layfield",
+        "TEXT": "Come un mio scettico amico di Cambridge occidentale.",
+        "TIME": "10 ore fa"
+      }
+    },
+    "EXTRA_PAGES": {
+      "TITLE": "Pagine extra"
+    },
+    "LOGIN": {
+      "PROFILE": "Profilo",
+      "MESSAGES": "Messaggi",
+      "TASKBOARD": "Taskboard",
+      "HELP": "Aiuto",
+      "BALANCE": "Equilibrio",
+      "SETTINGS": "impostazioni",
+      "LOCK_SCREEN": "Blocca schermo",
+      "LOGOUT": "Disconnettersi"
+    }
+  }, 
+  "RIGHTSIDEBAR": {
+    "LAYOUT": {
+      "TEXT": "disposizione",
+      "LIST": {
+        "VERTICAL": "Verticale",
+        "HORIZONTAL": "Orizzontale"
+      }
+    },
+    "LAYOUTMODE": {
+      "TEXT": "Modalità layout",
+      "LIST": {
+        "LIGHT": "Leggero",
+        "DARK": "Buio"
+      }
+    },
+    "LAYOUTWIDTH": {
+      "TEXT": "Larghezza layout",
+      "LIST": {
+        "FLUID": "Fluido",
+        "BOXED": "Incorniciato"
+      }
+    },
+    "LAYOUTPOSITION": {
+      "TEXT": "Posizione layout",
+      "LIST": {
+        "FIXED": "Fisso",
+        "SCROLLABLE": "Scorrevole"
+      }
+    },
+    "TOPBARCOLOR": {
+      "TEXT": "Colore barra superiore",
+      "LIST": {
+        "LIGHT": "Leggero",
+        "DARK": "Buio"
+      }
+    },
+    "SIDEBARSIZE": {
+      "TEXT": "Dimensioni barra laterale",
+      "LIST": {
+        "DEFAULT": "Predefinito",
+        "COMPACT": "Compatto",
+        "SMALL": "Piccolo"
+      }
+    },
+    "SIDEBARCOLOR": {
+      "TEXT": "Colore barra laterale",
+      "LIST": {
+        "LIGHT": "Leggero",
+        "DARK": "Buio",
+        "BRAND": "Marca"
+      }
+    }
+  },   
+  "MENUITEMS": {
+    "MENU": {
+      "TEXT": "Menù"
+    },
+    "DASHBOARDS": {
+      "TEXT": "Pannello di controllo"
+    },
+    "APPS": {
+      "TEXT": "App",
+      "LIST": {
+        "CALENDAR": "Calendario",
+        "CHAT": "Chiacchierare",
+        "EMAIL": "E-mail",
+        "SUB": {
+          "INBOX": "Posta in arrivo",
+          "READEMAIL": "Leggere l'e-mail"
+        }
+      }
+    },
+    "AUTHENTICATION": {
+      "TEXT": "Autenticazione",
+      "BADGE": "Nuovo",
+      "LIST": {
+        "LOGIN": "Accedere",
+        "LOGIN1": "Accedere1",
+        "REGISTER": "Registrati",
+        "REGISTER1": "Registrati1",
+        "RECOVERPWD": "Recupera la password",
+        "RECOVERPWD1": "Recupera password 1",
+        "LOCKSCREEN": "Blocca schermo",
+        "CONFIRMMAIL": "Conferma posta",
+        "EMAILVERIFICATION": "Verifica email",
+        "TWOSTEPVERIFICATION": "Verifica in due passaggi"
+      }
+    },
+    "PAGES": {
+      "TEXT": "Pages",
+      "LIST": {
+        "STARTER": "Pagina iniziale",
+        "PROFILE": "Profilo",
+        "INVOICE": "Fattura",
+        "MAINTENANCE": "Manutenzione",
+        "COMINGSOON": "Prossimamente",
+        "TIMELINE": "Sequenza temporale",
+        "PRICING": "Prezzi",
+        "ERROR404": "Errore 404",
+        "ERROR500": "Errore 500"
+      }
+    },
+    "ADMINKIT": {
+      "TEXT": "KIT DI AMMINISTRAZIONE"
+    },
+    "UIELEMENTS": {
+      "TEXT": "Elementi dell'interfaccia utente"
+    },
+    "ADVANCEDKIT": {
+      "TEXT": "Kit avanzato",
+      "LIST": {
+        "SWEETALERT": "Sweet Alert",
+        "RANGESLIDER": "Range Slider",
+        "NOTIFICATIONS": "notifiche",
+        "CAROUSEL": "giostra"
+      }
+    },
+    "TYPOGRAPHY": {
+      "TEXT": "Tipografia"
+    },
+    "FORMS": {
+      "TEXT": "Forme",
+      "BADGE": "nove",
+      "LIST": {
+        "ELEMENTS": "Elementi del modulo",
+        "ADVANCED": "Modulo avanzato"
+      }
+    },
+    "TABLES": {
+      "TEXT": "Tabelle",
+      "LIST": {
+        "BASIC": "Tabelle Bootstrap",
+        "ADVANCED": "Tabella dati"
+      }
+    },
+    "CHARTS": {
+      "TEXT": "Grafici"
+    },
+    "ICONS": {
+      "TEXT": "Icone",
+      "LIST": {
+        "BOXICONS": "Boxicons",
+        "MATERIALDESIGN": "Material Design",
+        "DRIPICONS": "Dripicons",
+        "FONTAWESOME": "Carattere fantastico"
+      }
+    },
+    "MAPS": {
+      "TEXT": "Mappe"
+    },
+    "MULTILEVEL": {
+      "TEXT": "Multi livello",
+      "LIST": {
+        "LEVEL1": {
+          "1": "Livello 1.1",
+          "2": "Livello 1.2",
+          "LEVEL2": {
+            "1": "Livello 2.1",
+            "2": "Livello 2.2"
+          }
+        }
+      }
+    }  
+    
+  }
+}

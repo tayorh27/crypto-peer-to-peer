@@ -1,0 +1,21 @@
+<div class="table-responsive mb-0">
+    <table class="table align-middle table-striped table-nowrap mb-0">
+        <tbody>
+            <tr *ngFor="let data of transactions">
+                <td>
+                    <img src="{{data.image}}" alt="user-image" class="avatar-xs rounded-circle me-2">
+                    {{data.name}}
+                </td>
+                <td><i class="mdi mdi-checkbox-blank-circle text-success" [ngClass]=" { 'text-danger': data.status === 'Payment expired',
+                    'text-warning':data.status === 'Waiting payment' }"></i> {{data.status}}</td>
+                <td>{{data.total}}</td>
+                <td>{{data.date}}</td>
+                <td>
+                    <button type="button" class="btn btn-light btn-sm waves-effect"> <i
+                            class='mdi mdi-square-edit-outline me-1'></i> Edit</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<!-- end table -->

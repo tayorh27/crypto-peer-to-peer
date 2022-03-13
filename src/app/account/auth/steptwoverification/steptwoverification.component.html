@@ -1,0 +1,64 @@
+<div class="account-pages my-5 pt-sm-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="text-center mb-5 text-muted">
+                    <a routerLink="/" class="auth-logo">
+                        <img src="assets/images/logo-dark.png" alt="" height="28" class="auth-logo-dark">
+                        <img src="assets/images/logo-light.png" alt="" height="28" class="auth-logo-light">
+                    </a>
+                    <!-- <p class="font-size-15 text-muted mt-3">Responsive <b>Bootstrap 5</b> Admin Dashboard</p> -->
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6 col-xl-5">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="p-2">
+                            <div class="text-center">
+                                <div class="avatar-md mx-auto">
+                                    <div class="avatar-title rounded-circle bg-light">
+                                        <i class="bx bxs-envelope h1 mb-0 text-primary"></i>
+                                    </div>
+                                </div>
+                                <div class="p-2 mt-4">
+                                    <h4>Verify your email</h4>
+                                    <p class="mb-5 text-muted">Please enter the 4-digit code sent to <span
+                                            class="font-weight-semibold">{{email}}</span></p>
+                                    <form>
+                                        <ng-otp-input [config]="otpconfig" (onInputChange)="onOTP($event)"></ng-otp-input>
+                                    </form>
+
+                                    <div class="mt-4">
+                                        <a href="javascript:void(0)" (click)="confirmCode()" class="btn btn-success w-md">Confirm</a>
+                                    </div>
+
+                                    <ngb-alert *ngIf="error !== ''" [dismissible]="true" type="danger">
+                                        {{error}}
+                                    </ngb-alert> 
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- end card -->
+                <div class="mt-5 text-center">
+                    <p>Did't receive a code ? <a href="javascript:void(0)" (click)="resendCode()"
+                            class="fw-semibold text-decoration-underline text-primary">
+                            Resend </a> </p>
+                    <p>© {{year}} <b>TAGDEV TECHNOLOGIES LIMITED</b>. 
+                        <!-- Crafted with <i class="mdi mdi-heart text-danger"></i> by Pichforest -->
+                    </p>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- end container -->
+</div>
+<!-- end account page -->

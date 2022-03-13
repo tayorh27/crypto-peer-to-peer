@@ -1,0 +1,201 @@
+<!-- start page title -->
+<app-pagetitle title="Notifications" [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Toast Notifications</h4>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="p-2">
+                            <h5 class="font-size-14">Basic</h5>
+                            <p class="card-title-desc">
+                                Toasts are as flexible as you need and have very little required markup.
+                                At a minimum, we require a single element to contain your
+                                “toasted” content and strongly encourage a dismiss button.
+                            </p>
+                            <ngb-toast *ngIf="show" header="Bootstrap" [autohide]="false" (hidden)="closeToast()">
+                                Hello, world! This is a toast message.
+                            </ngb-toast>                                                
+                        </div><!--end div-->
+                    </div><!--end col-->
+
+                    <div class="col-lg-6">
+                        <div class="p-2">
+                            <h5 class="font-size-14">Translucent</h5>
+                            <p class="card-title-desc">
+                                Example of toastr.
+                            </p>
+                            <div class="bg-light p-3">
+                                <ngb-toast *ngIf="translucentToast" header="Bootstrap" [autohide]="false" (hidden)="closeTranslucentToast()">
+                                    Hello, world! This is a toast message.
+                                </ngb-toast>
+                            </div><!--end div -->
+                        </div><!--end div -->
+                    </div><!--end col-->
+                </div><!--end row-->
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="p-2">
+                            <h5 class="font-size-14">Placement</h5>
+                            <p class="card-title-desc">
+                                You can also get fancy with flexbox utilities to align toasts horizontally
+                                and/or vertically.
+                            </p>
+                            <div class="bg-light p-2 p-lg-3">
+                                <div class="d-flex justify-content-center align-items-center w-100" style="min-height: 200px;">
+                                    <ngb-toast *ngIf="placeholderToast" header="Bootstrap" [autohide]="false" (hidden)="isplaceholderToast()">
+                                        Hello, world! This is a toast message.
+                                    </ngb-toast>
+                                </div>
+                                <!-- Flexbox container for aligning the toasts -->
+                            </div><!--end div-->
+                        </div><!--end card-->
+                    </div><!--end col-->
+                </div><!--end row-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Alerts Notifications</h4>
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="">
+                            <h4 class="font-size-14">Default Notifications Alerts</h4>
+                            <p class="card-title-desc">Alerts as an optional dismiss button. For proper styling, use one
+                                of the four <strong>required</strong> contextual classes (e.g.,
+                                <code>.alert-success</code>). For inline
+                                dismissal, use the alerts jQuery plugin.
+                            </p>
+                            <div class="mb-4">
+                                <ngb-alert [dismissible]="false" type="primary">
+                                    A simple primary alert—check it out!
+                                </ngb-alert>
+                                <ngb-alert [dismissible]="false" type="secondary">
+                                    A simple secondary alert—check it out!
+                                </ngb-alert>
+                                <ngb-alert [dismissible]="false" type="success">
+                                    A simple success alert—check it out!
+                                </ngb-alert>
+                                <ngb-alert [dismissible]="false" type="danger">
+                                    A simple danger alert—check it out!
+                                </ngb-alert>
+                                <ngb-alert [dismissible]="false" type="warning">
+                                    A simple warning alert—check it out!
+                                </ngb-alert>
+                                <ngb-alert [dismissible]="false" type="info">
+                                    A simple info alert—check it out!
+                                </ngb-alert>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end col -->
+
+                    <div class="col-xl-6">
+                        <h4 class="font-size-14">Link color</h4>
+                        <p class="card-title-desc">Alerts as an optional dismiss button. Use the
+                            <code>.alert-link</code> utility class to
+                            quickly provide matching colored links within any alert.
+                        </p>
+                        <div class="mb-4">
+                            <ngb-alert [dismissible]="false" type="primary">
+                                A simple primary alert with <a href="javascript: void(0);" class="alert-link">an example
+                                    link</a>. Give it
+                                a click if you
+                                like.
+                            </ngb-alert>
+                            <ngb-alert [dismissible]="false" type="secondary">
+                                A simple secondary alert with <a href="javascript: void(0);" class="alert-link">an
+                                    example link</a>. Give
+                                it a click if you
+                                like.
+                            </ngb-alert>
+                            <ngb-alert [dismissible]="false" type="success">
+                                A simple success alert with <a href="javascript: void(0);" class="alert-link">an example
+                                    link</a>. Give it
+                                a click if you
+                                like.
+                            </ngb-alert>
+                            <ngb-alert [dismissible]="false" type="danger">
+                                A simple danger alert with <a href="javascript: void(0);" class="alert-link">an example
+                                    link</a>. Give it
+                                a click if you
+                                like.
+                            </ngb-alert>
+                            <ngb-alert [dismissible]="false" type="warning">
+                                A simple warning alert with <a href="javascript: void(0);" class="alert-link">an example
+                                    link</a>. Give it
+                                a click if you
+                                like.
+                            </ngb-alert>
+                            <ngb-alert [dismissible]="false" type="info">
+                                A simple info alert with <a href="javascript: void(0);" class="alert-link">an example
+                                    link</a>. Give it a
+                                click if you like.
+                            </ngb-alert>
+                        </div>
+                    </div>
+                    <!-- end col -->
+                </div>
+                <!-- end row -->
+
+                <div class="row mt-4">
+                    <div class="col-xl-6">
+                        <h4 class="font-size-14">Dismissing</h4>
+                        <p class="card-title-desc">
+                            Add a dismiss button and the <code>.alert-dismissible</code> class, which adds extra padding
+                            to the right of the alert and positions the <code>.btn-close</code> button.
+                        </p>
+                        <div class="mb-4">
+                            <div *ngFor="let color of alertData">
+                                <ngb-alert type="{{color.color}}" (close)="close(color, alertData)"
+                                    class="custom-alert">
+                                    A simple {{color.color}} alert—check it out!
+                                </ngb-alert>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end col -->
+
+                    <div class="col-xl-6">
+
+                        <h4 class="font-size-14">With Icon</h4>
+                        <p class="card-title-desc">
+                            Add a dismiss button and the <code>.alert-dismissible</code> class, which adds extra padding
+                            to the right of the alert and positions the <code>.btn-close</code> button & with Icon.
+                        </p>
+                        <div class="">
+                            <div *ngFor="let color of alertData">
+                                <ngb-alert type="{{color.color}}" (close)="close(color, alertData)"
+                                    class="custom-alert">
+                                    <i class="mdi {{color.icon}} me-2"></i>
+                                    A simple {{color.color}} alert—check it out!
+                                </ngb-alert>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end col -->
+                </div>
+                <!-- end row -->
+
+                <div class="row mt-4">
+                    <div class="col-xl-12">
+                        <h4 class="font-size-14">Self closing alert</h4>
+                        <p class="card-title-desc">Static self-closing alert that disappears after 20 seconds (refresh the page if it has already disappeared)</p>
+                        <ngb-alert #staticAlert class="custom-alert" *ngIf="!staticAlertClosed" (closed)="staticAlertClosed = true">
+                           This alert disappears after 20 seconds</ngb-alert>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

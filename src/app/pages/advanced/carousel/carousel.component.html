@@ -1,0 +1,155 @@
+<!-- start page title -->
+<app-pagetitle title="Carousel" [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Slides only</h4>
+                <p class="card-title-desc">Here’s a carousel with slides only.
+                    Note the presence of the <code>.d-block</code>
+                    and <code>.img-fluid</code> on carousel images
+                    to prevent browser default image alignment.</p>
+                <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel"
+                    data-bs-interval="3000">
+                    <div class="carousel-inner" role="listbox">
+                        <ngb-carousel [showNavigationArrows]="showNavigationArrows"
+                            [showNavigationIndicators]="showNavigationIndicators">
+                            <ng-template ngbSlide>
+                                <img class="d-block img-fluid" src="assets/images/small/img-1.jpg" alt="First slide">
+                            </ng-template>
+                            <ng-template ngbSlide>
+                                <img class="d-block img-fluid" src="assets/images/small/img-2.jpg" alt="Second slide">
+                            </ng-template>
+                            <ng-template ngbSlide>
+                                <img class="d-block img-fluid" src="assets/images/small/img-3.jpg" alt="Third slide">
+                            </ng-template>
+                        </ngb-carousel>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- end col -->
+
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+
+                <h4 class="card-title">With controls</h4>
+                <p class="card-title-desc">Adding in the previous and next controls:</p>
+                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                    <ngb-carousel [showNavigationIndicators]="showNavigationIndicators">
+                        <ng-template ngbSlide>
+                            <img src="assets/images/small/img-4.jpg" alt="first slide" class="d-block img-fluid">
+                        </ng-template>
+                        <ng-template ngbSlide>
+                            <img src="assets/images/small/img-5.jpg" alt="second slide" class="d-block img-fluid">
+                        </ng-template>
+                        <ng-template ngbSlide>
+                            <img src="assets/images/small/img-6.jpg" alt="third slide" class="d-block img-fluid">
+                        </ng-template>
+                    </ngb-carousel>
+                </div>
+            </div>
+        </div>
+    </div> <!-- end col -->
+</div> <!-- end row -->
+
+
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+
+                <h4 class="card-title">With indicators</h4>
+                <p class="card-title-desc">You can also add the indicators to the
+                    carousel, alongside the controls, too.</p>
+                <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                    <!-- Indicator carousel -->
+                    <ngb-carousel [showNavigationIndicators]="!showNavigationIndicators">
+                        <ng-template ngbSlide>
+                            <img src="assets/images/small/img-3.jpg" alt="first slide" class="d-block img-fluid">
+                        </ng-template>
+                        <ng-template ngbSlide>
+                            <img src="assets/images/small/img-2.jpg" alt="second slide" class="d-block img-fluid">
+                        </ng-template>
+                        <ng-template ngbSlide>
+                            <img src="assets/images/small/img-1.jpg" alt="third slide" class="d-block img-fluid">
+                        </ng-template>
+                    </ngb-carousel>
+                    <!-- End indicator carousel -->
+                </div>
+            </div>
+        </div>
+    </div> <!-- end col -->
+
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+
+                <h4 class="card-title">With captions</h4>
+                <p class="card-title-desc">Add captions to your slides easily with the <code>.carousel-caption</code>
+                    element within any <code>.carousel-item</code>.</p>
+                <div id="carouselExampleCaption" class="carousel slide" data-bs-ride="carousel">
+                    <!-- Carousel with caption -->
+                    <ngb-carousel>
+                        <ng-template ngbSlide>
+                            <img src="assets/images/small/img-5.jpg" alt="first slide" class="d-block img-fluid">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5 class="text-white">First slide label</h5>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                            </div>
+                        </ng-template>
+                        <ng-template ngbSlide>
+                            <img src="assets/images/small/img-3.jpg" alt="second slide" class="d-block img-fluid">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5 class="text-white">Second slide label</h5>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                            </div>
+                        </ng-template>
+                        <ng-template ngbSlide>
+                            <img src="assets/images/small/img-2.jpg" alt="third slide" class="d-block img-fluid">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5 class="text-white">Third slide label</h5>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                            </div>
+                        </ng-template>
+                    </ngb-carousel>
+                    <!-- End carousel -->
+                </div>
+            </div>
+        </div>
+    </div> <!-- end col -->
+</div> <!-- end row -->
+
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Crossfade</h4>
+                <p class="card-title-desc">Add <code>.carousel-fade</code> to your carousel to animate slides with a
+                    fade transition instead of a slide.</p>
+                <div id="carouselExampleFade" class="carousel slide carousel-fade" data-ride="carousel">
+                    <!-- Crossfade carousel -->
+                    <ngb-carousel [showNavigationIndicators]="showNavigationIndicators">
+                        <ng-template ngbSlide>
+                            <img src="assets/images/small/img-1.jpg" alt="first slide"
+                                class="animated fadeIn d-block img-fluid">
+                        </ng-template>
+                        <ng-template ngbSlide>
+                            <img src="assets/images/small/img-2.jpg" alt="second slide"
+                                class="animated fadeIn d-block img-fluid">
+                        </ng-template>
+                        <ng-template ngbSlide>
+                            <img src="assets/images/small/img-3.jpg" alt="third slide"
+                                class="animated fadeIn d-block img-fluid">
+                        </ng-template>
+                    </ngb-carousel>
+                    <!-- End Crossfade carousel -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end row -->

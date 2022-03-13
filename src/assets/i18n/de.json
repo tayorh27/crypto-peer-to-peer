@@ -1,0 +1,209 @@
+{
+  "HEADER": {
+    "SEARCH": "Suche...",
+    "WELCOME": "Willkommen Peter!",
+    "NOTIFICATIONS": {
+      "TITLE": "Benachrichtigungen",
+      "VIEW_ALL": "Alle ansehen",
+      "LOAD_MORE": "Mehr sehen..",
+      "FIRST": {
+        "TITLE": "Ihre Bestellung wird aufgegeben",
+        "TEXT": "Wenn mehrere Sprachen die Grammatik verschmelzen",
+        "TIME": "Vor 3 min"
+      },
+      "SECOND": {
+        "TITLE": "James Lemire",
+        "TEXT": "Es wird wie vereinfachtes Englisch erscheinen.",
+        "TIME": "Vor 1 Stunde"
+      },
+      "THIRD": {
+        "TITLE": "Ihr Artikel wird versendet",
+        "TEXT": "Wenn mehrere Sprachen die Grammatik verschmelzen",
+        "TIME": "Vor 3 min"
+      },
+      "FOUR": {
+        "TITLE": "Salena Layfield",
+        "TEXT": "Als skeptischer Cambridge-Freund von mir Occidental.",
+        "TIME": "vor 10 Stunden"
+      }
+    },
+    "EXTRA_PAGES": {
+      "TITLE": "Zusätzliche Seiten"
+    },
+    "LOGIN": {
+      "PROFILE": "Profil",
+      "MESSAGES": "Mitteilungen",
+      "TASKBOARD": "Taskboard",
+      "HELP": "Hilfe",
+      "BALANCE": "Balance",
+      "SETTINGS": "die Einstellungen",
+      "LOCK_SCREEN": "Bildschirm sperren",
+      "LOGOUT": "Ausloggen"
+    }
+  }, 
+  "RIGHTSIDEBAR": {
+    "LAYOUT": {
+      "TEXT": "Layout",
+      "LIST": {
+        "VERTICAL": "Vertikal",
+        "HORIZONTAL": "Horizontal"
+      }
+    },
+    "LAYOUTMODE": {
+      "TEXT": "Layout-Modus",
+      "LIST": {
+        "LIGHT": "Licht",
+        "DARK": "Dunkel"
+      }
+    },
+    "LAYOUTWIDTH": {
+      "TEXT": "Layoutbreite",
+      "LIST": {
+        "FLUID": "Flüssigkeit",
+        "BOXED": "Boxed"
+      }
+    },
+    "LAYOUTPOSITION": {
+      "TEXT": "Layoutposition",
+      "LIST": {
+        "FIXED": "Fest",
+        "SCROLLABLE": "Bildlauffähig"
+      }
+    },
+    "TOPBARCOLOR": {
+      "TEXT": "Farbe der oberen Leiste",
+      "LIST": {
+        "LIGHT": "Licht",
+        "DARK": "Dunkel"
+      }
+    },
+    "SIDEBARSIZE": {
+      "TEXT": "Seitenleistengröße",
+      "LIST": {
+        "DEFAULT": "Standard",
+        "COMPACT": "Kompakt",
+        "SMALL": "Klein"
+      }
+    },
+    "SIDEBARCOLOR": {
+      "TEXT": "Seitenleistenfarbe",
+      "LIST": {
+        "LIGHT": "Licht",
+        "DARK": "Dunkel",
+        "BRAND": "Marke"
+      }
+    }
+  },   
+  "MENUITEMS": {
+    "MENU": {
+      "TEXT": "Speisekarte"
+    },
+    "DASHBOARDS": {
+      "TEXT": "Instrumententafel"
+    },
+    "APPS": {
+      "TEXT": "Apps",
+      "LIST": {
+        "CALENDAR": "Kalender",
+        "CHAT": "Plaudern",
+        "EMAIL": "Email",
+        "SUB": {
+          "INBOX": "Posteingang",
+          "READEMAIL": "E-Mail lesen"
+        }
+      }
+    },
+    "AUTHENTICATION": {
+      "TEXT": "Authentifizierung",
+      "BADGE": "Neu",
+      "LIST": {
+        "LOGIN": "Anmeldung",
+        "LOGIN1": "Anmeldung1",
+        "REGISTER": "Registrieren",
+        "REGISTER1": "Registrieren1",
+        "RECOVERPWD": "Passwort wiederherstellen",
+        "RECOVERPWD1": "Passwort wiederherstellen1",
+        "LOCKSCREEN": "Bildschirm sperren",
+        "CONFIRMMAIL": "Mail bestätigen",
+        "EMAILVERIFICATION": "E-Mail-Verifizierung",
+        "TWOSTEPVERIFICATION": "Überprüfung in zwei Schritten"
+      }
+    },
+    "PAGES": {
+      "TEXT": "Seiten",
+      "LIST": {
+        "STARTER": "Startseite",
+        "PROFILE": "Profil",
+        "INVOICE": "Rechnung",
+        "MAINTENANCE": "Instandhaltung",
+        "COMINGSOON": "Kommt bald",
+        "TIMELINE": "Zeitleiste",
+        "PRICING": "Preisgestaltung",
+        "ERROR404": "Fehler 404",
+        "ERROR500": "Fehler 500"
+      }
+    },
+    "ADMINKIT": {
+      "TEXT": "ADMIN KIT"
+    },
+    "UIELEMENTS": {
+      "TEXT": "UI-Elemente"
+    },
+    "ADVANCEDKIT": {
+      "TEXT": "Advanced Kit",
+      "LIST": {
+        "SWEETALERT": "Süßer Alarm",
+        "RANGESLIDER": "Range Slider",
+        "NOTIFICATIONS": "Benachrichtigungen",
+        "CAROUSEL": "Karussell"
+      }
+    },
+    "TYPOGRAPHY": {
+      "TEXT": "Typografie"
+    },
+    "FORMS": {
+      "TEXT": "Formen",
+      "BADGE": "neun",
+      "LIST": {
+        "ELEMENTS": "Formularelemente",
+        "ADVANCED": "Formular Erweitert"
+      }
+    },
+    "TABLES": {
+      "TEXT": "Tabellen",
+      "LIST": {
+        "BASIC": "Bootstrap-Tabellen",
+        "ADVANCED": "Datentabelle"
+      }
+    },
+    "CHARTS": {
+      "TEXT": "Diagramme"
+    },
+    "ICONS": {
+      "TEXT": "Symbole",
+      "LIST": {
+        "BOXICONS": "Boxicons",
+        "MATERIALDESIGN": "Material Design",
+        "DRIPICONS": "Dripicons",
+        "FONTAWESOME": "Font Awesome"
+      }
+    },
+    "MAPS": {
+      "TEXT": "Karten"
+    },
+    "MULTILEVEL": {
+      "TEXT": "Multi Level",
+      "LIST": {
+        "LEVEL1": {
+          "1": "Stufe 1.1",
+          "2": "Stufe 1.1",
+          "LEVEL2": {
+            "1": "Stufe 2.1",
+            "2": "Stufe 2.1"
+          }
+        }
+      }
+    }  
+    
+  }
+}
