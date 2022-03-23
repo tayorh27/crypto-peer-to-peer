@@ -37,6 +37,10 @@ const routes: Routes = [
   { path: 'maps', component: MapsComponent },
   {
     path: 'apps', loadChildren: () => import('./apps/apps.module').then(m => m.AppsModule)
+  },
+  {
+    path: 'p2p',
+    loadChildren: () => import('./p2p-order/p2p-order.module').then(m => m.P2POrderModule)
   }
 ];
 

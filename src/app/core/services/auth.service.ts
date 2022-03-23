@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { getFirebaseBackend } from '../../authUtils';
 import { User } from '../models/auth.models';
 import { CryptoUser } from '../models/user.models';
+import firebase from 'firebase/app';
+import "firebase/firestore";
 
 @Injectable({ providedIn: 'root' })
 
@@ -15,6 +17,24 @@ export class AuthenticationService {
 
     constructor() { }
 
+    public async getUserData(uid: string) {//firebase.firestore.DocumentSnapshot
+        // console.log(email)
+        if (uid == null) {
+            return null;
+        }
+        const userSnap = await firebase.firestore().collection('users').doc(uid).get();
+        return (userSnap.exists) ? <CryptoUser>userSnap.data() : null;
+    }
+
+    getLocalStorageUserData() {
+        let data = sessionStorage.getItem("authUser");
+        if (data == null) {
+            data = "{}"
+        }
+        var json = JSON.parse(data);
+        return json;
+    }
+
     /**
      * Performs the register
      * @param email email
@@ -27,8 +47,8 @@ export class AuthenticationService {
         });
     }
 
-    uploadUserData(uid:any, user:CryptoUser) {
-        return getFirebaseBackend()!.uploadUser(uid, user).then((response:any) => {
+    uploadUserData(uid: any, user: CryptoUser) {
+        return getFirebaseBackend()!.uploadUser(uid, user).then((response: any) => {
             const res = response;
             return res;
         })

@@ -29,4 +29,19 @@ export class AppConfig {
             },
         });
     }
+
+    formatNumber(number: string) {
+        const re = /\ /gi
+        const n = number.toString().replace(re, '')
+        if (n.startsWith('234')) {
+            return n.replace(re, '')
+        } else if (n.startsWith('+234')) {
+            return n.substring(1).replace(re, '')
+        } else if (n.startsWith('0')) {
+            return `234${n.substring(1).replace(re, '')}`
+        } else if (n.startsWith('7') || n.startsWith('8') || n.startsWith('9')) {
+            return `234${n.replace(re, '')}`
+        }
+        return n.replace(re, '')
+    }
 }

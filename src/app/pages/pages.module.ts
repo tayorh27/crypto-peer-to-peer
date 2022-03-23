@@ -24,13 +24,17 @@ import { SharedModule } from '../shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { FlutterwaveModule } from "flutterwave-angular-v3"
 
+import { Select2Module } from "ng-select2-component";
+import { HttpClientModule } from "@angular/common/http";
+import { P2POrderModule } from './p2p-order/p2p-order.module';
+
 @NgModule({
   declarations: [
     DashboardsComponent,
     UiComponent,
     TypographyComponent,
     ChartsComponent,
-    MapsComponent
+    MapsComponent,
   ],
   imports: [
     CommonModule,
@@ -58,7 +62,10 @@ import { FlutterwaveModule } from "flutterwave-angular-v3"
     }),
     FormsModule,
     ReactiveFormsModule,
-    FlutterwaveModule
+    FlutterwaveModule,
+    Select2Module,
+    HttpClientModule,
+    P2POrderModule
   ]
 })
 export class PagesModule { }

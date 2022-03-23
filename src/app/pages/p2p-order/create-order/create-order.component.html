@@ -1,0 +1,101 @@
+<!-- start page title -->
+<app-pagetitle title="Create New Order" [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
+<!-- end page title -->
+
+<!-- Start Select row -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">USDT/NGN</h4>
+                <p class="card-title-desc">
+                    Create an order to sell or buy USDT
+                </p>
+
+                <form [formGroup]="orderForm" (ngSubmit)="onSubmit()">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="form-label">Select Order Type</label>
+                                <select class="form-select" formControlName="type" [ngClass]="{ 'is-invalid': submitted && f.type.errors }">
+                                    <option value="buy">I WANT TO BUY</option>
+                                    <option value="sell">I WANT TO SELL</option>
+                                </select>
+                                <div *ngIf="submitted && f.type.errors" class="invalid-feedback">
+                                    <div *ngIf="f.type.errors.required">Order Type is required</div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Total Amount in {{f.type.value === 'sell' ? 'USDT' : 'NGN'}}</label>
+                                <input class="form-control" formControlName="total" type="number" [ngClass]="{ 'is-invalid': submitted && f.total.errors }" placeholder="Enter Total Amount" id="example-number-input">
+                                <div *ngIf="f.type.value === 'buy'">
+                                    <div>TOTAL NGN: {{total_ngn_bal | currency:'₦':'symbol'}}</div>
+                                </div>
+                                <div *ngIf="f.type.value === 'sell'">
+                                    <div>TOTAL USDT: {{total_usdt_bal}} USDT</div>
+                                </div>
+                                <div *ngIf="submitted && f.total.errors" class="invalid-feedback">
+                                    <div *ngIf="f.total.errors.required">Total amount is required</div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="form-label">Order Limit</label>
+                                <div class="row">
+                                    <div class="form-floating col-lg-6">
+                                        <input class="form-control" type="number" formControlName="limit_min" [ngClass]="{ 'is-invalid': submitted && f.limit_min.errors }" placeholder="Order Limit Min" id="order-number-input-min">
+                                        <label for="order-number-input-min">Order Min Limit in {{f.type.value === 'sell' ? 'USDT' : 'NGN'}}</label>
+                                        <div *ngIf="submitted && f.limit_min.errors" class="invalid-feedback">
+                                            <div *ngIf="f.limit_min.errors.required">Order Minimum Limit is required</div>
+                                        </div>
+                                    </div>
+                                    <div class="form-floating col-lg-6">
+                                        <input class="form-control" type="number" formControlName="limit_max" placeholder="Order Limit Max" [ngClass]="{ 'is-invalid': submitted && f.limit_max.errors }" id="order-number-input-max">
+                                        <label for="order-number-input-max">Order Max Limit in {{f.type.value === 'sell' ? 'USDT' : 'NGN'}}</label>
+                                        <div *ngIf="submitted && f.limit_max.errors" class="invalid-feedback">
+                                            <div *ngIf="f.limit_max.errors.required">Order Maximum Limit is required</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3 ajax-select mt-3 mt-lg-0">
+                                <label class="form-label">Select Asset</label>
+                                <select class="form-select" formControlName="asset" [ngClass]="{ 'is-invalid': submitted && f.asset.errors }">
+                                    <!-- <option value="ngn">NGN</option> -->
+                                    <option value="usdt">USDT</option>
+                                </select>
+                                <div *ngIf="submitted && f.asset.errors" class="invalid-feedback">
+                                    <div *ngIf="f.asset.errors.required">Order Asset is required</div>
+                                </div>
+                            </div>
+                            <div class="templating-select">
+                                <label class="form-label">Order Price</label>
+                                <input class="form-control" type="number" formControlName="price" [ngClass]="{ 'is-invalid': submitted && f.price.errors }" placeholder="Enter Order Price" id="example-number-input">
+                                <div *ngIf="submitted && f.price.errors" class="invalid-feedback">
+                                    <div *ngIf="f.price.errors.required">Order Price is required</div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="mb-3">
+                                <label class="form-label">Minimum Order Price</label>
+                                <h2>₦570.32</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button [disabled]="button_pressed" class="btn btn-primary w-md waves-effect waves-light"
+                                                        type="submit">{{button_pressed ? 'Please wait...' : 'Submit' }}</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+        <!-- end select2 -->
+    </div>
+</div>
+<!-- end row -->

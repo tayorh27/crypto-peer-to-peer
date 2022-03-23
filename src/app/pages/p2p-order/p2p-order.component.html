@@ -1,0 +1,223 @@
+<!-- start page title -->
+<app-pagetitle title="P2P Orders" [breadcrumbItems]="breadCrumbItems" *ngIf="showBreadCrumb"></app-pagetitle>
+<!-- end page title -->
+
+<!-- Start Select row -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">P2P Orders</h4>
+                <p class="card-title-desc">
+                    Select to buy/sell any crypto asset.
+                </p>
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="float-end">
+                                <ul class="list-inline mb-0">
+                                    <li class="list-inline-item mr-2">
+                                        <div class="dropdown d-inline-block" ngbDropdown>
+                                            <a class="dropdown-toggle text-reset" href="javascript:void(0);"
+                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                                ngbDropdownToggle>
+                                                <span class="text-muted">Select Order Type: </span> <span
+                                                    class="fw-semibold">{{listed_as}}<i
+                                                        class="mdi mdi-chevron-down ms-1"></i></span>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                                                <!-- item-->
+                                                <a class="dropdown-item" href="javascript:void(0);"
+                                                    (click)="toggleOrderType('BUY')">BUY</a>
+                                                <a class="dropdown-item" href="javascript:void(0);"
+                                                    (click)="toggleOrderType('SELL')">SELL</a>
+                                                <!-- item-->
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <div class="dropdown d-inline-block" ngbDropdown>
+                                            <a class="dropdown-toggle text-reset" href="javascript:void(0);"
+                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                                ngbDropdownToggle>
+                                                <span class="text-muted">Select Asset: </span> <span
+                                                    class="fw-semibold">{{order_asset}}<i
+                                                        class="mdi mdi-chevron-down ms-1"></i></span>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                                                <!-- item-->
+                                                <a class="dropdown-item" href="javascript:void(0);"
+                                                    (click)="order_asset = 'USDT'">USDT</a>
+                                                <!-- item-->
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <h4 class="card-title mb-4">Filter</h4>
+                            <div>
+                                <div class="row">
+                                    <div class="col-lg-3">
+                                        <label for="order-filter-amount">Enter amount</label>
+                                        <input class="form-control" type="number" [(ngModel)]="filteredAmount" placeholder="Enter amount" id="order-filter-amount">
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <button class="btn btn-success w-md waves-effect waves-light"
+                                            style="margin-top: 28px;" type="submit" (click)="searchByAmount()">Search</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <br><br>
+                            <div class="row mb-md-2">
+                                <div class="col-sm-12 col-md-6">
+                                    <div class="dataTables_length" id="tickets-table_length"><label
+                                            class="d-inline-flex align-items-center">Show
+                                            <select name="tickets-table_length" aria-controls="tickets-table"
+                                                name="pageSize" [(ngModel)]="service.pageSize"
+                                                class="form-control form-control-sm mx-2">
+                                                <option [ngValue]="10">10</option>
+                                                <option [ngValue]="25">25</option>
+                                                <option [ngValue]="50">50</option>
+                                                <option [ngValue]="100">100</option>
+                                            </select> entries</label></div>
+                                </div>
+                                <!-- Search -->
+                                <!-- <div class="col-sm-12 col-md-6">
+                                    <div id="tickets-table_filter" class="dataTables_filter text-md-end"><label
+                                            class="d-inline-flex align-items-center">Search:
+                                            <input type="text" name="searchTerm"
+                                                class="form-control form-control-sm ms-2" aria-controls="tickets-table"
+                                                [(ngModel)]="service.searchTerm"></label></div>
+                                </div> -->
+                                <!-- End search -->
+                            </div>
+                            <div class="table-responsive">
+                                <table id="basic-datatable"
+                                    class="table table-bordered dt-responsive nowrap datatables no-footer dtr-inline">
+                                    <thead>
+                                        <tr>
+                                            <!-- <th sortable="id" (sort)="onSort($event)">id</th> -->
+                                            <th>User</th>
+                                            <th>Price</th>
+                                            <th>Total Available Amount</th>
+                                            <th>Limit</th>
+                                            <th>Trade</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody *ngFor="let table of tables$ | async;let i=index">
+                                        <tr>
+                                            <!-- <td align="center">
+                                                <ngb-highlight [result]="table.id | number" [term]="service.searchTerm">
+                                                </ngb-highlight>
+                                            </td> -->
+                                            <td>
+                                                <ngb-highlight [result]="table.created_by.name" [term]="service.searchTerm">
+                                                </ngb-highlight>
+                                            </td>
+                                            <td>
+                                                <ngb-highlight result="{{table.order_price | currency:'₦':'symbol'}}" [term]="service.searchTerm">
+                                                </ngb-highlight>
+                                            </td>
+                                            <td *ngIf="table.listed_as === 'sell'">
+                                                <ngb-highlight result="{{table.total_amount | currency:'₦':'symbol'}}" [term]="service.searchTerm">
+                                                </ngb-highlight>
+                                            </td>
+                                            <td *ngIf="table.listed_as === 'buy'">
+                                                <ngb-highlight result="{{table.total_amount}} USDT" [term]="service.searchTerm">
+                                                </ngb-highlight>
+                                            </td>
+                                            <td *ngIf="table.listed_as === 'sell'">
+                                                <ngb-highlight result="{{table.order_limit_min | currency:'₦':'symbol'}} - {{table.order_limit_max | currency:'₦':'symbol'}}" [term]="service.searchTerm">
+                                                </ngb-highlight>
+                                            </td>
+                                            <td *ngIf="table.listed_as === 'buy'">
+                                                <ngb-highlight result="{{table.order_limit_min}} USDT - {{table.order_limit_max}} USDT" [term]="service.searchTerm">
+                                                </ngb-highlight>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-{{listed_as === 'BUY' ? 'success' : 'danger'}} w-md waves-effect waves-light" type="submit" (click)="openOrderWindow(table.id)">{{listed_as}}</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div *ngIf="showSpinner">
+                                <div class="spinner-border text-success m-1" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                            <!--end table-responsive-->
+                            <div class="row justify-content-md-between align-items-md-center mt-2">
+                                <div class="col-sm-12 col-md-5">
+                                    <div class="dataTables_info mb-2" id="tickets-table_info" role="status"
+                                        aria-live="polite">
+                                        Showing
+                                        {{service.startIndex}} to
+                                        {{service.endIndex}} of {{service.totalRecords}}
+                                        entries
+                                    </div>
+                                </div>
+                                <!-- Pagination -->
+                                <div class="col-sm-12 col-md-5">
+                                    <div class="text-md-right float-md-end pagination-rounded">
+                                        <ngb-pagination [collectionSize]="(total$ | async)!" [(page)]="service.page"
+                                            [pageSize]="service.pageSize">
+                                        </ngb-pagination>
+                                    </div>
+                                </div>
+                                <!-- End Pagination -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end select2 -->
+    </div>
+</div>
+<!-- end row -->
+
+<ng-template #buyContent let-modal>
+    <div class="modal-header border-bottom-0">
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"> </button>
+    </div>
+    <div class="modal-body">
+        <div class="text-center mb-4">
+            <div class="avatar-md mx-auto mb-4">
+                <div class="avatar-title bg-light rounded-circle text-primary h1">
+                    <i class="mdi mdi-email-open"></i>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-xl-10">
+                    <h4 class="text-primary">BUY {{order_asset}}</h4>
+                    <p class="text-muted font-size-14 mb-4">Transfer fee: FREE</p>
+                    <p class="text-muted font-size-14 mb-4">Order Price: {{selectedP2P.order_price | currency:'₦':'symbol'}}</p>
+                    <label class="form-label">I Want to pay: </label>
+                    <div class="input-group bg-light rounded">
+                        <input type="number" name="fundAmt"
+                            class="form-control bg-transparent border-0" [(ngModel)]="buy_parameter_ngn" (ngModelChange)="onBuyParameterNgnChange($event)" placeholder="Limit: {{convertTokenToNGN(selectedP2P.order_limit_min) | currency:'₦':'symbol'}} - {{convertTokenToNGN(selectedP2P.order_limit_max) | currency:'₦':'symbol'}}"
+                            aria-label="Recipient's username" aria-describedby="button-addon2">
+                    </div>
+                    <div>TOTAL NGN: {{total_ngn_bal | currency:'₦':'symbol'}}</div>
+                    <br>
+                    <label class="form-label">{{order_asset}} you will receive: </label>
+                    <div class="input-group bg-light rounded">
+                        <input type="number" name="fundAmt" [disabled]="true"
+                            class="form-control bg-transparent border-0" [(ngModel)]="buy_parameter_token" placeholder="Amount in {{order_asset}} you will receive."
+                            aria-label="Recipient's username" aria-describedby="button-addon2">
+                    </div>
+                    <br>
+                    <button [disabled]="button_pressed" style="margin-right: 20px;" class="btn btn-danger" (click)="closeModal()" type="button" id="button-addon2">
+                        Cancel
+                    </button>
+                    <button [disabled]="button_pressed" (click)="submitBuyToken()" class="btn btn-success" type="button" id="button-addon2">
+                        <i class="bx bxs-paper-plane"></i> {{button_pressed ? 'TRADING...' : 'BUY USDT'}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

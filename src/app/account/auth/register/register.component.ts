@@ -14,6 +14,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore'
 import Moralis from 'moralis';
 import { ToastrService } from 'ngx-toastr';
+import { AppConfig } from 'src/app/core/services/global.service';
 
 @Component({
   selector: 'app-register',
@@ -33,6 +34,8 @@ export class RegisterComponent implements OnInit {
   successmsg = false;
   error = '';
   show = false
+
+  config = new AppConfig();
 
   // set the currenr year
   year: number = new Date().getFullYear();
@@ -90,7 +93,7 @@ export class RegisterComponent implements OnInit {
             const user: CryptoUser = {
               id: res.uid,
               email: `${this.f.email.value}`.toLowerCase(),
-              phone_number: this.f.phonenumber.value,
+              phone_number: this.config.formatNumber(this.f.phonenumber.value),
               name: this.f.username.value,
               image: 'assets/images/default-avatar.png',
               user_type: 'crypto_user',

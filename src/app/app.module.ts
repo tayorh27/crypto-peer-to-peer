@@ -59,7 +59,7 @@ export function createTranslateLoader(http: HttpClient): any {
     TranslateModule,
     ToastrModule.forRoot(),
     FormsModule,
-    ReactiveFormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

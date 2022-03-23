@@ -22,9 +22,13 @@
                 </div>
                 <p class="text-muted mt-3 mb-0">
                     <a href="javascript:void(0);" (click)="receiveUSDT()"><span class="badge badge-soft-success me-1"><i
-                                class="mdi mdi-arrow-up-bold me-1"></i>Receive</span></a>
+                                class="mdi mdi-arrow-up-bold me-1"></i>Deposit</span></a>
                     <a href="javascript:void(0);" (click)="sendUSDT()"><span class="badge badge-soft-danger me-1"><i
-                                class="mdi mdi-arrow-down-bold me-1"></i>Send</span></a>
+                                class="mdi mdi-arrow-down-bold me-1"></i>Withdraw</span></a>
+                    <span class="badge badge-soft-warning me-1" placement="right"
+                    ngbTooltip="Frozen assets are for P2P transactions."><i
+                            class="mdi mdi-arrow-down-bold me-1"></i>{{total_frozen_usdt_bal |
+                        currency:'USD':'symbol'}} locked asset</span>
                 </p>
             </div>
         </div>
@@ -53,6 +57,9 @@
                     <a href="javascript:void(0);" (click)="withdrawFunds()"><span
                             class="badge badge-soft-danger me-1"><i
                                 class="mdi mdi-arrow-down-bold me-1"></i>Withdraw</span></a>
+                    <span class="badge badge-soft-warning me-1" placement="right"
+                    ngbTooltip="Frozen assets are for P2P transactions."><i
+                            class="mdi mdi-arrow-down-bold me-1"></i>{{total_frozen_ngn_bal | currency:'₦':'symbol'}} locked asset</span>
                 </p>
             </div>
         </div>
@@ -96,12 +103,14 @@
                     </div>
                 </div>
                 <div>
-                    <p class="text-muted text-uppercase fw-semibold">All Time Orders</p>
-                    <h4 class="mb-1 mt-1"><span class="counter-value" [CountTo]="9582" [from]="0" [duration]="1"></span>
+                    <p class="text-muted text-uppercase fw-semibold">Total Transactions</p>
+                    <h4 *ngIf="total_transactions === 0">0</h4>
+                    <h4 class="mb-1 mt-1"><span class="counter-value" [CountTo]="total_transactions" [from]="0" [duration]="1"></span>
                     </h4>
                 </div>
-                <p class="text-muted mt-3 mb-0"><span class="badge badge-soft-warning me-1"><i
-                            class="mdi mdi-arrow-up-bold me-1"></i>0.55%</span> since last week
+                <p class="text-muted mt-3 mb-0">
+                    <a href="javascript:void(0);" (click)="viewTransactions()"><span
+                        class="badge badge-soft-success me-1">View all</span></a>
                 </p>
             </div>
         </div>
@@ -170,7 +179,8 @@
     </div> <!-- end col-->
 
     <div class="col-lg-12">
-        <div class="card">
+        <app-p2p-order [showBreadCrumb]="false" [total_ngn_bal]="total_ngn_bal" [total_frozen_ngn_bal]="total_frozen_ngn_bal" [total_usdt_bal]="total_usdt_bal" [total_frozen_usdt_bal]="total_frozen_usdt_bal" [isDashboard]="true"></app-p2p-order>
+        <div class="card" *ngIf="show">
             <div class="card-body">
                 <div class="float-end">
                     <ul class="list-inline mb-0">
@@ -306,7 +316,7 @@
 </div>
 <!-- end row -->
 
-<div class="row">
+<div class="row" *ngIf="show">
     <div class="col-xl-6">
         <div class="card">
             <div class="card-body">
@@ -386,13 +396,107 @@
                     </p>
                     <div class="input-group bg-light rounded">
                         <input type="number" [(ngModel)]="fundingAmount" name="fundAmt"
-                            class="form-control bg-transparent border-0" placeholder="Enter amount" aria-label="Recipient's username"
-                            aria-describedby="button-addon2">
+                            class="form-control bg-transparent border-0" placeholder="Enter amount"
+                            aria-label="Recipient's username" aria-describedby="button-addon2">
 
                         <button class="btn btn-primary" type="button" (click)="openFlutterwave()" id="button-addon2">
                             <i class="bx bxs-paper-plane"></i>
                         </button>
 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #withdraw let-modal>
+    <div class="modal-header border-bottom-0">
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"> </button>
+    </div>
+    <div class="modal-body">
+        <div class="text-center mb-4">
+            <div class="avatar-md mx-auto mb-4">
+                <div class="avatar-title bg-light rounded-circle text-primary h1">
+                    <i class="mdi mdi-email-open"></i>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-xl-10" *ngIf="displayWithdrawalForm">
+                    <h4 class="text-primary">Withdraw Funds !</h4>
+                    <p class="text-muted font-size-14 mb-4">Enter the amount you want to withdraw from your wallet.
+                        Minimum amount is ₦1,000
+                    </p>
+                    <div class="input-group bg-light rounded">
+                        <input type="number" [(ngModel)]="withdrawAmount" (change)="getTransferRate($event)" name="withdrawAmt"
+                            class="form-control bg-transparent border-0" placeholder="Enter amount"
+                            aria-label="Recipient's username" aria-describedby="button-addon2">
+                    </div>
+                    <div *ngIf="showSpinner">
+                        <div class="spinner-border text-success m-1" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                    <br>
+                    <p class="text-muted font-size-14 mb-4">Select bank account. <a href="javascript:void(0)" (click)="toggleAddNewAccount()" class="fw-semibold text-decoration-underline">  Add new account?
+                    </a></p>
+                    <div class="input-group bg-light rounded">
+                        <select class="form-select" [(ngModel)]="selectedUserBank" (change)="setBank($event)">
+                            <option value=""></option>
+                            <option *ngFor="let bank of banks;" [value]="bank.id">{{bank.bank_name}} - {{bank.bank_account_number}}</option>
+                        </select>
+                        <!-- <select2 [data]="data"></select2> -->
+                    </div>
+                    <p class="text-muted font-size-14 mb-4" *ngIf="selectedBank"><br>Send amount to {{selectedBank.bank_account_holder}}</p>
+                    <br>
+                    <p class="text-muted font-size-14 mb-4" *ngIf="feeAmount > 0">Transfer fee is {{feeAmount | currency:'₦':'symbol'}}</p>
+                    <br>
+                    <div class="input-group">
+                        <button [disabled]="showSpinner || button_pressed" class="btn btn-primary" type="button" (click)="withdrawFundsToAccount()" id="button-addon2">
+                            {{button_pressed ? 'Transferring...' : 'Withdraw' }}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-xl-10" *ngIf="!displayWithdrawalForm">
+                    <h4 class="text-primary">Add New Account!</h4>
+
+                    <div class="input-group bg-light rounded">
+                        <input type="text" [(ngModel)]="bankAcctNumber" (change)="verifyUserBankAccount($event)" name="ban"
+                            class="form-control bg-transparent border-0" placeholder="Enter bank account number"
+                            aria-label="Recipient's username" aria-describedby="button-addon2">
+                    </div>
+                    <br>
+                    <div class="input-group">
+                        <select2 style="width: 100%;" [data]="data" [placeholder]="'Please select a bank'" [(ngModel)]="selectedBankFromList" (ngModelChange)="verifyUserBankAccount($event)"></select2>
+                        <div *ngIf="showSpinner">
+                            <div class="spinner-border text-success m-1" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                        <!-- <p>{{selectedBankFromList}}</p> -->
+                        <!-- <select class="form-select" [(ngModel)]="bankName">
+                            <option>Select bank</option>
+                            <option>Large select</option>
+                            <option>Small select</option>
+                        </select> -->
+                    </div>
+                    <br>
+
+                    <div class="input-group bg-light rounded">
+                        <input type="text" [disabled]="true" [(ngModel)]="bankAcctName" name="bann"
+                            class="form-control bg-transparent border-0" placeholder="Enter bank account name"
+                            aria-label="Recipient's username" aria-describedby="button-addon2">
+                    </div>
+                    <br>
+                    <div class="input-group">
+                        <button [disabled]="button_pressed" style="margin-right: 20px;" class="btn btn-success" type="button" (click)="saveBankAccount()" id="button-addon2">
+                            {{button_pressed ? 'Saving...' : 'Add bank account' }}
+                        </button>
+
+                        <button class="btn btn-danger" type="button" (click)="toggleAddNewAccount()" id="button-addon2">
+                            Cancel
+                        </button>
                     </div>
                 </div>
             </div>
