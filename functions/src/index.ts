@@ -118,16 +118,16 @@ export const onUserCreated = functions.firestore.document("/users/{id}").onCreat
 export const onWalletUpdated = functions.firestore.document("/users/{id}/wallet/{walletId}").onUpdate(async (snapshot, context) => {
   const data = snapshot.after.data();
 
-  const total_amount = data.total_amount;
-  const frozen_amount = data.frozen_amount;
+  const totalAmount = data["total-amount"];
+  const frozenAmount = data["frozen-amount"];
 
-  if(total_amount < 0) {
+  if (totalAmount < 0) {
     snapshot.after.ref.update({
       "total-amount": 0,
     });
   }
 
-  if(frozen_amount < 0) {
+  if (frozenAmount < 0) {
     snapshot.after.ref.update({
       "frozen-amount": 0,
     });
@@ -237,7 +237,7 @@ export const onOrderCreated = functions.firestore.document("/p2p-orders/{id}").o
 });
 
 export const onOrderUpdated = functions.firestore.document("/p2p-orders/{id}").onUpdate(async (snapshot, context) => {
-  await freezeToken(4, "", "", "");
+  await freezeToken(0, "", "", "");
 });
 
 export const onOrderDeleted = functions.firestore.document("/p2p-orders/{id}").onDelete(async (snapshot, context) => {
@@ -277,10 +277,10 @@ export const onOrderDeleted = functions.firestore.document("/p2p-orders/{id}").o
     const newAmt = totalAmt * -1;
     if (orderType === "sell") {
       const unfreeze = await freezeToken(totalAmt, userData.address, userData.privateKey, "unfreeze");
-      await admin.firestore().collection("users").doc(uid).collection("wallet").doc("usdt-wallet").update({
-        "frozen-amount": admin.firestore.FieldValue.increment(newAmt),
-      });
       if (unfreeze.status) {
+        await admin.firestore().collection("users").doc(uid).collection("wallet").doc("usdt-wallet").update({
+          "frozen-amount": admin.firestore.FieldValue.increment(newAmt),
+        });
         emailSubject = "P2P ORDER DELETE STATUS";
         emailContent = `Your P2P Order, ${data.order_id} has been deleted successfully.\n\n ${totalAmt} USDT has been moved from your locked wallet to your active wallet.`;
       }
@@ -369,7 +369,7 @@ export const onTradeCreated = functions.firestore.document("/trades/{id}").onCre
     await admin.firestore().collection("p2p-orders").doc(data.p2p_id).update({
       "total_amount": newPTotal,
       "order_limit_max": newPTotal,
-      "order_limit_min": (newPTotal < pMin) ? (pMin) : pMin,
+      "order_limit_min": (newPTotal <= 0) ? 0 : pMin, // (newPTotal < pMin) ? (pMin) : pMin,
       "status": (newPTotal <= 0) ? "expired" : pData.status,
       "is_user_ordering": newPTotal > 0 ? false : true,
       "updated_by": "trade-system",
@@ -399,6 +399,128 @@ export const onTradeCreated = functions.firestore.document("/trades/{id}").onCre
         image: creatorUserData.image,
         number: creatorUserData.phone_number,
       },
+      year: new Date().getFullYear(),
+      month: mths[new Date().getMonth()],
+      day: new Date().getDate(),
+    };
+    await admin.firestore().collection("p2p-transactions").doc(creatorKey).set(creatorTransData);
+
+    const guestKey = admin.firestore().collection("p2p-transactions").doc().id;
+    const guestTransData = {
+      id: guestKey,
+      received: {
+        currency: data.send_guest.currency,
+        local: data.send_guest.local,
+        amount: data.send_guest.amount,
+      },
+      sent: {
+        currency: data.send_creator.currency,
+        local: data.send_creator.local,
+        amount: data.send_creator.amount,
+      },
+      p2p_id: data.p2p_id,
+      order_price: data.price,
+      listed_as: data.listed_as,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      created_date: `${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`,
+      created_by: {
+        user_id: guestUid,
+        email: guestUserData.email,
+        name: guestUserData.name,
+        msgId: guestUserData.msgID,
+        image: guestUserData.image,
+        number: guestUserData.phone_number,
+      },
+      year: new Date().getFullYear(),
+      month: mths[new Date().getMonth()],
+      day: new Date().getDate(),
+    };
+    await admin.firestore().collection("p2p-transactions").doc(guestKey).set(guestTransData);
+
+    // send creator email
+    const cSubject = "P2P TRADE CONFIRMATION";
+    const cContent = `<strong>NGN ${data.send_creator.amount}</strong> has successfully been transferred to your NGN Wallet which is equivalent to ${data.send_guest.amount} ${data.send_guest.currency} you sold.<br><br>Check your dashboard for your transaction details.`;
+    await sendGeneralEmail(creatorUserData.email, cSubject, cContent);
+
+    // send guest email
+    const gSubject = "P2P TRADE CONFIRMATION";
+    const gContent = `<strong>${data.send_guest.amount} ${data.send_guest.currency}</strong> has successfully been transferred to your ${data.send_guest.currency} Wallet which is equivalent to <strong>NGN ${data.send_creator.amount}</strong> you sold.<br><br>Check your dashboard for your transaction details.`;
+    await sendGeneralEmail(guestUserData.email, gSubject, gContent);
+
+    // delete trade data
+    await admin.firestore().collection("trades").doc(data.id).delete();
+  
+  } else {
+    // send guest ngn and debit creator ngn
+
+    // send guest ngn
+    await admin.firestore().collection("users").doc(guestUid).collection("wallet").doc("ngn-wallet").update({
+      "total-amount": admin.firestore.FieldValue.increment(data.send_guest.amount),
+    });
+
+    // deduct ngn from creator
+    const deductAmount = data.send_guest.amount * -1;
+    await admin.firestore().collection("users").doc(creatorUid).collection("wallet").doc("ngn-wallet").update({
+      "total-amount": admin.firestore.FieldValue.increment(deductAmount),
+    });
+
+    // send creator token from guest
+    await transferToken(data.send_creator.amount, ADMIN_USDT_WALLET, creatorUserData.address, ADMIN_USDT_WALLET_PRIVATE_KEY);
+
+    // deduct token amount from guest
+    const newTokenAmt = data.send_creator.amount * -1;
+    await admin.firestore().collection("users").doc(guestUid).collection("wallet").doc("usdt-wallet").update({
+      "frozen-amount": admin.firestore.FieldValue.increment(newTokenAmt),
+    });
+
+    // update p2p data;
+    const p2pData = await admin.firestore().collection("p2p-orders").doc(data.p2p_id).get();
+    const pData = p2pData.data();
+    if (pData === undefined) {
+      return;
+    }
+    const pTotal = pData.total_amount;
+    const pMin = pData.order_limit_min;
+
+    const newPTotal = pTotal - data.send_guest.amount; // same as max
+
+    await admin.firestore().collection("p2p-orders").doc(data.p2p_id).update({
+      "total_amount": newPTotal,
+      "order_limit_max": newPTotal,
+      "order_limit_min": (newPTotal <= 0) ? 0 : pMin, //(newPTotal < pMin) ? (pMin) : pMin,
+      "status": (newPTotal <= 0) ? "expired" : pData.status,
+      "is_user_ordering": newPTotal > 0 ? false : true,
+      "updated_by": "trade-system",
+    });
+
+    // record order transaction for creator
+    const creatorKey = admin.firestore().collection("p2p-transactions").doc().id;
+    const creatorTransData = {
+      id: creatorKey,
+      received: {
+        currency: data.send_creator.currency,
+        amount: data.send_creator.amount,
+      },
+      sent: {
+        currency: data.send_guest.currency,
+        amount: data.send_guest.amount,
+      },
+      order_price: data.price,
+      p2p_id: data.p2p_id,
+      listed_as: data.listed_as,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      created_date: `${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`,
+      created_by: {
+        user_id: creatorUid,
+        email: creatorUserData.email,
+        name: creatorUserData.name,
+        msgId: creatorUserData.msgID,
+        image: creatorUserData.image,
+        number: creatorUserData.phone_number,
+      },
+      year: new Date().getFullYear(),
+      month: mths[new Date().getMonth()],
+      day: new Date().getDate(),
     };
     await admin.firestore().collection("p2p-transactions").doc(creatorKey).set(creatorTransData);
 
@@ -418,25 +540,28 @@ export const onTradeCreated = functions.firestore.document("/trades/{id}").onCre
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
       created_date: `${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`,
       created_by: {
-        user_id: creatorUid,
-        email: creatorUserData.email,
-        name: creatorUserData.name,
-        msgId: creatorUserData.msgID,
-        image: creatorUserData.image,
-        number: creatorUserData.phone_number,
+        user_id: guestUid,
+        email: guestUserData.email,
+        name: guestUserData.name,
+        msgId: guestUserData.msgID,
+        image: guestUserData.image,
+        number: guestUserData.phone_number,
       },
+      year: new Date().getFullYear(),
+      month: mths[new Date().getMonth()],
+      day: new Date().getDate(),
     };
     await admin.firestore().collection("p2p-transactions").doc(guestKey).set(guestTransData);
 
-    // send creator email
-    const cSubject = "P2P TRADE CONFIRMATION";
-    const cContent = `<strong>NGN ${data.send_creator.amount}</strong> has successfully been transferred to your NGN Wallet which is equivalent to ${data.send_guest.amount} ${data.send_guest.currency} you sold.<br><br>Check your dashboard for your transaction details.`;
-    await sendGeneralEmail(creatorUserData.email, cSubject, cContent);
-
     // send guest email
     const gSubject = "P2P TRADE CONFIRMATION";
-    const gContent = `<strong>${data.send_guest.amount} ${data.send_guest.currency}</strong> has successfully been transferred to your ${data.send_guest.currency} Wallet which is equivalent to <strong>NGN ${data.send_creator.amount}</strong> you sold.<br><br>Check your dashboard for your transaction details.`;
+    const gContent = `<strong>NGN ${data.send_guest.amount}</strong> has successfully been transferred to your NGN Wallet which is equivalent to ${data.send_creator.amount} ${data.send_creator.currency}.<br><br>Check your dashboard for your transaction details.`;
     await sendGeneralEmail(guestUserData.email, gSubject, gContent);
+
+    // send creator email
+    const cSubject = "P2P TRADE CONFIRMATION";
+    const cContent = `<strong>${data.send_creator.amount} ${data.send_creator.currency}</strong> has successfully been transferred to your ${data.send_creator.currency} Wallet which is equivalent to <strong>NGN ${data.send_guest.amount}</strong>.<br><br>Check your dashboard for your transaction details.`;
+    await sendGeneralEmail(creatorUserData.email, cSubject, cContent);
 
     // delete trade data
     await admin.firestore().collection("trades").doc(data.id).delete();

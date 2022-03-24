@@ -61,6 +61,7 @@ function matches(table: any, term: string, pipe: PipeTransform) {
 })
 
 export class AdvancedService {
+    private _tableData:any[] = []
     // tslint:disable-next-line: variable-name
     private _loading$ = new BehaviorSubject<boolean>(true);
     // tslint:disable-next-line: variable-name
@@ -98,6 +99,7 @@ export class AdvancedService {
     /**
      * Returns the value
      */
+    get tableData() { return this._tableData; }
     get tables$() { return this._tables$.asObservable(); }
     get total$() { return this._total$.asObservable(); }
     get loading$() { return this._loading$.asObservable(); }
@@ -133,6 +135,10 @@ export class AdvancedService {
         this._search$.next();
     }
 
+    public setTableData(data:any[]) {
+        this._tableData = data;
+    }
+
     /**
      * Search Method
      */
@@ -140,7 +146,7 @@ export class AdvancedService {
         const { sortColumn, sortDirection, pageSize, page, searchTerm } = this._state;
 
         // 1. sort
-        let tables = sort([], sortColumn, sortDirection);
+        let tables = sort(this.tableData, sortColumn, sortDirection);
 
         // 2. filter
         tables = tables.filter(table => matches(table, searchTerm, this.pipe));

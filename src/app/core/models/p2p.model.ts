@@ -5,6 +5,7 @@ export interface P2P {
     order_asset: string
     listed_as: string
     total_amount: number
+    initial_total_amount: number
     order_price: number
     order_limit_min: number
     order_limit_max: number
@@ -15,6 +16,9 @@ export interface P2P {
     timestamp: any
     created_date: string
     created_by: CreatedBy
+    year: number
+    month: string
+    day: number
 }
 
 export interface CreatedBy {

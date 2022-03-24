@@ -11,7 +11,8 @@ import { environment } from 'src/environments/environment';
 import { ToastrService } from 'ngx-toastr';
 import { Select2Data } from 'ng-select2-component';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 @Component({
   selector: 'app-dashboards',
@@ -46,6 +47,8 @@ export class DashboardsComponent implements OnInit {
   total_usdt_bal = 0;
   total_frozen_usdt_bal = 0;
 
+  total_bnb = 0;
+
   proccess_orders = 0;
   total_transactions = 0;
 
@@ -70,13 +73,22 @@ export class DashboardsComponent implements OnInit {
 
   showSpinner = false;
 
-  selectedBank:any
+  selectedBank:any;
+
+  routeAction:any;
 
   constructor(private modalService: NgbModal, 
     private flutterwave: Flutterwave, 
     private toastr: ToastrService, 
     private http:HttpClient,
-    private router: Router) { }
+    private router: Router,
+    private clipboard: Clipboard,
+    private route:ActivatedRoute) {
+      const r = this.route.snapshot.params.action;
+      if(r !== undefined) {
+        this.routeAction = r;
+      }
+     }
 
   ngOnInit(): void {
 
@@ -107,6 +119,18 @@ export class DashboardsComponent implements OnInit {
     this.getBalances();
     this.getProcessedOrders();
     this.getUserBanks();
+
+    if(this.routeAction !== undefined) {
+      if(this.routeAction === "fund") {
+        this.addFunds();
+        return;
+      }
+      if(this.routeAction === "withdraw") {
+        this.withdrawFunds();
+        return;
+      }
+      this.router.navigate(["/404"]);
+    }
   }
 
   getProcessedOrders() {
@@ -116,7 +140,7 @@ export class DashboardsComponent implements OnInit {
       }
     });
 
-    firebase.firestore().collection("transactions").where("created_by.user_id", "==", this.uid).onSnapshot(query => {
+    firebase.firestore().collection("token-transactions").where("created_by.user_id", "==", this.uid).onSnapshot(query => {
       if (!query.empty) {
         this.total_transactions = query.size;
       }
@@ -151,7 +175,11 @@ export class DashboardsComponent implements OnInit {
         this.toastr.error(res["message"]);
         return;
       }
+      this.total_bnb = res["native"];
       const tokens:any[] = res["tokens"];
+      if(tokens.length === 0) {
+        return;
+      }
       const usdt = tokens.find((val, ind, arr) => {
         return val.symbol === "USDT";
       });
@@ -402,14 +430,26 @@ export class DashboardsComponent implements OnInit {
   }
 
   sendUSDT() {
-
+    this.router.navigate(["/tokens/withdraw/usdt"]);
   }
 
   receiveUSDT() {
+    this.router.navigate(["/tokens/deposit/usdt"]);
+  }
 
+  receiveBNB() {
+    this.router.navigate(["/tokens/deposit/bnb"]);
+  }
+
+  sendBNB() {
+    this.router.navigate(["/tokens/withdraw/bnb"]);
   }
 
   viewOrders() {
+    this.router.navigate(["/p2p/orders/history"]);
+  }
+
+  ViewMyOrders() {
     this.router.navigate(["/p2p/my-orders"]);
   }
 
@@ -417,8 +457,20 @@ export class DashboardsComponent implements OnInit {
     this.router.navigate(["/p2p/new-order"]);
   }
 
-  viewTransactions() {
-
+  async copyWalletAddress() {
+    const query = await firebase.firestore().collection("users").doc(this.uid).get();
+    if(!query.exists){
+      this.toastr.error("Invalid user. Please login again.");
+      return;
+    }
+    const user = query.data();
+    if(user === undefined){
+      this.toastr.error("Invalid user. Please login again.");
+      return;
+    }
+    const address = user.address;
+    this.clipboard.copy(address);
+    this.toastr.success("Wallet address copied!");
   }
 
   ngAfterViewInit() {

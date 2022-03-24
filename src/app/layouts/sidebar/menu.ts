@@ -400,13 +400,13 @@ export const MENU: MenuItem[] = [
         id: 10,
         label: 'My Orders',
         icon: 'bx bxs-dashboard',
-        link: '/p2p/orders',
+        link: '/p2p/my-orders',
     },
     {
         id: 11,
-        label: 'Send/Receive USDT',
+        label: 'Send/Receive Token',
         icon: 'bx bxs-dashboard',
-        link: '',
+        link: '/tokens',
     },
     {
         id: 12,
@@ -416,9 +416,9 @@ export const MENU: MenuItem[] = [
     },
     {
         id: 13,
-        label: 'USDT Transactions',
+        label: 'Token Transactions',
         icon: 'bx bxs-dashboard',
-        link: '',
+        link: '/tokens/transaction',
     },
     {
         id: 14,
@@ -432,6 +432,12 @@ export const MENU: MenuItem[] = [
     {
         id: 16,
         label: 'Fund NGN',
+        icon: 'bx bxs-dashboard',
+        link: '',
+    },
+    {
+        id: 16,
+        label: 'Withdraw NGN',
         icon: 'bx bxs-dashboard',
         link: '',
     },

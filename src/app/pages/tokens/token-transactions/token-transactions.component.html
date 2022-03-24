@@ -1,5 +1,5 @@
 <!-- start page title -->
-<app-pagetitle title="P2P Order History" [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
+<app-pagetitle title="Token Transactions" [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
 <!-- end page title -->
 
 <!-- Start Select row -->
@@ -7,9 +7,9 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">P2P Order History</h4>
+                <h4 class="card-title">Your Transactions</h4>
                 <p class="card-title-desc">
-                    This show all the buy and sell trades you have done in P2P.
+                    This show all the transaction, both deposit and withdrawal you have made.
                 </p>
                 <div class="col-lg-12">
                     <div class="card">
@@ -41,13 +41,11 @@
                                             <th>Created Date</th>
                                         </tr>
                                     </thead>
-                                    <tbody *ngFor="let table of tables$ | async;let i=index">
+                                    <!-- <tbody *ngFor="let table of tables$ | async;let i=index">
                                         <tr>
                                             <td>
-                                                <span *ngIf="table.listed_as === 'buy'" class="badge bg-success ms-1">{{table.listed_as | uppercase}}</span>
-                                                <span *ngIf="table.listed_as === 'sell'"class="badge bg-danger ms-1">{{table.listed_as | uppercase}}</span>
-                                                <!-- <ngb-highlight [result]="table.listed_as" [term]="service.searchTerm">
-                                                </ngb-highlight> -->
+                                                <span *ngIf="table.listed_as === 'buy'" class="badge bg-success ms-1">{{table.listed_as}}</span>
+                                                <span *ngIf="table.listed_as === 'sell'"class="badge bg-danger ms-1">{{table.listed_as}}</span>
                                             </td>
                                             <td>
                                                 <ngb-highlight result="{{table.order_price | currency:'₦':'symbol'}}"
@@ -82,7 +80,7 @@
                                                 </ngb-highlight>
                                             </td>
                                         </tr>
-                                    </tbody>
+                                    </tbody> -->
                                 </table>
                             </div>
 

@@ -1,16 +1,17 @@
-import { Component, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { LAYOUT_MODE } from 'src/app/layouts/layouts.model';
 import firebase from 'firebase/app';
 import "firebase/firestore";
 import { AdvancedService } from 'src/app/core/tables/table.service';
 import { DecimalPipe } from '@angular/common';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { AdvancedSortableDirective, SortEvent } from 'src/app/core/tables/table.sortable.directive';
 import { P2P } from 'src/app/core/models/p2p.model';
 import { HttpClient } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
+import { NavigationStart, Router } from '@angular/router';
 
 @Component({
   selector: 'app-p2p-order',
@@ -18,8 +19,9 @@ import { AuthenticationService } from 'src/app/core/services/auth.service';
   styleUrls: ['./p2p-order.component.scss'],
   providers: [AdvancedService, DecimalPipe]
 })
-export class P2POrderComponent implements OnInit {
+export class P2POrderComponent implements OnInit, OnDestroy {
 
+  subscription:Subscription;
   layout_mode!: string;
   // bread crumb items
   breadCrumbItems!: Array<{}>;
@@ -48,9 +50,37 @@ export class P2POrderComponent implements OnInit {
   selectedP2P: any;
 
   public isCollapsed = true;
-  constructor(public service: AdvancedService, private http: HttpClient, private modalService: NgbModal, private toastr: ToastrService, private authService: AuthenticationService) {
+  constructor(private router:Router, public service: AdvancedService, private http: HttpClient, private modalService: NgbModal, private toastr: ToastrService, private authService: AuthenticationService) {
     this.tables$ = service.tables$;
     this.total$ = service.total$;
+
+    this.subscription = router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        if(!router.navigated) {
+          console.log("refreshing");
+          this.updateP2PData();
+        }
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.updateP2PData();
+  }
+
+  async updateP2PData() {
+    if(this.selectedOrderId === "" || this.selectedOrderId === undefined || this.selectedOrderId === null){
+      return;
+    }
+    // await firebase.firestore().collection("p2p-orders").doc(this.selectedOrderId).update({
+    //   "": false,
+    //   "updated"
+    // })
+    this.http.get(`https://us-central1-cryptopeer2peer.cloudfunctions.net/changeorderstatus?value=false&order_id=${this.selectedOrderId}&id=${this.selectedOrderId}`).subscribe((res: any) => {
+      if (res["error"]) {
+        return;
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -61,7 +91,7 @@ export class P2POrderComponent implements OnInit {
     //BreadCrumb 
     this.breadCrumbItems = [
       { label: 'P2p' },
-      { label: 'Orders', active: true }
+      { label: '', active: true }
     ];
 
     this.getAllOrders("buy");
@@ -80,6 +110,9 @@ export class P2POrderComponent implements OnInit {
 
   buy_parameter_ngn = "";
   buy_parameter_token = "";
+
+  sell_parameter_ngn = "";
+  sell_parameter_token = "";
 
   getBalances() {
     const uid = this.authService.getLocalStorageUserData().uid;
@@ -111,6 +144,9 @@ export class P2POrderComponent implements OnInit {
         return;
       }
       const tokens:any[] = res["tokens"];
+      if(tokens.length === 0) {
+        return;
+      }
       const usdt = tokens.find((val, ind, arr) => {
         return val.symbol === "USDT";
       });
@@ -202,6 +238,11 @@ export class P2POrderComponent implements OnInit {
     return (value * this.selectedP2P.order_price).toFixed(2)
   }
 
+  setMaxBuy() {
+    this.buy_parameter_ngn = this.convertTokenToNGN(this.selectedP2P.order_limit_max);
+    this.buy_parameter_token = (Number(this.buy_parameter_ngn) / this.selectedP2P.order_price).toFixed(2).toString();
+  }
+
   async submitBuyToken() {
     if (Number(this.buy_parameter_token) < this.selectedP2P.order_limit_min || this.buy_parameter_ngn < this.convertTokenToNGN(this.selectedP2P.order_limit_min)) {
       this.toastr.error(`Amount is below limit of ${this.selectedP2P.order_limit_min} ${this.selectedP2P.order_asset.toUpperCase()}`);
@@ -218,6 +259,7 @@ export class P2POrderComponent implements OnInit {
       return;
     }
 
+    try{
     this.button_pressed = true;
 
     const key = firebase.firestore().collection("trades").doc().id;
@@ -233,6 +275,7 @@ export class P2POrderComponent implements OnInit {
         currency: this.order_asset,
         amount: this.buy_parameter_token,
       },
+      price: this.selectedP2P.order_price,
       p2p_id: this.selectedOrderId,
       listed_as: this.listed_as.toLowerCase(),
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -243,6 +286,74 @@ export class P2POrderComponent implements OnInit {
     this.modalService.dismissAll();
     this.buy_parameter_ngn = "";
     this.buy_parameter_token = "";
+    this.selectedOrderId = "";
+    this.selectedP2P = null;
+  }catch(err) {
+    this.button_pressed = false;
+    this.toastr.error("An error occurred. Please try again.")
+  }
+  }
+
+  setMaxSell() {
+    this.sell_parameter_token = `${this.total_usdt_bal}`;
+    this.sell_parameter_ngn = (Number(this.sell_parameter_token) * this.selectedP2P.order_price).toFixed(2);
+  }
+
+  onSellParameterUSDTChange(evt:any) {
+    this.sell_parameter_ngn = (Number(this.sell_parameter_token) * this.selectedP2P.order_price).toFixed(2);
+  }
+
+  async submitSellToken() {
+    if(Number(this.sell_parameter_token) > this.total_frozen_usdt_bal) {
+      this.toastr.error(`Your USDT frozen account balance is insufficient to perform this trade.`);
+      return;
+    }
+
+    if(Number(this.sell_parameter_ngn) < this.selectedP2P.order_limit_min) { //Number(this.sell_parameter_ngn) < (this.selectedP2P.order_limit_min * this.selectedP2P.order_price)
+      this.toastr.error(`Amount is below limit of ${this.selectedP2P.order_limit_min} ${this.selectedP2P.order_asset.toUpperCase()}`);
+      return;
+    }
+
+    if(Number(this.sell_parameter_ngn) > this.selectedP2P.order_limit_max) { // Number(this.sell_parameter_ngn) > (this.selectedP2P.order_limit_max * this.selectedP2P.order_price)
+      this.toastr.error(`Amount is above limit of ${this.selectedP2P.order_limit_max} ${this.selectedP2P.order_asset.toUpperCase()}`);
+      return;
+    }
+
+    try {
+      this.button_pressed = true;
+
+      const key = firebase.firestore().collection("trades").doc().id;
+      const sell_trading_data = {
+        id: key,
+        send_creator: {
+          uid: this.selectedP2P.created_by.user_id,
+          currency: this.order_asset,
+          local: false,
+          amount: this.sell_parameter_token,
+        },
+        send_guest: {
+          uid: this.authService.getLocalStorageUserData().uid,
+          currency: "NGN",
+          local: true,
+          amount: this.sell_parameter_ngn,
+        },
+        p2p_id: this.selectedOrderId,
+        price: this.selectedP2P.order_price,
+        listed_as: this.listed_as.toLowerCase(),
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      }
+      await firebase.firestore().collection("trades").doc(key).set(sell_trading_data);
+      this.toastr.success("Trade successful.");
+      this.button_pressed = false;
+      this.modalService.dismissAll();
+      this.sell_parameter_ngn = "";
+      this.sell_parameter_token = "";
+      this.selectedOrderId = "";
+      this.selectedP2P = null;
+    }catch(err) {
+      this.button_pressed = false;
+      this.toastr.error("An error occurred. Please try again.")
+    }
   }
 
   openModal() {

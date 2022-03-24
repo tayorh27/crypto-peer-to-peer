@@ -1,19 +1,20 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { Observable, of } from 'rxjs';
 import firebase from 'firebase/app';
 import "firebase/firestore";
+import { ToastrService } from 'ngx-toastr';
+import { Observable, of } from 'rxjs';
+import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { AdvancedService } from 'src/app/core/tables/table.service';
 import { AdvancedSortableDirective } from 'src/app/core/tables/table.sortable.directive';
-import { AuthenticationService } from 'src/app/core/services/auth.service';
 
 @Component({
-  selector: 'app-order-history',
-  templateUrl: './order-history.component.html',
-  styleUrls: ['./order-history.component.scss'],
+  selector: 'app-token-transactions',
+  templateUrl: './token-transactions.component.html',
+  styleUrls: ['./token-transactions.component.scss'],
   providers: [AdvancedService, DecimalPipe]
 })
-export class OrderHistoryComponent implements OnInit {
+export class TokenTransactionsComponent implements OnInit {
 
   // bread crumb items
   breadCrumbItems!: Array<{}>;
@@ -28,22 +29,22 @@ export class OrderHistoryComponent implements OnInit {
 
   showSpinner = false;
 
-  constructor(public service: AdvancedService, private authService: AuthenticationService) {
+  constructor(public service: AdvancedService, private authService: AuthenticationService, private toastr: ToastrService) {
     this.tables$ = service.tables$;
     this.total$ = service.total$;
   }
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: 'P2p' },
-      { label: 'P2P Order History', active: true }
+      { label: 'Tokens' },
+      { label: 'Transactions', active: true }
     ];
-    this.getOrderHistory();
+    // this.getTokenTransactions();
   }
 
-  async getOrderHistory() {
+  async getTokenTransactions() {
     const uid = this.authService.getLocalStorageUserData().uid;
-    const query = await firebase.firestore().collection("p2p-transactions").where("created_by.user_id", "==", uid).orderBy("timestamp", "desc").get();
+    const query = await firebase.firestore().collection("token-transactions").where("created_by.user_id", "==", uid).orderBy("timestamp", "desc").get();
     this.showSpinner = false;
     if (query.empty) {
       this.tableData = [];

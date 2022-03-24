@@ -1,0 +1,141 @@
+<!-- start page title -->
+<app-pagetitle title="Tokens" [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
+<!-- end page title -->
+
+<!-- Start Select row -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Send & Receive Token</h4>
+                <p class="card-title-desc">
+                    This platform currently support Binance Smart Chain Network.
+                </p>
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <ul ngbNav #nav2="ngbNav" [activeId]="selectedTab" class="nav-pills centered">
+                                <li ngbNavItem="deposit">
+                                    <a ngbNavLink>
+                                        <span class="d-block d-sm-none"><i
+                                                class="fas fa-home"></i></span>
+                                        <span class="d-none d-sm-block">Deposit {{selectedToken | uppercase}}</span>
+                                    </a>
+                                    <br>
+                                    <ng-template ngbNavContent>
+                                        <div class="row">
+                                            <div class="col-lg-3"></div>
+                                            <div class="col-lg-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Select Network</label>
+                                                    <select class="form-select" [(ngModel)]="selectedNetwork">
+                                                        <option value="bsc">BNB Smart Chain (BEP20)</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Select Token</label>
+                                                    <select class="form-select" [(ngModel)]="selectedToken">
+                                                        <option value="bnb">BNB</option>
+                                                        <option value="usdt">USDT</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">{{selectedToken | uppercase}} Wallet Address</label>
+                                                    <h5>{{walletAddress}} <small><a href="javascript:void(0);" (click)="copyAddress()"><span class="badge badge-soft-success me-1"><i
+                                                        class="mdi mdi-copy-bold me-1"></i>Copy address</span></a></small></h5>
+                                                </div>
+                                                <div *ngIf="walletAddress !== ''" class="mb-3">
+                                                    <label class="form-label">Send {{selectedToken | uppercase}} to this wallet address</label>
+                                                    <qrcode [qrdata]="walletAddress" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3"></div>
+                                        </div>
+                                    </ng-template>
+                                </li>
+                                <li ngbNavItem="withdraw">
+                                    <a ngbNavLink>
+                                        <span class="d-block d-sm-none"><i
+                                                class="far fa-user"></i></span>
+                                        <span class="d-none d-sm-block">Withdraw {{selectedToken | uppercase}}</span>
+                                    </a>
+                                    <br>
+                                    <ng-template ngbNavContent>
+                                        <form [formGroup]="withdrawForm" (ngSubmit)="onSubmit()">
+                                        <div class="row">
+                                            <div class="col-lg-3"></div>
+                                            <div class="col-lg-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Select Network</label>
+                                                    <select class="form-select" [(ngModel)]="selectedNetwork" [ngModelOptions]="{standalone: true}">
+                                                        <option value="bsc">BNB Smart Chain (BEP20)</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Select Token</label>
+                                                    <select class="form-select" [(ngModel)]="selectedToken" [ngModelOptions]="{standalone: true}">
+                                                        <option value="bnb">BNB</option>
+                                                        <option value="usdt">USDT</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Address</label>
+                                                    <input class="form-control" formControlName="address" type="text" [ngClass]="{ 'is-invalid': submitted && f.address.errors }" placeholder="Enter Wallet Address" id="example-number-input">
+                                                    <div *ngIf="submitted && f.address.errors" class="invalid-feedback">
+                                                        <div *ngIf="f.address.errors.required">Wallet address is required</div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Amount</label>
+                                                    <div class="input-group bg-light rounded">
+                                                        <input class="form-control" formControlName="amount" type="number" [ngClass]="{ 'is-invalid': submitted && f.amount.errors }" placeholder="Enter Amount" id="example-number-inputw">
+                                                        <button (click)="setMaxToken()" class="btn btn-warning" type="button" id="button-addon2">
+                                                            MAX {{selectedToken | uppercase}}
+                                                        </button>
+                                                    </div>
+                                                    <div *ngIf="selectedToken === 'usdt'">Available Balance: {{total_usdt_bal}} {{selectedToken | uppercase}}</div>
+                                                    <div *ngIf="selectedToken === 'bnb'">Available Balance: {{total_bnb}} {{selectedToken | uppercase}}</div>
+                                                    <div *ngIf="submitted && f.amount.errors" class="invalid-feedback">
+                                                        <div *ngIf="f.amount.errors.required">Amount is required</div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <div class="card bg-success text-white-50">
+                                                        <div class="card-body">
+                                                            <p class="card-text">Receive amount</p>
+                                                            <h5>{{f.amount.value}} {{selectedToken | uppercase}}</h5>
+                                                            <p class="card-text">Network fee: 0 {{selectedToken | uppercase}}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <div class="card bg-warning text-white-50">
+                                                        <div class="card-body">
+                                                            <h5 class="mt-0 mb-4 text-white text-truncate"><i
+                                                                    class="mdi mdi-bullseye-arrow me-3"></i> Notice</h5>
+                                                            <p class="card-text">Please make sure the withdrawing address supports the selected network</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <button [disabled]="button_pressed" class="btn btn-success" type="submit" id="button-addon2">
+                                                        <i class="bx bxs-paper-plane"></i> {{button_pressed ? 'Please wait...' : 'WITHDRAW '}} {{button_pressed ? '' : selectedToken | uppercase}}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3"></div>
+                                        </div>
+                                        </form>
+                                    </ng-template>
+                                </li>
+                            </ul>
+                            <div [ngbNavOutlet]="nav2" class="text-muted"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end row -->

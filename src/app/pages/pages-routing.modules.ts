@@ -41,6 +41,10 @@ const routes: Routes = [
   {
     path: 'p2p',
     loadChildren: () => import('./p2p-order/p2p-order.module').then(m => m.P2POrderModule)
+  },
+  {
+    path: 'tokens',
+    loadChildren: () => import('./tokens/tokens.module').then(m => m.TokensModule)
   }
 ];
 

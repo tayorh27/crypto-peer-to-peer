@@ -87,6 +87,9 @@ export class CreateOrderComponent implements OnInit {
         return;
       }
       const tokens:any[] = res["tokens"];
+      if(tokens.length === 0) {
+        return;
+      }
       const usdt = tokens.find((val, ind, arr) => {
         return val.symbol === "USDT";
       });
@@ -142,6 +145,8 @@ export class CreateOrderComponent implements OnInit {
 
       this.button_pressed = true;
 
+      const mths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
       const data:P2P = {
         id: key,
         order_id: `${key.substring(1, 8)}`,
@@ -149,6 +154,7 @@ export class CreateOrderComponent implements OnInit {
         listed_as: this.f.type.value === "sell" ? "buy" : "sell",
         order_asset: this.f.asset.value,
         total_amount: Number(this.f.total.value),
+        initial_total_amount: Number(this.f.total.value),
         order_price: Number(this.f.price.value),
         order_limit_min: Number(this.f.limit_min.value),
         order_limit_max: Number(this.f.limit_max.value),
@@ -165,7 +171,10 @@ export class CreateOrderComponent implements OnInit {
           msgId: currentUser.msgID,
           image: currentUser.image,
           number: currentUser.phone_number,
-        }
+        },
+        year: new Date().getFullYear(),
+        month: mths[new Date().getMonth()],
+        day: new Date().getDate(),
       }
 
       await firebase.firestore().collection("p2p-orders").doc(key).set(data);

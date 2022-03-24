@@ -13,6 +13,7 @@
   "dependencies": {
     "@agm/core": "^1.1.0",
     "@angular/animations": "~13.1.2",
+    "@angular/cdk": "~13.1.2",
     "@angular/common": "~13.1.2",
     "@angular/compiler": "~13.1.2",
     "@angular/core": "~13.1.2",
@@ -37,6 +38,7 @@
     "@nicky-lenaers/ngx-scroll-to": "^9.0.0",
     "angular-count-to": "0.0.3",
     "angularx-flatpickr": "^6.6.0",
+    "angularx-qrcode": "^13.0.6",
     "apexcharts": "^3.26.2",
     "bootstrap": "^5.1.1",
     "firebase": "^8.10.1",

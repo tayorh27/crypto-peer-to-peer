@@ -9,6 +9,34 @@
                 <div class="float-end">
                     <div class="avatar-sm mx-auto mb-4">
                         <span class="avatar-title rounded-circle bg-light font-size-24">
+                            <i class="mdi mdi-cart-check text-success"></i>
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-muted text-uppercase fw-semibold">Total BNB</p>
+                    <h4 *ngIf="total_bnb === 0">0</h4>
+                    <h4 class="mb-1 mt-1"><span class="counter-value" [CountTo]="total_bnb" [from]="0" [duration]="1"></span>
+                    </h4>
+                </div>
+                <p class="text-muted mt-3 mb-0">
+                    <a href="javascript:void(0);" (click)="receiveBNB()"><span class="badge badge-soft-success me-1"><i
+                        class="mdi mdi-arrow-up-bold me-1"></i>Deposit</span></a>
+                    <a href="javascript:void(0);" (click)="sendBNB()"><span class="badge badge-soft-danger me-1"><i
+                        class="mdi mdi-arrow-down-bold me-1"></i>Withdraw</span></a>
+                        <a href="javascript:void(0);" (click)="copyWalletAddress()"><span class="badge badge-soft-primary me-1"><i
+                            class="mdi mdi-copy-bold me-1"></i>Copy wallet address</span></a>
+                </p>
+            </div>
+        </div>
+    </div> <!-- end col-->
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="float-end">
+                    <div class="avatar-sm mx-auto mb-4">
+                        <span class="avatar-title rounded-circle bg-light font-size-24">
                             <i class="mdi mdi-cash-multiple text-primary"></i>
                         </span>
                     </div>
@@ -87,30 +115,8 @@
                             class="badge badge-soft-success me-1">View all</span></a>
                     <a href="javascript:void(0);" (click)="createOrder()"><span
                             class="badge badge-soft-success me-1">Create new order</span></a>
-                </p>
-            </div>
-        </div>
-    </div> <!-- end col-->
-
-    <div class="col-md-6 col-xl-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="float-end">
-                    <div class="avatar-sm mx-auto mb-4">
-                        <span class="avatar-title rounded-circle bg-light font-size-24">
-                            <i class="mdi mdi-cart-check text-success"></i>
-                        </span>
-                    </div>
-                </div>
-                <div>
-                    <p class="text-muted text-uppercase fw-semibold">Total Transactions</p>
-                    <h4 *ngIf="total_transactions === 0">0</h4>
-                    <h4 class="mb-1 mt-1"><span class="counter-value" [CountTo]="total_transactions" [from]="0" [duration]="1"></span>
-                    </h4>
-                </div>
-                <p class="text-muted mt-3 mb-0">
-                    <a href="javascript:void(0);" (click)="viewTransactions()"><span
-                        class="badge badge-soft-success me-1">View all</span></a>
+                            <a href="javascript:void(0);" (click)="ViewMyOrders()"><span
+                                class="badge badge-soft-primary me-1">View my orders</span></a>
                 </p>
             </div>
         </div>

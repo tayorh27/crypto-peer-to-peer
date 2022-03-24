@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CountToModule } from 'angular-count-to';
+import {ClipboardModule} from '@angular/cdk/clipboard';
 
 import { ScrollToModule } from '@nicky-lenaers/ngx-scroll-to';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -38,6 +39,7 @@ import { P2POrderModule } from './p2p-order/p2p-order.module';
   ],
   imports: [
     CommonModule,
+    ClipboardModule,
     WidgetModule,
     PagesRoutingModule,
     ScrollToModule.forRoot(),

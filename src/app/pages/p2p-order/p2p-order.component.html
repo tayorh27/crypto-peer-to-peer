@@ -200,6 +200,9 @@
                         <input type="number" name="fundAmt"
                             class="form-control bg-transparent border-0" [(ngModel)]="buy_parameter_ngn" (ngModelChange)="onBuyParameterNgnChange($event)" placeholder="Limit: {{convertTokenToNGN(selectedP2P.order_limit_min) | currency:'₦':'symbol'}} - {{convertTokenToNGN(selectedP2P.order_limit_max) | currency:'₦':'symbol'}}"
                             aria-label="Recipient's username" aria-describedby="button-addon2">
+                            <button [disabled]="button_pressed" (click)="setMaxBuy()" class="btn btn-warning" type="button" id="button-addon2">
+                                MAX
+                            </button>
                     </div>
                     <div>TOTAL NGN: {{total_ngn_bal | currency:'₦':'symbol'}}</div>
                     <br>
@@ -215,6 +218,53 @@
                     </button>
                     <button [disabled]="button_pressed" (click)="submitBuyToken()" class="btn btn-success" type="button" id="button-addon2">
                         <i class="bx bxs-paper-plane"></i> {{button_pressed ? 'TRADING...' : 'BUY USDT'}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #sellContent let-modal>
+    <div class="modal-header border-bottom-0">
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"> </button>
+    </div>
+    <div class="modal-body">
+        <div class="text-center mb-4">
+            <div class="avatar-md mx-auto mb-4">
+                <div class="avatar-title bg-light rounded-circle text-primary h1">
+                    <i class="mdi mdi-email-open"></i>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-xl-10">
+                    <h4 class="text-primary">SELL {{order_asset}}</h4>
+                    <p class="text-muted font-size-14 mb-4">Transfer fee: FREE</p>
+                    <p class="text-muted font-size-14 mb-4">Order Price: {{selectedP2P.order_price | currency:'₦':'symbol'}}</p>
+                    <label class="form-label">I Want to sell: </label>
+                    <div class="input-group bg-light rounded">
+                        <input type="number" name="fundAmt"
+                            class="form-control bg-transparent border-0" [(ngModel)]="sell_parameter_token" (ngModelChange)="onSellParameterUSDTChange($event)" placeholder="Amount you want to sell"
+                            aria-label="Recipient's username" aria-describedby="button-addon2">
+                            <button [disabled]="button_pressed" (click)="setMaxSell()" class="btn btn-warning" type="button" id="button-addon2">
+                                MAX
+                            </button>
+                    </div>
+                    <div>TOTAL USDT BALANCE: {{total_frozen_usdt_bal}} USDT</div>
+                    <br>
+                    <label class="form-label">Amount in NGN you will receive: </label>
+                    <div class="input-group bg-light rounded">
+                        <input type="number" name="fundAmt" [disabled]="true"
+                            class="form-control bg-transparent border-0" [(ngModel)]="sell_parameter_ngn" placeholder="Amount in NGN you will receive."
+                            aria-label="Recipient's username" aria-describedby="button-addon2">
+                    </div>
+                    <div>Limit: {{selectedP2P.order_limit_min | currency:'₦':'symbol'}} - {{selectedP2P.order_limit_max | currency:'₦':'symbol'}}</div>
+                    <br>
+                    <button [disabled]="button_pressed" style="margin-right: 20px;" class="btn btn-danger" (click)="closeModal()" type="button" id="button-addon2">
+                        Cancel
+                    </button>
+                    <button [disabled]="button_pressed" (click)="submitSellToken()" class="btn btn-success" type="button" id="button-addon2">
+                        <i class="bx bxs-paper-plane"></i> {{button_pressed ? 'TRADING...' : 'SELL USDT'}}
                     </button>
                 </div>
             </div>
