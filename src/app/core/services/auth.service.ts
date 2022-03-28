@@ -28,8 +28,8 @@ export class AuthenticationService {
 
     getLocalStorageUserData() {
         let data = sessionStorage.getItem("authUser");
-        if (data == null) {
-            data = "{}"
+        if (data === null) {
+            return JSON.parse("{}");
         }
         var json = JSON.parse(data);
         return json;

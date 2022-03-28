@@ -45,23 +45,24 @@ export class MyOrdersComponent implements OnInit {
 
   async getOrders() {
     const uid = this.authService.getLocalStorageUserData().uid;
-    const query = await firebase.firestore().collection("p2p-orders").where("created_by.user_id", "==", uid).orderBy("timestamp", "desc").get();
-    this.showSpinner = false;
-    if (query.empty) {
+    firebase.firestore().collection("p2p-orders").where("created_by.user_id", "==", uid).orderBy("timestamp", "desc").onSnapshot(query => {
+      this.showSpinner = false;
+      if (query.empty) {
+        this.tableData = [];
+        this.tables$ = of([]);
+        this.total$ = of(0);
+        return;
+      }
       this.tableData = [];
-      this.tables$ = of([]);
-      this.total$ = of(0);
-      return;
-    }
-    this.tableData = [];
-    query.docs.forEach(doc => {
-      const orders = doc.data();
-      this.tableData.push(orders);
+      query.docs.forEach(doc => {
+        const orders = doc.data();
+        this.tableData.push(orders);
+      });
+      // this.service.setTableData(this.tableData);
+      // this.service._search();
+      this.tables$ = of(this.tableData);
+      this.total$ = of(query.size);
     });
-    // this.service.setTableData(this.tableData);
-    // this.service._search();
-    this.tables$ = of(this.tableData);
-    this.total$ = of(query.size);
   }
 
   deleteOrder(orderId: any) {

@@ -67,6 +67,8 @@ class FirebaseAuthBackend {
     logout = () => {
         return new Promise((resolve, reject) => {
             firebase.auth().signOut().then(() => {
+                sessionStorage.clear();
+                localStorage.clear();
                 resolve(true);
             }).catch((error) => {
                 reject(this._handleError(error));

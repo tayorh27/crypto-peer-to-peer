@@ -231,7 +231,7 @@ export class P2POrderComponent implements OnInit, OnDestroy {
   }
 
   onBuyParameterNgnChange(evt: any) {
-    this.buy_parameter_token = (Number(this.buy_parameter_ngn) / this.selectedP2P.order_price).toFixed(2).toString();
+    this.buy_parameter_token = (Number(this.buy_parameter_ngn) / this.selectedP2P.order_price).toString(); //.fixed
   }
 
   convertTokenToNGN(value: any) {
@@ -240,7 +240,7 @@ export class P2POrderComponent implements OnInit, OnDestroy {
 
   setMaxBuy() {
     this.buy_parameter_ngn = this.convertTokenToNGN(this.selectedP2P.order_limit_max);
-    this.buy_parameter_token = (Number(this.buy_parameter_ngn) / this.selectedP2P.order_price).toFixed(2).toString();
+    this.buy_parameter_token = (Number(this.buy_parameter_ngn) / this.selectedP2P.order_price).toString(); //.fixed
   }
 
   async submitBuyToken() {
@@ -268,12 +268,14 @@ export class P2POrderComponent implements OnInit, OnDestroy {
       send_creator: {
         uid: this.selectedP2P.created_by.user_id,
         currency: "NGN",
-        amount: this.buy_parameter_ngn,
+        local: true,
+        amount: Number(this.buy_parameter_ngn),
       },
       send_guest: {
         uid: this.authService.getLocalStorageUserData().uid,
         currency: this.order_asset,
-        amount: this.buy_parameter_token,
+        local: false,
+        amount: Number(this.buy_parameter_token),
       },
       price: this.selectedP2P.order_price,
       p2p_id: this.selectedOrderId,
@@ -304,7 +306,7 @@ export class P2POrderComponent implements OnInit, OnDestroy {
   }
 
   async submitSellToken() {
-    if(Number(this.sell_parameter_token) > this.total_frozen_usdt_bal) {
+    if(Number(this.sell_parameter_token) > this.total_usdt_bal) {
       this.toastr.error(`Your USDT frozen account balance is insufficient to perform this trade.`);
       return;
     }
@@ -329,13 +331,13 @@ export class P2POrderComponent implements OnInit, OnDestroy {
           uid: this.selectedP2P.created_by.user_id,
           currency: this.order_asset,
           local: false,
-          amount: this.sell_parameter_token,
+          amount: Number(this.sell_parameter_token),
         },
         send_guest: {
           uid: this.authService.getLocalStorageUserData().uid,
           currency: "NGN",
           local: true,
-          amount: this.sell_parameter_ngn,
+          amount: Number(this.sell_parameter_ngn),
         },
         p2p_id: this.selectedOrderId,
         price: this.selectedP2P.order_price,

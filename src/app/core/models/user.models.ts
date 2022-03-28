@@ -7,7 +7,7 @@ export interface CryptoUser {
     user_type?:string
     user_role_type?:string//owner, staff
     email_verified?:boolean
-    blocked?:boolean
+    blocked:boolean
     role:string
     access_levels:string
     created_date?:string

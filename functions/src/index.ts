@@ -10,12 +10,15 @@ import * as Web3 from "web3";
 import {Eth} from "web3-eth";
 import {Utils, AbiItem} from "web3-utils";
 
-// import Moralis from "moralis/node";
+import * as MoralCall from "moralis/node";
+const Moralis: any = MoralCall;
+// const Moralis = require("moralis/node");
 
 // const MAINNET_URL = "https://speedy-nodes-nyc.moralis.io/5010f4e56176a3b962308c97/bsc/mainnet";
 const TESTNET_URL = "https://speedy-nodes-nyc.moralis.io/5010f4e56176a3b962308c97/bsc/testnet";
 const web3: Eth = new (Web3 as any)(TESTNET_URL).eth;
 const web3Utils: Utils = new (Web3 as any)(TESTNET_URL).utils;
+// const Moralis = (moralis as any).default;
 // const web3 = Web3(TESTNET_URL);
 // import {BncClient} from "@binance-chain/javascript-sdk";
 
@@ -39,8 +42,16 @@ const flw = new Flutterwave(FLW_PUBLIC, FLW_SECRET);
 const MORALIS_WEB_API_URL = "https://deep-index.moralis.io/api/v2";
 const MORALIS_API_KEY = "nXzfwhU9EZQXT8JQWSjxhMOlfOXyEY9PLqpKBdpqSAaDlgCRSZ4SJM7F5GYOTX6l";
 const USDT_CONTRACT_ADDRESS = "0x337610d27c682e347c9cd60bd4b3b107c9d34ddd";
-const ADMIN_USDT_WALLET = "0x3d6A762aEDC6420CC83Fab34073EEcA2d211931b";
-const ADMIN_USDT_WALLET_PRIVATE_KEY = "f21d083d58e9c844ebca2f3d35de6c7d200e59a43e83b10753e8fc7bbb47405c";
+
+// const ADMIN_CONTRACT_WALLET_ADDRESS = "0x3d6A762aEDC6420CC83Fab34073EEcA2d211931b";
+// const ADMIN_CONTRACT_WALLET_PRIVATE_KEY = "f21d083d58e9c844ebca2f3d35de6c7d200e59a43e83b10753e8fc7bbb47405c";
+const ADMIN_CONTRACT_ADDRESS = "0x6FB283B463efb88e9796eD38a50e8326aF708E60"; // "0xED09fB64826F58EE5A704461c28C3D562a1279E8";
+
+// const ADMIN_PROFIT_WALLET_ADDRESS = "";
+// const ADMIN_PROFIT_WALLET_ADDRESS_PRIVATE_KEY = "";
+
+const ADMIN_TRANSACTION_WALLET_ADDRESS = "0x3d6A762aEDC6420CC83Fab34073EEcA2d211931b"; // owner address for contract
+const ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY = "f21d083d58e9c844ebca2f3d35de6c7d200e59a43e83b10753e8fc7bbb47405c";
 
 
 export const flutterwave = functions.https.onRequest(async (request, response) => {
@@ -169,7 +180,7 @@ export const onOrderCreated = functions.firestore.document("/p2p-orders/{id}").o
       // get wallet data
       const userWallet = await admin.firestore().collection("users").doc(data.created_by.user_id).collection("wallet").doc("ngn-wallet").get();
       const walletData = userWallet.data() ?? {};
-      const totalAmt = walletData.total_amount;
+      const totalAmt = walletData["total-amount"];
       if (data.total_amount > totalAmt) {
         emailSubject = "P2P ORDER STATUS UPDATE";
         emailContent = `Your P2P Order, ${data.order_id} cannot be processed because your wallet balance is not sufficient to perform this order. Please update your order from your dashboard.`;
@@ -177,7 +188,7 @@ export const onOrderCreated = functions.firestore.document("/p2p-orders/{id}").o
         return;
       }
       // update frozen and total
-      const newTotalAmt = (totalAmt - data.total_amount) * -1;
+      const newTotalAmt = data.total_amount * -1;
       await admin.firestore().collection("users").doc(data.created_by.user_id).collection("wallet").doc("ngn-wallet").update({
         "total-amount": admin.firestore.FieldValue.increment(newTotalAmt),
         "frozen-amount": admin.firestore.FieldValue.increment(data.total_amount),
@@ -213,11 +224,12 @@ export const onOrderCreated = functions.firestore.document("/p2p-orders/{id}").o
     // freeze the total amount
     // reduce allowance to zero
     // update address approved amount
-    const freeze = await freezeToken(data.total_amount, userData.address, userData.privateKey, "freeze");
+    const freeze = await freezeToken(data.total_amount, userData.privateKey, userData.address);
+    console.log(freeze);
     if (freeze["status"]) {
       // update frozen and total
       await admin.firestore().collection("users").doc(data.created_by.user_id).collection("wallet").doc("usdt-wallet").update({
-        "frozen-amount": admin.firestore.FieldValue.increment(data.total_amount),
+        "frozen-amount": admin.firestore.FieldValue.increment(data.total_amount), // minus transaction fee
       });
 
       // update status
@@ -237,7 +249,8 @@ export const onOrderCreated = functions.firestore.document("/p2p-orders/{id}").o
 });
 
 export const onOrderUpdated = functions.firestore.document("/p2p-orders/{id}").onUpdate(async (snapshot, context) => {
-  await freezeToken(0, "", "", "");
+  // await freezeToken(0, "", "", "");
+  console.log("hello");
 });
 
 export const onOrderDeleted = functions.firestore.document("/p2p-orders/{id}").onDelete(async (snapshot, context) => {
@@ -273,10 +286,10 @@ export const onOrderDeleted = functions.firestore.document("/p2p-orders/{id}").o
   }
 
 
-  if (totalAmt > 0) {
+  if ((totalAmt > 0 && data.status === "expired") || (totalAmt > 0 && data.status === "approved")) {
     const newAmt = totalAmt * -1;
     if (orderType === "sell") {
-      const unfreeze = await freezeToken(totalAmt, userData.address, userData.privateKey, "unfreeze");
+      const unfreeze = await unfreezeToken(totalAmt, userData.address);
       if (unfreeze.status) {
         await admin.firestore().collection("users").doc(uid).collection("wallet").doc("usdt-wallet").update({
           "frozen-amount": admin.firestore.FieldValue.increment(newAmt),
@@ -285,7 +298,7 @@ export const onOrderDeleted = functions.firestore.document("/p2p-orders/{id}").o
         emailContent = `Your P2P Order, ${data.order_id} has been deleted successfully.\n\n ${totalAmt} USDT has been moved from your locked wallet to your active wallet.`;
       }
     } else { // order = buy
-      await admin.firestore().collection("users").doc(uid).collection("wallet").doc("ngn-wallet").update({
+      await admin.firestore().collection("users").doc(`${uid}`).collection("wallet").doc("ngn-wallet").update({
         "total-amount": admin.firestore.FieldValue.increment(totalAmt),
         "frozen-amount": admin.firestore.FieldValue.increment(newAmt),
       });
@@ -331,240 +344,275 @@ export const onTradeCreated = functions.firestore.document("/trades/{id}").onCre
     return;
   }
 
-
-  if (data.listed_as === "buy") {
+  try {
+    if (data.listed_as === "buy") {
     // send creator ngn and debit guest ngn
 
-    // send creator ngn
-    await admin.firestore().collection("users").doc(creatorUid).collection("wallet").doc("ngn-wallet").update({
-      "total-amount": admin.firestore.FieldValue.increment(data.send_creator.amount),
-    });
+      // send guest token from creator -- const sendGuestTokenFromCreator =
+      const gtrf = await transferTokenBuy(data.send_guest.amount, guestUserData.address);
+      console.log(gtrf);
 
-    // deduct ngn from guest
-    const deductAmount = data.send_creator.amount * -1;
-    await admin.firestore().collection("users").doc(guestUid).collection("wallet").doc("ngn-wallet").update({
-      "total-amount": admin.firestore.FieldValue.increment(deductAmount),
-    });
+      if (!gtrf.status) {
+        await admin.firestore().collection("p2p-orders").doc(data.p2p_id).update({
+          "is_user_ordering": false,
+          "updated_by": "trade-system",
+        });
+        const emailSubject = "P2P TRADE STATUS UPDATE";
+        const emailContent = `Your trade order cannot be processed because:\n\n${gtrf.message}`;
+        await sendGeneralEmail(guestUserData.email, emailSubject, emailContent);
+        return;
+      }
 
-    // send guest token from creator -- const sendGuestTokenFromCreator =
-    await transferToken(data.send_guest.amount, ADMIN_USDT_WALLET, guestUserData.address, ADMIN_USDT_WALLET_PRIVATE_KEY);
+      // send creator ngn
+      await admin.firestore().collection("users").doc(creatorUid).collection("wallet").doc("ngn-wallet").update({
+        "total-amount": admin.firestore.FieldValue.increment(data.send_creator.amount),
+      });
 
-    // deduct token amount from creator
-    const newTokenAmt = data.send_guest.amount * -1;
-    await admin.firestore().collection("users").doc(creatorUid).collection("wallet").doc("usdt-wallet").update({
-      "frozen-amount": admin.firestore.FieldValue.increment(newTokenAmt),
-    });
+      // deduct ngn from guest
+      const deductAmount = data.send_creator.amount * -1;
+      await admin.firestore().collection("users").doc(guestUid).collection("wallet").doc("ngn-wallet").update({
+        "total-amount": admin.firestore.FieldValue.increment(deductAmount),
+      });
 
-    // update p2p data;
-    const p2pData = await admin.firestore().collection("p2p-orders").doc(data.p2p_id).get();
-    const pData = p2pData.data();
-    if (pData === undefined) {
-      return;
-    }
-    const pTotal = pData.total_amount;
-    const pMin = pData.order_limit_min;
+      // deduct token amount from creator
+      const newTokenAmt = data.send_guest.amount * -1;
+      await admin.firestore().collection("users").doc(creatorUid).collection("wallet").doc("usdt-wallet").update({
+        "frozen-amount": admin.firestore.FieldValue.increment(newTokenAmt),
+      });
 
-    const newPTotal = pTotal - data.send_guest.amount; // same as max
+      // update p2p data;
+      const p2pData = await admin.firestore().collection("p2p-orders").doc(data.p2p_id).get();
+      const pData = p2pData.data();
+      if (pData === undefined) {
+        return;
+      }
+      const pTotal = pData.total_amount;
+      const pMin = pData.order_limit_min;
 
-    await admin.firestore().collection("p2p-orders").doc(data.p2p_id).update({
-      "total_amount": newPTotal,
-      "order_limit_max": newPTotal,
-      "order_limit_min": (newPTotal <= 0) ? 0 : pMin, // (newPTotal < pMin) ? (pMin) : pMin,
-      "status": (newPTotal <= 0) ? "expired" : pData.status,
-      "is_user_ordering": newPTotal > 0 ? false : true,
-      "updated_by": "trade-system",
-    });
+      const newPTotal = pTotal - data.send_guest.amount; // same as max
 
-    // record order transaction for creator
-    const creatorKey = admin.firestore().collection("p2p-transactions").doc().id;
-    const creatorTransData = {
-      id: creatorKey,
-      received: {
-        currency: data.send_creator.currency,
-        amount: data.send_creator.amount,
-      },
-      sent: {
-        currency: data.send_guest.currency,
-        amount: data.send_guest.amount,
-      },
-      p2p_id: data.p2p_id,
-      listed_as: data.listed_as,
-      timestamp: admin.firestore.FieldValue.serverTimestamp(),
-      created_date: `${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`,
-      created_by: {
-        user_id: creatorUid,
-        email: creatorUserData.email,
-        name: creatorUserData.name,
-        msgId: creatorUserData.msgID,
-        image: creatorUserData.image,
-        number: creatorUserData.phone_number,
-      },
-      year: new Date().getFullYear(),
-      month: mths[new Date().getMonth()],
-      day: new Date().getDate(),
-    };
-    await admin.firestore().collection("p2p-transactions").doc(creatorKey).set(creatorTransData);
+      await admin.firestore().collection("p2p-orders").doc(data.p2p_id).update({
+        "total_amount": newPTotal,
+        "order_limit_max": newPTotal,
+        "order_limit_min": (newPTotal < pMin) ? 1 : pMin, // (newPTotal < pMin) ? (pMin) : pMin,
+        "status": (newPTotal <= 0) ? "expired" : pData.status,
+        "is_user_ordering": newPTotal > 0 ? false : true,
+        "updated_by": "trade-system",
+      });
 
-    const guestKey = admin.firestore().collection("p2p-transactions").doc().id;
-    const guestTransData = {
-      id: guestKey,
-      received: {
-        currency: data.send_guest.currency,
-        local: data.send_guest.local,
-        amount: data.send_guest.amount,
-      },
-      sent: {
-        currency: data.send_creator.currency,
-        local: data.send_creator.local,
-        amount: data.send_creator.amount,
-      },
-      p2p_id: data.p2p_id,
-      order_price: data.price,
-      listed_as: data.listed_as,
-      timestamp: admin.firestore.FieldValue.serverTimestamp(),
-      created_date: `${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`,
-      created_by: {
-        user_id: guestUid,
-        email: guestUserData.email,
-        name: guestUserData.name,
-        msgId: guestUserData.msgID,
-        image: guestUserData.image,
-        number: guestUserData.phone_number,
-      },
-      year: new Date().getFullYear(),
-      month: mths[new Date().getMonth()],
-      day: new Date().getDate(),
-    };
-    await admin.firestore().collection("p2p-transactions").doc(guestKey).set(guestTransData);
+      // record order transaction for creator
+      const creatorKey = admin.firestore().collection("p2p-transactions").doc().id;
+      const creatorTransData = {
+        id: creatorKey,
+        received: {
+          currency: data.send_creator.currency,
+          local: data.send_creator.local,
+          amount: data.send_creator.amount,
+        },
+        sent: {
+          currency: data.send_guest.currency,
+          local: data.send_guest.local,
+          amount: data.send_guest.amount,
+        },
+        p2p_id: data.p2p_id,
+        order_price: data.price,
+        listed_as: data.listed_as,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        created_date: `${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`,
+        created_by: {
+          user_id: creatorUid,
+          email: creatorUserData.email,
+          name: creatorUserData.name,
+          msgId: creatorUserData.msgID,
+          image: creatorUserData.image,
+          number: creatorUserData.phone_number,
+        },
+        year: new Date().getFullYear(),
+        month: mths[new Date().getMonth()],
+        day: new Date().getDate(),
+      };
+      await admin.firestore().collection("p2p-transactions").doc(creatorKey).set(creatorTransData);
 
-    // send creator email
-    const cSubject = "P2P TRADE CONFIRMATION";
-    const cContent = `<strong>NGN ${data.send_creator.amount}</strong> has successfully been transferred to your NGN Wallet which is equivalent to ${data.send_guest.amount} ${data.send_guest.currency} you sold.<br><br>Check your dashboard for your transaction details.`;
-    await sendGeneralEmail(creatorUserData.email, cSubject, cContent);
+      const guestKey = admin.firestore().collection("p2p-transactions").doc().id;
+      const guestTransData = {
+        id: guestKey,
+        received: {
+          currency: data.send_guest.currency,
+          local: data.send_guest.local,
+          amount: data.send_guest.amount,
+        },
+        sent: {
+          currency: data.send_creator.currency,
+          local: data.send_creator.local,
+          amount: data.send_creator.amount,
+        },
+        p2p_id: data.p2p_id,
+        order_price: data.price,
+        listed_as: data.listed_as,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        created_date: `${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`,
+        created_by: {
+          user_id: guestUid,
+          email: guestUserData.email,
+          name: guestUserData.name,
+          msgId: guestUserData.msgID,
+          image: guestUserData.image,
+          number: guestUserData.phone_number,
+        },
+        year: new Date().getFullYear(),
+        month: mths[new Date().getMonth()],
+        day: new Date().getDate(),
+      };
+      await admin.firestore().collection("p2p-transactions").doc(guestKey).set(guestTransData);
 
-    // send guest email
-    const gSubject = "P2P TRADE CONFIRMATION";
-    const gContent = `<strong>${data.send_guest.amount} ${data.send_guest.currency}</strong> has successfully been transferred to your ${data.send_guest.currency} Wallet which is equivalent to <strong>NGN ${data.send_creator.amount}</strong> you sold.<br><br>Check your dashboard for your transaction details.`;
-    await sendGeneralEmail(guestUserData.email, gSubject, gContent);
+      // send creator email
+      const cSubject = "P2P TRADE CONFIRMATION";
+      const cContent = `<strong>NGN ${data.send_creator.amount}</strong> has successfully been transferred to your NGN Wallet which is equivalent to ${data.send_guest.amount} ${data.send_guest.currency}.<br><br>Check your dashboard for your transaction details.`;
+      await sendGeneralEmail(creatorUserData.email, cSubject, cContent);
 
-    // delete trade data
-    await admin.firestore().collection("trades").doc(data.id).delete();
-  
-  } else {
+      // send guest email
+      const gSubject = "P2P TRADE CONFIRMATION";
+      const gContent = `<strong>${data.send_guest.amount} ${data.send_guest.currency}</strong> has successfully been transferred to your ${data.send_guest.currency} Wallet which is equivalent to <strong>NGN ${data.send_creator.amount}</strong>.<br><br>Check your dashboard for your transaction details.`;
+      await sendGeneralEmail(guestUserData.email, gSubject, gContent);
+
+      // delete trade data
+      await admin.firestore().collection("trades").doc(data.id).delete();
+    } else {
     // send guest ngn and debit creator ngn
 
-    // send guest ngn
-    await admin.firestore().collection("users").doc(guestUid).collection("wallet").doc("ngn-wallet").update({
-      "total-amount": admin.firestore.FieldValue.increment(data.send_guest.amount),
-    });
+      // send creator token from guest
+      const trf = await transferTokenSell(data.send_creator.amount, guestUserData.privateKey, guestUserData.address, creatorUserData.address);
+      console.log(trf);
+      if (!trf.status) {
+        await admin.firestore().collection("p2p-orders").doc(data.p2p_id).update({
+          "is_user_ordering": false,
+          "updated_by": "trade-system",
+        });
+        const emailSubject = "P2P TRADE STATUS UPDATE";
+        const emailContent = `Your trade order cannot be processed because:\n\n${trf.message}`;
+        await sendGeneralEmail(guestUserData.email, emailSubject, emailContent);
+        return;
+      }
 
-    // deduct ngn from creator
-    const deductAmount = data.send_guest.amount * -1;
-    await admin.firestore().collection("users").doc(creatorUid).collection("wallet").doc("ngn-wallet").update({
-      "total-amount": admin.firestore.FieldValue.increment(deductAmount),
-    });
+      // send guest ngn
+      await admin.firestore().collection("users").doc(guestUid).collection("wallet").doc("ngn-wallet").update({
+        "total-amount": admin.firestore.FieldValue.increment(data.send_guest.amount),
+      });
 
-    // send creator token from guest
-    await transferToken(data.send_creator.amount, ADMIN_USDT_WALLET, creatorUserData.address, ADMIN_USDT_WALLET_PRIVATE_KEY);
+      // deduct ngn from creator
+      const deductAmount = data.send_guest.amount * -1;
+      await admin.firestore().collection("users").doc(creatorUid).collection("wallet").doc("ngn-wallet").update({
+        "total-amount": admin.firestore.FieldValue.increment(deductAmount),
+      });
 
-    // deduct token amount from guest
-    const newTokenAmt = data.send_creator.amount * -1;
-    await admin.firestore().collection("users").doc(guestUid).collection("wallet").doc("usdt-wallet").update({
-      "frozen-amount": admin.firestore.FieldValue.increment(newTokenAmt),
-    });
+      // deduct token amount from guest
+      // const newTokenAmt = data.send_creator.amount * -1;
+      // await admin.firestore().collection("users").doc(guestUid).collection("wallet").doc("usdt-wallet").update({
+      //   "frozen-amount": admin.firestore.FieldValue.increment(newTokenAmt),
+      // });
 
-    // update p2p data;
-    const p2pData = await admin.firestore().collection("p2p-orders").doc(data.p2p_id).get();
-    const pData = p2pData.data();
-    if (pData === undefined) {
-      return;
+      // update p2p data;
+      const p2pData = await admin.firestore().collection("p2p-orders").doc(data.p2p_id).get();
+      const pData = p2pData.data();
+      if (pData === undefined) {
+        return;
+      }
+      const pTotal = pData.total_amount;
+      const pMin = pData.order_limit_min;
+
+      const newPTotal = pTotal - data.send_guest.amount; // same as max
+
+      await admin.firestore().collection("p2p-orders").doc(data.p2p_id).update({
+        "total_amount": newPTotal,
+        "order_limit_max": newPTotal,
+        "order_limit_min": (newPTotal <= 0) ? 0 : pMin, // (newPTotal < pMin) ? (pMin) : pMin,
+        "status": (newPTotal <= 0) ? "expired" : pData.status,
+        "is_user_ordering": newPTotal > 0 ? false : true,
+        "updated_by": "trade-system",
+      });
+
+      // record order transaction for creator
+      const creatorKey = admin.firestore().collection("p2p-transactions").doc().id;
+      const creatorTransData = {
+        id: creatorKey,
+        received: {
+          currency: data.send_creator.currency,
+          amount: data.send_creator.amount,
+        },
+        sent: {
+          currency: data.send_guest.currency,
+          amount: data.send_guest.amount,
+        },
+        order_price: data.price,
+        p2p_id: data.p2p_id,
+        listed_as: data.listed_as,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        created_date: `${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`,
+        created_by: {
+          user_id: creatorUid,
+          email: creatorUserData.email,
+          name: creatorUserData.name,
+          msgId: creatorUserData.msgID,
+          image: creatorUserData.image,
+          number: creatorUserData.phone_number,
+        },
+        year: new Date().getFullYear(),
+        month: mths[new Date().getMonth()],
+        day: new Date().getDate(),
+      };
+      await admin.firestore().collection("p2p-transactions").doc(creatorKey).set(creatorTransData);
+
+      const guestKey = admin.firestore().collection("p2p-transactions").doc().id;
+      const guestTransData = {
+        id: guestKey,
+        received: {
+          currency: data.send_guest.currency,
+          amount: data.send_guest.amount,
+        },
+        sent: {
+          currency: data.send_creator.currency,
+          amount: data.send_creator.amount,
+        },
+        p2p_id: data.p2p_id,
+        listed_as: data.listed_as,
+        order_price: data.price,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        created_date: `${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`,
+        created_by: {
+          user_id: guestUid,
+          email: guestUserData.email,
+          name: guestUserData.name,
+          msgId: guestUserData.msgID,
+          image: guestUserData.image,
+          number: guestUserData.phone_number,
+        },
+        year: new Date().getFullYear(),
+        month: mths[new Date().getMonth()],
+        day: new Date().getDate(),
+      };
+      await admin.firestore().collection("p2p-transactions").doc(guestKey).set(guestTransData);
+
+      // send guest email
+      const gSubject = "P2P TRADE CONFIRMATION";
+      const gContent = `<strong>NGN ${data.send_guest.amount}</strong> has successfully been transferred to your NGN Wallet which is equivalent to ${data.send_creator.amount} ${data.send_creator.currency}.<br><br>Check your dashboard for your transaction details.`;
+      await sendGeneralEmail(guestUserData.email, gSubject, gContent);
+
+      // send creator email
+      const cSubject = "P2P TRADE CONFIRMATION";
+      const cContent = `<strong>${data.send_creator.amount} ${data.send_creator.currency}</strong> has successfully been transferred to your ${data.send_creator.currency} Wallet which is equivalent to <strong>NGN ${data.send_guest.amount}</strong>.<br><br>Check your dashboard for your transaction details.`;
+      await sendGeneralEmail(creatorUserData.email, cSubject, cContent);
+
+      // delete trade data
+      await admin.firestore().collection("trades").doc(data.id).delete();
     }
-    const pTotal = pData.total_amount;
-    const pMin = pData.order_limit_min;
-
-    const newPTotal = pTotal - data.send_guest.amount; // same as max
-
+  } catch (err) {
     await admin.firestore().collection("p2p-orders").doc(data.p2p_id).update({
-      "total_amount": newPTotal,
-      "order_limit_max": newPTotal,
-      "order_limit_min": (newPTotal <= 0) ? 0 : pMin, //(newPTotal < pMin) ? (pMin) : pMin,
-      "status": (newPTotal <= 0) ? "expired" : pData.status,
-      "is_user_ordering": newPTotal > 0 ? false : true,
+      "is_user_ordering": false,
       "updated_by": "trade-system",
     });
-
-    // record order transaction for creator
-    const creatorKey = admin.firestore().collection("p2p-transactions").doc().id;
-    const creatorTransData = {
-      id: creatorKey,
-      received: {
-        currency: data.send_creator.currency,
-        amount: data.send_creator.amount,
-      },
-      sent: {
-        currency: data.send_guest.currency,
-        amount: data.send_guest.amount,
-      },
-      order_price: data.price,
-      p2p_id: data.p2p_id,
-      listed_as: data.listed_as,
-      timestamp: admin.firestore.FieldValue.serverTimestamp(),
-      created_date: `${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`,
-      created_by: {
-        user_id: creatorUid,
-        email: creatorUserData.email,
-        name: creatorUserData.name,
-        msgId: creatorUserData.msgID,
-        image: creatorUserData.image,
-        number: creatorUserData.phone_number,
-      },
-      year: new Date().getFullYear(),
-      month: mths[new Date().getMonth()],
-      day: new Date().getDate(),
-    };
-    await admin.firestore().collection("p2p-transactions").doc(creatorKey).set(creatorTransData);
-
-    const guestKey = admin.firestore().collection("p2p-transactions").doc().id;
-    const guestTransData = {
-      id: guestKey,
-      received: {
-        currency: data.send_guest.currency,
-        amount: data.send_guest.amount,
-      },
-      sent: {
-        currency: data.send_creator.currency,
-        amount: data.send_creator.amount,
-      },
-      p2p_id: data.p2p_id,
-      listed_as: data.listed_as,
-      timestamp: admin.firestore.FieldValue.serverTimestamp(),
-      created_date: `${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`,
-      created_by: {
-        user_id: guestUid,
-        email: guestUserData.email,
-        name: guestUserData.name,
-        msgId: guestUserData.msgID,
-        image: guestUserData.image,
-        number: guestUserData.phone_number,
-      },
-      year: new Date().getFullYear(),
-      month: mths[new Date().getMonth()],
-      day: new Date().getDate(),
-    };
-    await admin.firestore().collection("p2p-transactions").doc(guestKey).set(guestTransData);
-
-    // send guest email
-    const gSubject = "P2P TRADE CONFIRMATION";
-    const gContent = `<strong>NGN ${data.send_guest.amount}</strong> has successfully been transferred to your NGN Wallet which is equivalent to ${data.send_creator.amount} ${data.send_creator.currency}.<br><br>Check your dashboard for your transaction details.`;
-    await sendGeneralEmail(guestUserData.email, gSubject, gContent);
-
-    // send creator email
-    const cSubject = "P2P TRADE CONFIRMATION";
-    const cContent = `<strong>${data.send_creator.amount} ${data.send_creator.currency}</strong> has successfully been transferred to your ${data.send_creator.currency} Wallet which is equivalent to <strong>NGN ${data.send_guest.amount}</strong>.<br><br>Check your dashboard for your transaction details.`;
-    await sendGeneralEmail(creatorUserData.email, cSubject, cContent);
-
-    // delete trade data
-    await admin.firestore().collection("trades").doc(data.id).delete();
+    const emailSubject = "P2P TRADE STATUS UPDATE";
+    const emailContent = `Your trade order cannot be processed because:\n\n${err}`;
+    await sendGeneralEmail(data.created_by.email, emailSubject, emailContent);
   }
 });
 
@@ -860,54 +908,34 @@ export const getnigeriabanks = functions.https.onRequest(async (request, respons
   }
 });
 
-async function transferToken(amount: any, fromAddr: any, toAddr: any, privateKey: any) {
-  web3.accounts.wallet.add(privateKey); // "0x3d6A762aEDC6420CC83Fab34073EEcA2d211931b"
-  const gasP = await web3.getGasPrice();
-  const contract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS, {gas: 5000000, gasPrice: gasP});
-  // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
-  const amt = web3Utils.toWei(`${amount}`, "ether");
-  const res = await contract.methods.transfer(toAddr, amt).send({from: fromAddr});
-  return res;
-
-  // let returnResponse = {};
-  // await bnbClient.setPrivateKey(privateKey);
-  // await bnbClient.initChain();
-  // const httpClient = axios.default.create({baseURL: api});
-  // const addressFrom = fromAddr; // bnbClient.getClientKeyAddress() // sender address string (e.g. bnb1...)
-  // const sequenceURL = `${api}api/v1/account/${addressFrom}/sequence`;
-
-  // try {
-  //   const res = await httpClient.get(sequenceURL);
-  //   const sequence = res.data.sequence || 0;
-  //   const result = await bnbClient.transfer(
-  //       addressFrom,
-  //       toAddr,
-  //       amount,
-  //       asset,
-  //       message,
-  //       sequence
-  //   );
-  //   console.log(result);
-  //   if (result.status === 200) {
-  //     returnResponse = {"status": true, "result": result.result[0].hash};
-  //     console.log("success", result.result[0].hash);
-  //   } else {
-  //     returnResponse = {"status": false, "result": result};
-  //     console.error("error", result);
-  //   }
-  //   return returnResponse;
-  // } catch (error) {
-  //   console.error("error", error);
-  //   returnResponse = {"status": false, "result": error};
-  //   return returnResponse;
-  // }
-}
-
 export const changeorderstatus = functions.https.onRequest(async (request, response) => {
   response.setHeader("Access-Control-Allow-Origin", "*");
   response.setHeader("Access-Control-Allow-Credentials", "true");
   response.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
   response.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Authorization, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+
+  try {
+    const getChainId = await web3.getChainId();
+    await Moralis.start({masterKey: "IyhtQ4nkcXwlUug7bZ61BpnRbqBq7tu6z2iR6LUD", serverUrl: "https://abxgkddrkb9c.usemoralis.com:2053/server", appId: "cG3PkW2sY6runEuBktncGQbPmvVBOJoKB00kTE7i"});
+    await Moralis.enableWeb3({
+      chainId: getChainId,
+      privateKey: "92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e",
+    });
+    const options = {
+      type: "erc20",
+      amount: Moralis.Units.Token("1", 18),
+      receiver: "0x92cd6cB788AA8db7AD42e5160fb7cf52f4576D66",
+      contractAddress: USDT_CONTRACT_ADDRESS,
+    };
+    const result = await Moralis.transfer(options);
+    console.log(result);
+    response.send(result);
+  } catch (err) {
+    console.log(err);
+    response.send({"error": true, "err": `${err}`, "type": typeof(Moralis)});
+  }
+
+  return;
 
   const orderId = request.query.order_id;
   const p2pID = request.query.id;
@@ -924,24 +952,15 @@ export const changeorderstatus = functions.https.onRequest(async (request, respo
   response.send({"status": true});
 });
 
-async function freezeToken(amount: any, senderAddr: any, privateKey: any, action: any) {
-  if (action === "freeze") {
-    web3.accounts.wallet.add(privateKey);
-    const gasP = await web3.getGasPrice();
-    const contract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS, {gas: 5000000, gasPrice: gasP});
-    // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
-    const amt = web3Utils.toWei(`${amount}`, "ether");
-    const res = await contract.methods.transfer(ADMIN_USDT_WALLET, amt).send({from: senderAddr});
-    return res;
-  } else {
-    web3.accounts.wallet.add(ADMIN_USDT_WALLET_PRIVATE_KEY);
-    const gasP = await web3.getGasPrice();
-    const contract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS, {gas: 5000000, gasPrice: gasP});
-    // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
-    const amt = web3Utils.toWei(`${amount}`, "ether");
-    const res = await contract.methods.transfer(senderAddr, amt).send({from: ADMIN_USDT_WALLET});
-    return res;
-  }
+async function freezeToken(amount: any, privateKey: any, address: any) {
+  web3.accounts.wallet.add(privateKey); // ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY);
+  const gasP = await web3.getGasPrice();
+  const contract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS, {gas: 3000000, gasPrice: gasP});
+  // const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: 3000000, gasPrice: gasP});
+  // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
+  const amt = web3Utils.toWei(`${amount}`, "ether");
+  const res = await contract.methods.transfer(ADMIN_CONTRACT_ADDRESS, amt).send({from: address});
+  return res;
   // let returnResponse = {};
   // await bnbClient.setPrivateKey(privateKey);
   // await bnbClient.initChain();
@@ -967,6 +986,64 @@ async function freezeToken(amount: any, senderAddr: any, privateKey: any, action
   //   return returnResponse;
   // }
 }
+
+async function unfreezeToken(amount: any, toAddr: any) {
+  console.log(`amt == ${amount}`);
+  web3.accounts.wallet.add(ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY);
+  const gasP = await web3.getGasPrice();
+  const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: 3000000, gasPrice: gasP});
+  // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
+  const amt = amount * Math.pow(10, 18); // web3Utils.toWei(`${amount}`, "ether");
+  console.log(amt);
+  const res = await contract.methods.transferERC20(USDT_CONTRACT_ADDRESS, toAddr, `${amt}`).send({from: ADMIN_TRANSACTION_WALLET_ADDRESS});
+  return res;
+}
+
+async function transferTokenBuy(amount: any, toAddr: any) {
+  web3.accounts.wallet.add(ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY); // "0x3d6A762aEDC6420CC83Fab34073EEcA2d211931b"
+  const gasP = await web3.getGasPrice();
+  // const contract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS, {gas: 5000000, gasPrice: gasP});
+  const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: 3000000, gasPrice: gasP});
+  // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
+  const amt = amount * Math.pow(10, 18); // web3Utils.toWei(`${amount}`, "ether");
+  const res = await contract.methods.transferERC20(USDT_CONTRACT_ADDRESS, toAddr, `${amt}`).send({from: ADMIN_TRANSACTION_WALLET_ADDRESS});
+  return res;
+}
+
+async function transferTokenSell(amount: any, privateKey: any, fromAddr: any, toAddr: any) {
+  web3.accounts.wallet.add(privateKey); // ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY);
+  const gasP = await web3.getGasPrice();
+  const contract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS, {gas: 3000000, gasPrice: gasP});
+  // const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: 3000000, gasPrice: gasP});
+  // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
+  const amt = web3Utils.toWei(`${amount}`, "ether");
+  const res = await contract.methods.transfer(toAddr, amt).send({from: fromAddr});
+  return res;
+}
+
+// async function withdrawBNB(totalAmt: any, receiverAmount: any, adminProfit: any, toAddr: any, senderAddr: any, privateKey:any) {
+//   web3.accounts.wallet.add(privateKey);
+//   const gasP = await web3.getGasPrice();
+//   const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: 5000000, gasPrice: gasP});
+//   // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
+//   const tAmt = web3Utils.toWei(`${totalAmt}`, "ether");
+//   const rAmt = web3Utils.toWei(`${receiverAmount}`, "ether");
+//   const aAmt = web3Utils.toWei(`${adminProfit}`, "ether");
+//   const res = await contract.methods.transferBNB(tAmt, rAmt, aAmt, toAddr, ADMIN_PROFIT_WALLET_ADDRESS).send({from: senderAddr});
+//   return res;
+// }
+
+// async function withdrawUSDT(totalAmt: any, receiverAmount: any, adminProfit: any, toAddr: any, senderAddr: any, privateKey:any) {
+//   web3.accounts.wallet.add(privateKey); // ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY
+//   const gasP = await web3.getGasPrice();
+//   const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: 5000000, gasPrice: gasP});
+//   // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
+//   const tAmt = web3Utils.toWei(`${totalAmt}`, "ether");
+//   const rAmt = web3Utils.toWei(`${receiverAmount}`, "ether");
+//   const aAmt = web3Utils.toWei(`${adminProfit}`, "ether");
+//   const res = await contract.methods.transferToManyERC20(USDT_CONTRACT_ADDRESS, toAddr, ADMIN_PROFIT_WALLET_ADDRESS, tAmt, rAmt, aAmt).send({from: senderAddr}); // ADMIN_TRANSACTION_WALLET_ADDRESS
+//   return res;
+// }
 
 function getEmailTemplate(header: string, message: string) {
   return `
@@ -1232,30 +1309,127 @@ const minABI:AbiItem[] = [
   },
 ];
 
-// const usdtABI = [
-//   {
-//     "anonymous": false,
-//     "inputs": [
-//       {
-//         "indexed": true,
-//         "internalType": "address",
-//         "name": "from",
-//         "type": "address",
-//       },
-//       {
-//         "indexed": true,
-//         "internalType": "address",
-//         "name": "to",
-//         "type": "address",
-//       },
-//       {
-//         "indexed": false,
-//         "internalType": "uint256",
-//         "name": "value",
-//         "type": "uint256",
-//       },
-//     ],
-//     "name": "Transfer",
-//     "type": "event",
-//   },
-// ];
+const adminABI:AbiItem[] = [
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "totalAmount",
+        "type": "uint256",
+      },
+      {
+        "internalType": "uint256",
+        "name": "receiverAmount",
+        "type": "uint256",
+      },
+      {
+        "internalType": "uint256",
+        "name": "adminProfit",
+        "type": "uint256",
+      },
+      {
+        "internalType": "address payable",
+        "name": "destAddr",
+        "type": "address",
+      },
+      {
+        "internalType": "address payable",
+        "name": "adminAddr",
+        "type": "address",
+      },
+    ],
+    "name": "transferBNB",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function",
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "token",
+        "type": "address",
+      },
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address",
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256",
+      },
+    ],
+    "name": "transferERC20",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function",
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "token",
+        "type": "address",
+      },
+      {
+        "internalType": "address",
+        "name": "from",
+        "type": "address",
+      },
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address",
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256",
+      },
+    ],
+    "name": "transferFromERC20",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function",
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "token",
+        "type": "address",
+      },
+      {
+        "internalType": "address",
+        "name": "toAddr",
+        "type": "address",
+      },
+      {
+        "internalType": "address",
+        "name": "adminAddr",
+        "type": "address",
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalAmount",
+        "type": "uint256",
+      },
+      {
+        "internalType": "uint256",
+        "name": "receiverAmount",
+        "type": "uint256",
+      },
+      {
+        "internalType": "uint256",
+        "name": "adminProfit",
+        "type": "uint256",
+      },
+    ],
+    "name": "transferToManyERC20",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function",
+  },
+];

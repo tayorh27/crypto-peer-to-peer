@@ -140,11 +140,11 @@ export class DashboardsComponent implements OnInit {
       }
     });
 
-    firebase.firestore().collection("token-transactions").where("created_by.user_id", "==", this.uid).onSnapshot(query => {
-      if (!query.empty) {
-        this.total_transactions = query.size;
-      }
-    });
+    // firebase.firestore().collection("token-transactions").where("created_by.user_id", "==", this.uid).onSnapshot(query => {
+    //   if (!query.empty) {
+    //     this.total_transactions = query.size;
+    //   }
+    // });
   }
 
   getBalances() {
@@ -156,6 +156,7 @@ export class DashboardsComponent implements OnInit {
         }
         this.total_ngn_bal = dt["total-amount"];
         this.total_frozen_ngn_bal = dt["frozen-amount"];
+        this.getCrypto();
       }
     });
 
@@ -167,9 +168,13 @@ export class DashboardsComponent implements OnInit {
         }
         // this.total_usdt_bal = dt["total-amount"];
         this.total_frozen_usdt_bal = dt["frozen-amount"];
+        this.getCrypto();
       }
     });
+    this.getCrypto();
+  }
 
+  getCrypto() {
     this.http.get(`https://us-central1-cryptopeer2peer.cloudfunctions.net/getwalletbalance?uid=${this.uid}`).subscribe((res:any) => {
       if(res["error"]) {
         this.toastr.error(res["message"]);
@@ -185,7 +190,6 @@ export class DashboardsComponent implements OnInit {
       });
       this.total_usdt_bal = (usdt.balance / (Math.pow(10, usdt.decimals)));
     });
-
   }
 
   getUserBanks() {

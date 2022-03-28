@@ -429,18 +429,18 @@ export const MENU: MenuItem[] = [
         id: 15,
         isLayout: true
     },
-    {
-        id: 16,
-        label: 'Fund NGN',
-        icon: 'bx bxs-dashboard',
-        link: '',
-    },
-    {
-        id: 16,
-        label: 'Withdraw NGN',
-        icon: 'bx bxs-dashboard',
-        link: '',
-    },
+    // {
+    //     id: 16,
+    //     label: 'Fund NGN',
+    //     icon: 'bx bxs-dashboard',
+    //     link: '',
+    // },
+    // {
+    //     id: 16,
+    //     label: 'Withdraw NGN',
+    //     icon: 'bx bxs-dashboard',
+    //     link: '',
+    // },
     {
         id: 17,
         label: 'NGN Transactions',
