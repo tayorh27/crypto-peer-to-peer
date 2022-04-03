@@ -445,7 +445,7 @@ export const MENU: MenuItem[] = [
         id: 17,
         label: 'NGN Transactions',
         icon: 'bx bxs-dashboard',
-        link: '',
+        link: '/fiat/transactions',
     },
 ];
 

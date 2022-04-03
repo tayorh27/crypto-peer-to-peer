@@ -33,7 +33,8 @@ export class AppComponent implements OnInit{
       const m = <CryptoUser>user.data();
       if (m != null) {
         const blocked: boolean = m.blocked;
-        if (blocked) {
+        const logout: boolean = m.logout ?? false;
+        if (blocked || logout) {
           this.logout();
         }
       }

@@ -100,12 +100,14 @@ export class RegisterComponent implements OnInit {
               user_role_type: 'owner',
               email_verified: false,
               blocked: false,
+              logout: false,
               role: '',
               access_levels: '',
               created_date: `${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`,
               modified_date: `${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`,
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-              msgID: []
+              msgID: [],
+              admin_fee: 0,
             }
             this.authenticationService.uploadUserData(res.uid, user).then(async (rs) => {
               this.button_pressed = false;

@@ -6,12 +6,14 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 contract FeeCollector  {
     address public owner;
     uint256 public balance;
+    address public contractAddr;
     
     event TransferReceived(address _from, uint _amount);
     event TransferSent(address _from, address _destAddr, uint _amount);
     
     constructor() {
         owner = msg.sender;
+        contractAddr = address(this);
     }
     
     receive() payable external {
@@ -41,25 +43,25 @@ contract FeeCollector  {
     
     //for admin only - token. To transfer token when unfreeze and transfer tokens are called from cloud functions
     function transferERC20(IERC20 token, address to, uint256 amount) public {
-        require(msg.sender == owner, "Only owner can withdraw funds"); 
+        require(msg.sender == owner, "Only owner can withdraw funds");
         uint256 erc20balance = token.balanceOf(address(this));
         require(amount <= erc20balance, "balance is low");
         token.transfer(to, amount);
         emit TransferSent(msg.sender, to, amount);
     }
 
-    function transferFromERC20(IERC20 token, address to, uint256 amount) public {
-        // require(msg.sender == owner, "Only owner can withdraw funds");
-        // IERC20 token = IERC20(from);
-        uint256 erc20balance = token.balanceOf(address(this));
+    function transferFromERC20(IERC20 token, address from, address to, uint256 amount) public {
+        require(msg.sender == owner, "Only owner can withdraw funds");
+        uint256 erc20balance = token.balanceOf(from);
         require(amount <= erc20balance, "balance is low");
-        // token.approve(msg.sender, amount);
-        token.transfer(to, amount);
-        emit TransferSent(msg.sender, to, amount);
+        // token.approve(address(this), amount);
+        token.transferFrom(from, to, amount);
+        // emit token.Transfer(from, to, amount);
+        emit TransferSent(from, to, amount);
     }
 
     function transferToManyERC20(IERC20 token, address toAddr, address adminAddr, uint256 totalAmount, uint256 receiverAmount, uint256 adminProfit) public {
-        // require(msg.sender == owner, "Only owner can withdraw funds");
+        require(msg.sender == owner, "Only owner can withdraw funds");
         uint256 erc20balance = token.balanceOf(msg.sender);
         require(totalAmount <= erc20balance, "balance is low");
         token.transferFrom(msg.sender, toAddr, receiverAmount);

@@ -6,6 +6,7 @@ import { UiComponent } from './ui/ui.component';
 import { TypographyComponent } from './typography/typography.component';
 import { ChartsComponent } from './charts/charts.component';
 import { MapsComponent } from './maps/maps.component';
+import { FiatTransactionsComponent } from './fiat-transactions/fiat-transactions.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,10 @@ const routes: Routes = [
   {
     path: 'ui',
     component: UiComponent
+  },
+  {
+    path: 'fiat/transactions',
+    component: FiatTransactionsComponent
   },
   {
     path: 'advanced', loadChildren: () => import('./advanced/advanced.module').then(m => m.AdvancedModule)

@@ -44,6 +44,7 @@ export class MyOrdersComponent implements OnInit {
   }
 
   async getOrders() {
+    this.showSpinner = true;
     const uid = this.authService.getLocalStorageUserData().uid;
     firebase.firestore().collection("p2p-orders").where("created_by.user_id", "==", uid).orderBy("timestamp", "desc").onSnapshot(query => {
       this.showSpinner = false;

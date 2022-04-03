@@ -6,12 +6,22 @@ import * as axios from "axios";
 
 import * as Flutterwave from "flutterwave-node-v3";
 
+// import Binance from "node-binance-api";
+
+// const BINANCE_API_KEY = "d20ASiUmMCJqMK83e5OyDD5rjUJ5AlJDZHREdY6TUcAN9P3aqZStpkOdsmCfDwa6";
+// const BINANCE_SECRET_KEY = "HY3rhw66GObYKhScNFHUKPrwf8vpW83UI8KmTBBV2R6RzErj0hoHCEzlUaZfY8lr";
+
+// const binance = Binance. ({
+//   APIKEY: BINANCE_API_KEY,
+//   APISECRET: BINANCE_SECRET_KEY,
+// });
+
 import * as Web3 from "web3";
 import {Eth} from "web3-eth";
 import {Utils, AbiItem} from "web3-utils";
 
-import * as MoralCall from "moralis/node";
-const Moralis: any = MoralCall;
+// import * as MoralCall from "moralis/node";
+// const Moralis: any = MoralCall;
 // const Moralis = require("moralis/node");
 
 // const MAINNET_URL = "https://speedy-nodes-nyc.moralis.io/5010f4e56176a3b962308c97/bsc/mainnet";
@@ -36,6 +46,7 @@ admin.initializeApp();
 const FLW_SECRET = "FLWSECK-3eab2853290fcdddbdd574158eb90abc-X";
 const FLW_PUBLIC = "FLWPUBK-0d71ee518685d4e82073059eed9deff4-X";
 const FLW_BASE_URL = "https://api.flutterwave.com/v3";
+const FLW_SECRET_HASH = "RkxXLVRBR0RFVjI3";
 
 const flw = new Flutterwave(FLW_PUBLIC, FLW_SECRET);
 
@@ -45,7 +56,7 @@ const USDT_CONTRACT_ADDRESS = "0x337610d27c682e347c9cd60bd4b3b107c9d34ddd";
 
 // const ADMIN_CONTRACT_WALLET_ADDRESS = "0x3d6A762aEDC6420CC83Fab34073EEcA2d211931b";
 // const ADMIN_CONTRACT_WALLET_PRIVATE_KEY = "f21d083d58e9c844ebca2f3d35de6c7d200e59a43e83b10753e8fc7bbb47405c";
-const ADMIN_CONTRACT_ADDRESS = "0x6FB283B463efb88e9796eD38a50e8326aF708E60"; // "0xED09fB64826F58EE5A704461c28C3D562a1279E8";
+const ADMIN_CONTRACT_ADDRESS = "0x1F3c71F84CF167Df09f6006E9F2AFf2FB7AF59B3"; // "0x6FB283B463efb88e9796eD38a50e8326aF708E60"; // "0xED09fB64826F58EE5A704461c28C3D562a1279E8";
 
 // const ADMIN_PROFIT_WALLET_ADDRESS = "";
 // const ADMIN_PROFIT_WALLET_ADDRESS_PRIVATE_KEY = "";
@@ -53,17 +64,258 @@ const ADMIN_CONTRACT_ADDRESS = "0x6FB283B463efb88e9796eD38a50e8326aF708E60"; // 
 const ADMIN_TRANSACTION_WALLET_ADDRESS = "0x3d6A762aEDC6420CC83Fab34073EEcA2d211931b"; // owner address for contract
 const ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY = "f21d083d58e9c844ebca2f3d35de6c7d200e59a43e83b10753e8fc7bbb47405c";
 
+async function getBNBPrice() {
+  const res = await axios.default.get("https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT");
+  const dt = res.data;
+  return Number(dt["price"]);
+}
 
-export const flutterwave = functions.https.onRequest(async (request, response) => {
-  functions.logger.info(request.body, {structuredData: true});
-  functions.logger.info("Query Below", {structuredData: true});
-  functions.logger.info(request.query, {structuredData: true});
-  // const fr = await freezeToken(1, "0x3d6A762aEDC6420CC83Fab34073EEcA2d211931b", "f21d083d58e9c844ebca2f3d35de6c7d200e59a43e83b10753e8fc7bbb47405c");
-  // response.send(fr);
-  // response.send({req: request.body, q: request.query, auth: request.headers});
+export const c88b912eeb146c6b3a5ce703e1238a9 = functions.runWith({timeoutSeconds: 300}).https.onRequest(async (request, response) => {
+  response.setHeader("Access-Control-Allow-Origin", "*");
+  response.setHeader("Access-Control-Allow-Credentials", "true");
+  response.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  response.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Authorization, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+
+  const secretHash = FLW_SECRET_HASH;
+  const signature = request.headers["verif-hash"];
+  if (!signature || (signature !== secretHash)) {
+    // This request isn't from Flutterwave; discard
+    response.status(401).end();
+    return;
+  }
+
+  const json = request.body;
+  const event = json.event;
+
+  if (event === "charge.completed") {
+    const chargeData = json.data;
+    const chargeResult = chargeData.status;
+    const customer = chargeData.customer;
+
+    await checkDuplicates(chargeData, response);
+
+    // get user data
+    let userId = "";
+
+    const queryUser = await admin.firestore().collection("users").where("email", "==", `${customer.email}`.toLowerCase()).get();
+    if (queryUser.empty) {
+      response.status(401).send({"error": true, "message": "User does not exist."});
+      return;
+    }
+    const userData = queryUser.docs[0].data();
+    if (userData === undefined) {
+      response.status(401).send({"error": true, "message": "User does not exist."});
+      return;
+    }
+    userId = userData.id;
+    const amt = chargeData.amount;
+
+    // get failed charge
+    if (chargeResult.toLowerCase() === "failed") {
+      await callFailedTransfer(chargeData, amt, userId, userData);
+      response.status(401).send({"error": true, "message": "Account deposit failed", "content": chargeData.processor_response});
+      return;
+    }
+
+    // get successful charge
+    if (chargeResult.toLowerCase() === "successful") {
+      // verify charge
+      const resp = await flw.Transaction.verify({id: chargeData.id});
+      if (resp.data.status === "successful" && resp.data.amount === amt && resp.data.currency === chargeData.currency) {
+        // Success! Confirm the customer's payment
+        // create new transaction document
+        const key = admin.firestore().collection("local-transactions").doc().id;
+        const transaction = {
+          id: key,
+          flutterwave_data: chargeData,
+          transaction_type: "funded_ngn", // withdraw_ngn, funded_ngn
+          token: chargeData.currency, // USDT,NGN
+          amount: amt,
+          timestamp: admin.firestore.FieldValue.serverTimestamp(),
+          created_date: `${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`,
+          created_by: {
+            user_id: userId,
+            email: userData.email,
+            name: userData.name,
+            msgId: userData.msgID,
+            image: userData.image,
+            number: userData.phone_number,
+          },
+          status: "success",
+          year: new Date().getFullYear(),
+          month: mths[new Date().getMonth()],
+          day: new Date().getDate(),
+        };
+
+        await admin.firestore().collection("local-transactions").doc(key).set(transaction);
+
+
+        // send email
+        const subject = "ACCOUNT DEPOSIT STATUS";
+        const message = `Hi ${userData.name}, your deposit of ${chargeData.currency} ${amt} was successful.`;
+        const content = getEmailTemplate(subject, message);
+        await sendGeneralEmail(userData.email, subject, content);
+        response.status(200).send({"status": true, "message": "Account deposit successful", "content": chargeData.processor_response});
+        return;
+      } else {
+        await callFailedTransfer(chargeData, amt, userId, userData);
+        response.status(401).send({"error": true, "message": "Account deposit failed", "content": chargeData.processor_response});
+        return;
+      }
+    }
+    response.status(401).send({"error": true, "message": "Invalid webhook parameters"});
+  }
+
+  if (event === "transfer.completed") {
+    const transferData = json.data;
+    const transferResult = transferData.status;
+
+    await checkDuplicates(transferData, response);
+
+    // get user data
+    const userDetails = transferData.narration;
+    const userId = userDetails.split("|")[0];
+    const transKey = userDetails.split("|")[1];
+
+    const queryUser = await admin.firestore().collection("users").doc(`${userId}`).get();
+    if (!queryUser.exists) {
+      response.status(401).send({"error": true, "message": "User does not exist."});
+      return;
+    }
+    const userData = queryUser.data();
+    if (userData === undefined) {
+      response.status(401).send({"error": true, "message": "User does not exist."});
+      return;
+    }
+
+    const amt = transferData.amount;
+    const fee = transferData.fee;
+
+    // get failed transfer
+    if (transferResult.toLowerCase() === "failed") {
+      // update balance - reversal
+      const reducedAmount = (Number(`${amt}`) + Number(`${fee}`));
+
+      await admin.firestore().collection("users").doc(`${userId}`).collection("wallet").doc("ngn-wallet").update({
+        "total-amount": admin.firestore.FieldValue.increment(reducedAmount),
+      });
+
+      // update transaction status
+      await admin.firestore().collection("local-transactions").doc(transKey).update({
+        "status": "failed",
+      });
+
+      // send email
+      const subject = "TRANSFER STATUS";
+      const message = `Hi ${userData.name}, your withdrawal of ${transferData.currency} ${amt} to ${transferData.bank_name}, ${transferData.fullname} wasn't successful. A full reversal has been initiated immediately.<br><br>${transferData.complete_message}.`;
+      const content = getEmailTemplate(subject, message);
+      await sendGeneralEmail(userData.email, subject, content);
+      response.status(401).send({"error": true, "message": "Transfer failed", "content": transferData.complete_message});
+      return;
+    }
+
+    // transfer is successful
+    if (transferResult.toLowerCase() === "successful") {
+      // update transaction status
+      await admin.firestore().collection("local-transactions").doc(transKey).update({
+        "status": "success",
+      });
+
+      // send email
+      const subject = "TRANSFER STATUS";
+      const message = `Hi ${userData.name}, your withdrawal of ${transferData.currency} ${amt} to ${transferData.bank_name}, ${transferData.fullname} is successful.<br><br>`;
+      const content = getEmailTemplate(subject, message);
+      await sendGeneralEmail(userData.email, subject, content);
+      response.status(200).send({"status": true, "message": "Transfer is successful."});
+      return;
+    }
+    response.status(401).send({"error": true, "message": "Invalid webhook parameters"});
+  }
 });
 
-export const onUserCreated = functions.firestore.document("/users/{id}").onCreate(async (snapshot, context) => {
+async function callFailedTransfer(chargeData: any, amt: any, userId: any, userData: any) {
+  // create new transaction document
+  const key = admin.firestore().collection("transactions").doc().id;
+  const transaction = {
+    id: key,
+    flutterwave_data: chargeData,
+    transaction_type: "funded_ngn", // withdraw_ngn, funded_ngn
+    token: chargeData.currency, // USDT,NGN
+    amount: amt,
+    timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    created_date: `${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`,
+    created_by: {
+      user_id: userId,
+      email: userData.email,
+      name: userData.name,
+      msgId: userData.msgID,
+      image: userData.image,
+      number: userData.phone_number,
+    },
+    status: "failed",
+    year: new Date().getFullYear(),
+    month: mths[new Date().getMonth()],
+    day: new Date().getDate(),
+  };
+
+  await admin.firestore().collection("transactions").doc(key).set(transaction);
+
+
+  // send email
+  const subject = "ACCOUNT DEPOSIT STATUS";
+  const message = `Hi ${userData.name}, your deposit of ${chargeData.currency} ${amt} wasn't successful. Please try with another payment option.<br><br>${chargeData.processor_response}.`;
+  const content = getEmailTemplate(subject, message);
+  await sendGeneralEmail(userData.email, subject, content);
+}
+
+async function checkDuplicates(payload: any, response: functions.Response) {
+  const existingEvent = await flw.PaymentEvent.where({id: payload.id}).find();
+  if (existingEvent.status === payload.status) {
+    // The status hasn't changed,
+    // so it's probably just a duplicate event
+    // and we can discard it
+    response.status(200).end();
+  }
+  // Record this event
+  await flw.PaymentEvent.save(payload);
+}
+
+export const approveaddress = functions.https.onRequest(async (request, response) => {
+  const address = `${request.query.address}`;
+  const privateKey = `${request.query.pk}`;
+
+  const amt = web3Utils.toWei("1000000000", "ether");
+  web3.accounts.wallet.add(privateKey);
+  const gasP = await web3.getGasPrice();
+
+  const gContract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS);
+  const abi = gContract.methods.approve(ADMIN_CONTRACT_ADDRESS, amt).encodeABI();
+  const gasEstimate = await web3.estimateGas({from: address, to: USDT_CONTRACT_ADDRESS, data: abi}); // 3000000
+  console.log(`gasEstimate is ${gasEstimate}`);
+  const contract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS, {gas: gasEstimate, gasPrice: gasP});
+  console.log(`amt is ${amt}`);
+  const res = await contract.methods.approve(ADMIN_CONTRACT_ADDRESS, amt).send({from: address});
+  response.send({"res": res, "estimate": gasEstimate, "amt": amt});
+});
+
+export const onUserUpdated = functions.firestore.document("/users/{id}").onUpdate(async (snapshot, context) => {
+  const before = snapshot.before.data();
+  const after = snapshot.after.data();
+
+  if (before.admin_fee === after.admin_fee) {
+    return;
+  }
+
+  const getAdminFee = after.admin_fee;
+
+  if (getAdminFee < 0) {
+    await admin.firestore().collection("users").doc(after.id).update({
+      "admin_fee": getAdminFee * -1,
+    });
+  }
+});
+
+export const onUserCreated = functions.runWith({timeoutSeconds: 300}).firestore.document("/users/{id}").onCreate(async (snapshot, context) => {
   const user = snapshot.data();
 
   // if (user.hex !== undefined) {
@@ -74,6 +326,16 @@ export const onUserCreated = functions.firestore.document("/users/{id}").onCreat
   const name = user.name;
   const uid = user.id;
 
+  await admin.firestore().collection("users").doc(uid).collection("wallet").doc("ngn-wallet").set({
+    "total-amount": 0,
+    "frozen-amount": 0,
+  });
+
+  await admin.firestore().collection("users").doc(uid).collection("wallet").doc("usdt-wallet").set({
+    "total-amount": 0,
+    "frozen-amount": 0,
+  });
+
   try {
     // await bnbClient.initChain();
 
@@ -82,26 +344,62 @@ export const onUserCreated = functions.firestore.document("/users/{id}").onCreat
     const privateKey = newAcct.privateKey;
     const address = newAcct.address;
 
+    // send user BNB ~$1.0
+    web3.accounts.wallet.add(ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY);
+
+    // calculate how much bnb needed
+    const bnbAmt = web3Utils.toWei("1000000000", "ether");
+    const bnbCalcContract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS);
+    const bnbAbi = bnbCalcContract.methods.approve(ADMIN_CONTRACT_ADDRESS, bnbAmt).encodeABI();
+    const bnbGasEstimate = await web3.estimateGas({from: address, to: USDT_CONTRACT_ADDRESS, data: bnbAbi});
+
+    const bnbValue = Number(`${bnbGasEstimate}`) / 100000000; // check bnb decimal
+
+    // estimate gas price for sending also
+    const withdrawContract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS);
+    const withAmt = web3Utils.toWei(`${bnbValue}`, "ether");
+    const withdrawAbi = withdrawContract.methods.withdraw(withAmt, address).encodeABI();
+    const withdrawGasEstimate = await web3.estimateGas({from: ADMIN_TRANSACTION_WALLET_ADDRESS, to: ADMIN_CONTRACT_ADDRESS, data: withdrawAbi});
+
+    const withdrawValue = Number(`${withdrawGasEstimate}`) / 100000000; // check bnb decimal
+
+    const bnbGasP = await web3.getGasPrice();
+    const bnbContract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: withdrawGasEstimate, gasPrice: bnbGasP});
+    const sendBNB = await bnbContract.methods.withdraw(withAmt, address).send({from: ADMIN_TRANSACTION_WALLET_ADDRESS});
+
+    if (sendBNB["status"]) {
+      // approve contract as spender
+      web3.accounts.wallet.remove(ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY);
+      web3.accounts.wallet.add(privateKey);
+      // const gasP = await web3.getGasPrice();
+
+      // const gContract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS);
+      // const abi = gContract.methods.approve(ADMIN_CONTRACT_ADDRESS, amt).encodeABI();
+      // const gasEstimate = await web3.estimateGas({from: address, to: USDT_CONTRACT_ADDRESS, data: abi}); // 3000000
+      // console.log(`gasEstimate is ${gasEstimate}`);
+      const contract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS, {gas: bnbGasEstimate, gasPrice: bnbGasP});
+      console.log(`amt here is ${bnbAmt}`);
+      const res = await contract.methods.approve(ADMIN_CONTRACT_ADDRESS, bnbAmt).send({from: address});
+
+      if (res["status"]) {
+        if (res["transactionHash"] !== undefined) {
+          // store gas price to be deducted later
+          const totalDeduction = withdrawValue + bnbValue;
+          const ticker = await getBNBPrice();
+          await admin.firestore().collection("users").doc(uid).update({
+            "privateKey": privateKey,
+            "address": address,
+            "admin_fee": Number((totalDeduction * ticker).toFixed(2)),
+          });
+        }
+      }
+      console.log(JSON.stringify(res));
+    }
     // await bnbClient.setPrivateKey(privateKey);
     // const bnbAddress = crypto.getAddressFromPrivateKey(privateKey);
     // const hex = utils.str2hexstring(bnbAddress);
     // const bnbAddress = await bnbClient.getAccount();
     // console.log(bnbAddress?.result);
-
-    await admin.firestore().collection("users").doc(uid).update({
-      "privateKey": privateKey,
-      "address": address,
-    });
-
-    await admin.firestore().collection("users").doc(uid).collection("wallet").doc("ngn-wallet").set({
-      "total-amount": 0,
-      "frozen-amount": 0,
-    });
-
-    await admin.firestore().collection("users").doc(uid).collection("wallet").doc("usdt-wallet").set({
-      "total-amount": 0,
-      "frozen-amount": 0,
-    });
 
     // Moralis.authenticate({
     //   email: user.email,
@@ -122,7 +420,7 @@ export const onUserCreated = functions.firestore.document("/users/{id}").onCreat
                     Regards.`;
     await sendGeneralEmail(email, subject, content);
   } catch (err) {
-    console.log(err);
+    console.log(`eroor here - ${err}`);
   }
 });
 
@@ -145,7 +443,7 @@ export const onWalletUpdated = functions.firestore.document("/users/{id}/wallet/
   }
 });
 
-export const onOrderCreated = functions.firestore.document("/p2p-orders/{id}").onCreate(async (snapshot, context) => {
+export const onOrderCreated = functions.runWith({timeoutSeconds: 300}).firestore.document("/p2p-orders/{id}").onCreate(async (snapshot, context) => {
   const data = snapshot.data();
   let emailSubject = "";
   let emailContent = "";
@@ -208,7 +506,7 @@ export const onOrderCreated = functions.firestore.document("/p2p-orders/{id}").o
     };
     // get token balances for address
     const tokenReq = await axios.default.get(`${MORALIS_WEB_API_URL}/${address}/erc20?chain=bsc testnet`, {headers: _header});
-    const tokens:any[] = tokenReq.data;
+    const tokens: any[] = tokenReq.data;
 
     const usdt = tokens.find((val, ind, arr) => {
       return val.symbol === "USDT";
@@ -224,7 +522,7 @@ export const onOrderCreated = functions.firestore.document("/p2p-orders/{id}").o
     // freeze the total amount
     // reduce allowance to zero
     // update address approved amount
-    const freeze = await freezeToken(data.total_amount, userData.privateKey, userData.address);
+    const freeze = await freezeToken(data.total_amount, userData.id, userData.address);
     console.log(freeze);
     if (freeze["status"]) {
       // update frozen and total
@@ -248,12 +546,12 @@ export const onOrderCreated = functions.firestore.document("/p2p-orders/{id}").o
   }
 });
 
-export const onOrderUpdated = functions.firestore.document("/p2p-orders/{id}").onUpdate(async (snapshot, context) => {
+export const onOrderUpdated = functions.runWith({timeoutSeconds: 300}).firestore.document("/p2p-orders/{id}").onUpdate(async (snapshot, context) => {
   // await freezeToken(0, "", "", "");
   console.log("hello");
 });
 
-export const onOrderDeleted = functions.firestore.document("/p2p-orders/{id}").onDelete(async (snapshot, context) => {
+export const onOrderDeleted = functions.runWith({timeoutSeconds: 300}).firestore.document("/p2p-orders/{id}").onDelete(async (snapshot, context) => {
   let emailSubject = "";
   let emailContent = "";
   const data = snapshot.data();
@@ -289,7 +587,7 @@ export const onOrderDeleted = functions.firestore.document("/p2p-orders/{id}").o
   if ((totalAmt > 0 && data.status === "expired") || (totalAmt > 0 && data.status === "approved")) {
     const newAmt = totalAmt * -1;
     if (orderType === "sell") {
-      const unfreeze = await unfreezeToken(totalAmt, userData.address);
+      const unfreeze = await unfreezeToken(totalAmt, userData.address, userData.admin_fee, userData.id);
       if (unfreeze.status) {
         await admin.firestore().collection("users").doc(uid).collection("wallet").doc("usdt-wallet").update({
           "frozen-amount": admin.firestore.FieldValue.increment(newAmt),
@@ -309,7 +607,7 @@ export const onOrderDeleted = functions.firestore.document("/p2p-orders/{id}").o
   }
 });
 
-export const onTradeCreated = functions.firestore.document("/trades/{id}").onCreate(async (snapshot, context) => {
+export const onTradeCreated = functions.runWith({timeoutSeconds: 300}).firestore.document("/trades/{id}").onCreate(async (snapshot, context) => {
   const data = snapshot.data();
 
   // get creator data
@@ -346,10 +644,10 @@ export const onTradeCreated = functions.firestore.document("/trades/{id}").onCre
 
   try {
     if (data.listed_as === "buy") {
-    // send creator ngn and debit guest ngn
+      // send creator ngn and debit guest ngn
 
       // send guest token from creator -- const sendGuestTokenFromCreator =
-      const gtrf = await transferTokenBuy(data.send_guest.amount, guestUserData.address);
+      const gtrf = await transferTokenBuy(data.send_guest.amount, guestUserData.address, creatorUserData.id);
       console.log(gtrf);
 
       if (!gtrf.status) {
@@ -478,10 +776,10 @@ export const onTradeCreated = functions.firestore.document("/trades/{id}").onCre
       // delete trade data
       await admin.firestore().collection("trades").doc(data.id).delete();
     } else {
-    // send guest ngn and debit creator ngn
+      // send guest ngn and debit creator ngn
 
       // send creator token from guest
-      const trf = await transferTokenSell(data.send_creator.amount, guestUserData.privateKey, guestUserData.address, creatorUserData.address);
+      const trf = await transferTokenSell(data.send_creator.amount, guestUserData.id, guestUserData.address, creatorUserData.address);
       console.log(trf);
       if (!trf.status) {
         await admin.firestore().collection("p2p-orders").doc(data.p2p_id).update({
@@ -797,7 +1095,7 @@ export const withdrawfunds = functions.https.onRequest(async (request, response)
     return;
   }
 
-  const key = admin.firestore().collection("transactions").doc().id;
+  const key = admin.firestore().collection("local-transactions").doc().id;
 
   const payload = {
     "account_bank": accountBank,
@@ -820,6 +1118,7 @@ export const withdrawfunds = functions.https.onRequest(async (request, response)
       transaction_type: "withdraw_ngn", // withdraw_ngn, funded_ngn, receive_usdt, send_usdt
       token: "NGN", // USDT,NGN
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      amount: Number(amt),
       created_date: `${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`,
       created_by: {
         user_id: uid,
@@ -835,7 +1134,7 @@ export const withdrawfunds = functions.https.onRequest(async (request, response)
       day: new Date().getDate(),
     };
 
-    await admin.firestore().collection("transactions").doc(key).set(transaction);
+    await admin.firestore().collection("local-transactions").doc(key).set(transaction);
 
     // update balance
     const reducedAmount = (Number(amt) + Number(fee)) * -1;
@@ -914,28 +1213,28 @@ export const changeorderstatus = functions.https.onRequest(async (request, respo
   response.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
   response.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Authorization, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
 
-  try {
-    const getChainId = await web3.getChainId();
-    await Moralis.start({masterKey: "IyhtQ4nkcXwlUug7bZ61BpnRbqBq7tu6z2iR6LUD", serverUrl: "https://abxgkddrkb9c.usemoralis.com:2053/server", appId: "cG3PkW2sY6runEuBktncGQbPmvVBOJoKB00kTE7i"});
-    await Moralis.enableWeb3({
-      chainId: getChainId,
-      privateKey: "92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e",
-    });
-    const options = {
-      type: "erc20",
-      amount: Moralis.Units.Token("1", 18),
-      receiver: "0x92cd6cB788AA8db7AD42e5160fb7cf52f4576D66",
-      contractAddress: USDT_CONTRACT_ADDRESS,
-    };
-    const result = await Moralis.transfer(options);
-    console.log(result);
-    response.send(result);
-  } catch (err) {
-    console.log(err);
-    response.send({"error": true, "err": `${err}`, "type": typeof(Moralis)});
-  }
+  // try {
+  //   const getChainId = await web3.getChainId();
+  //   await Moralis.start({masterKey: "IyhtQ4nkcXwlUug7bZ61BpnRbqBq7tu6z2iR6LUD", serverUrl: "https://abxgkddrkb9c.usemoralis.com:2053/server", appId: "cG3PkW2sY6runEuBktncGQbPmvVBOJoKB00kTE7i"});
+  //   await Moralis.enableWeb3({
+  //     chainId: getChainId,
+  //     privateKey: "92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e",
+  //   });
+  //   const options = {
+  //     type: "erc20",
+  //     amount: Moralis.Units.Token("1", 18),
+  //     receiver: "0x92cd6cB788AA8db7AD42e5160fb7cf52f4576D66",
+  //     contractAddress: USDT_CONTRACT_ADDRESS,
+  //   };
+  //   const result = await Moralis.transfer(options);
+  //   console.log(result);
+  //   response.send(result);
+  // } catch (err) {
+  //   console.log(err);
+  //   response.send({"error": true, "err": `${err}`, "type": typeof(Moralis)});
+  // }
 
-  return;
+  // return;
 
   const orderId = request.query.order_id;
   const p2pID = request.query.id;
@@ -952,15 +1251,36 @@ export const changeorderstatus = functions.https.onRequest(async (request, respo
   response.send({"status": true});
 });
 
-async function freezeToken(amount: any, privateKey: any, address: any) {
-  web3.accounts.wallet.add(privateKey); // ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY);
+async function freezeToken(amount: any, uid: any, address: any) {
+  web3.accounts.wallet.add(ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY);
+  const amt = web3Utils.toWei(`${amount}`, "ether");
+  const freezeCalcContract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS);
+  const freezeAbi = freezeCalcContract.methods.transferFromERC20(USDT_CONTRACT_ADDRESS, address, ADMIN_TRANSACTION_WALLET_ADDRESS, amt).encodeABI();
+  const freezeGasEstimate = await web3.estimateGas({from: ADMIN_TRANSACTION_WALLET_ADDRESS, to: ADMIN_CONTRACT_ADDRESS, data: freezeAbi});
+
+  const bnbValue = Number(`${freezeGasEstimate}`) / 100000000; // check bnb decimal
+
   const gasP = await web3.getGasPrice();
-  const contract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS, {gas: 3000000, gasPrice: gasP});
+  const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: freezeGasEstimate, gasPrice: gasP});
+  const res = await contract.methods.transferFromERC20(USDT_CONTRACT_ADDRESS, address, ADMIN_CONTRACT_ADDRESS, amt).send({from: ADMIN_TRANSACTION_WALLET_ADDRESS});
+
+  if (res["status"]) {
+    const ticker = await getBNBPrice();
+    const toUSDT = Number((bnbValue * ticker).toFixed(2));
+    await admin.firestore().collection("users").doc(uid).update({
+      "admin_fee": admin.firestore.FieldValue.increment(toUSDT),
+    });
+  }
+  return res;
+
+  // web3.accounts.wallet.add(privateKey);
+
+
   // const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: 3000000, gasPrice: gasP});
   // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
-  const amt = web3Utils.toWei(`${amount}`, "ether");
-  const res = await contract.methods.transfer(ADMIN_CONTRACT_ADDRESS, amt).send({from: address});
-  return res;
+
+  // const res = await contract.methods.transfer(ADMIN_CONTRACT_ADDRESS, amt).send({from: address});
+  // return res;
   // let returnResponse = {};
   // await bnbClient.setPrivateKey(privateKey);
   // await bnbClient.initChain();
@@ -987,37 +1307,97 @@ async function freezeToken(amount: any, privateKey: any, address: any) {
   // }
 }
 
-async function unfreezeToken(amount: any, toAddr: any) {
+async function unfreezeToken(amount: any, toAddr: any, deductAmt: any, uid: any) {
   console.log(`amt == ${amount}`);
   web3.accounts.wallet.add(ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY);
-  const gasP = await web3.getGasPrice();
-  const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: 3000000, gasPrice: gasP});
-  // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
-  const amt = amount * Math.pow(10, 18); // web3Utils.toWei(`${amount}`, "ether");
-  console.log(amt);
-  const res = await contract.methods.transferERC20(USDT_CONTRACT_ADDRESS, toAddr, `${amt}`).send({from: ADMIN_TRANSACTION_WALLET_ADDRESS});
-  return res;
-}
 
-async function transferTokenBuy(amount: any, toAddr: any) {
-  web3.accounts.wallet.add(ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY); // "0x3d6A762aEDC6420CC83Fab34073EEcA2d211931b"
-  const gasP = await web3.getGasPrice();
-  // const contract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS, {gas: 5000000, gasPrice: gasP});
-  const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: 3000000, gasPrice: gasP});
-  // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
-  const amt = amount * Math.pow(10, 18); // web3Utils.toWei(`${amount}`, "ether");
-  const res = await contract.methods.transferERC20(USDT_CONTRACT_ADDRESS, toAddr, `${amt}`).send({from: ADMIN_TRANSACTION_WALLET_ADDRESS});
-  return res;
-}
-
-async function transferTokenSell(amount: any, privateKey: any, fromAddr: any, toAddr: any) {
-  web3.accounts.wallet.add(privateKey); // ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY);
-  const gasP = await web3.getGasPrice();
-  const contract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS, {gas: 3000000, gasPrice: gasP});
-  // const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: 3000000, gasPrice: gasP});
-  // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
   const amt = web3Utils.toWei(`${amount}`, "ether");
-  const res = await contract.methods.transfer(toAddr, amt).send({from: fromAddr});
+  const unfreezeCalcContract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS);
+  const unfreezeAbi = unfreezeCalcContract.methods.transferERC20(USDT_CONTRACT_ADDRESS, toAddr, amt).encodeABI();
+  const unfreezeGasEstimate = await web3.estimateGas({from: ADMIN_TRANSACTION_WALLET_ADDRESS, to: ADMIN_CONTRACT_ADDRESS, data: unfreezeAbi});
+
+  const bnbValue = Number(`${unfreezeGasEstimate}`) / 100000000;
+  const ticker = await getBNBPrice();
+  const toUSDT = Number((bnbValue * ticker).toFixed(2));
+  let transferAmt = amount - (deductAmt + toUSDT);
+  if (transferAmt < 0) {
+    transferAmt = amount;
+  }
+  const transferWei = web3Utils.toWei(`${transferAmt}`, "ether");
+
+  const gasP = await web3.getGasPrice();
+  const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: unfreezeGasEstimate, gasPrice: gasP});
+  // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
+  // const amt = amount * Math.pow(10, 18); // web3Utils.toWei(`${amount}`, "ether");
+  // console.log(amt);
+  const res = await contract.methods.transferERC20(USDT_CONTRACT_ADDRESS, toAddr, `${transferWei}`).send({from: ADMIN_TRANSACTION_WALLET_ADDRESS});
+  if (res["status"]) {
+    const deductAmount = (transferAmt < 0) ? toUSDT : (toUSDT * -1);
+    await admin.firestore().collection("users").doc(uid).update({
+      "admin_fee": admin.firestore.FieldValue.increment(deductAmount),
+    });
+  }
+  return res;
+}
+
+async function transferTokenBuy(amount: any, toAddr: any, fromUid: any) {
+  web3.accounts.wallet.add(ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY);
+  const amt = web3Utils.toWei(`${amount}`, "ether");
+  const buyCalcContract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS);
+  const buyAbi = buyCalcContract.methods.transferERC20(USDT_CONTRACT_ADDRESS, toAddr, amt).encodeABI();
+  const buyGasEstimate = await web3.estimateGas({from: ADMIN_TRANSACTION_WALLET_ADDRESS, to: ADMIN_CONTRACT_ADDRESS, data: buyAbi});
+
+  const bnbValue = Number(`${buyGasEstimate}`) / 100000000; // check bnb decimal
+  const ticker = await getBNBPrice();
+  const toUSDT = Number((bnbValue * ticker).toFixed(2));
+  let transferAmt = amount - toUSDT;
+  if (transferAmt < 0) {
+    transferAmt = amount;
+  }
+  const transferWei = web3Utils.toWei(`${transferAmt}`, "ether");
+
+  const gasP = await web3.getGasPrice();
+  const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: buyGasEstimate, gasPrice: gasP});
+  // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
+  // const amt = amount * Math.pow(10, 18); // web3Utils.toWei(`${amount}`, "ether");
+  const res = await contract.methods.transferERC20(USDT_CONTRACT_ADDRESS, toAddr, `${transferWei}`).send({from: ADMIN_TRANSACTION_WALLET_ADDRESS});
+  if (res["status"]) {
+    const deductAmount = (transferAmt < 0) ? toUSDT : (toUSDT * -1);
+    await admin.firestore().collection("users").doc(fromUid).update({
+      "admin_fee": admin.firestore.FieldValue.increment(deductAmount),
+    });
+  }
+  return res;
+}
+
+async function transferTokenSell(amount: any, fromUid: any, fromAddr: any, toAddr: any) {
+  web3.accounts.wallet.add(ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY);
+  const amt = web3Utils.toWei(`${amount}`, "ether");
+  const sellCalcContract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS);
+  const sellAbi = sellCalcContract.methods.transferFromERC20(USDT_CONTRACT_ADDRESS, fromAddr, toAddr, amt).encodeABI();
+  const sellGasEstimate = await web3.estimateGas({from: ADMIN_TRANSACTION_WALLET_ADDRESS, to: ADMIN_CONTRACT_ADDRESS, data: sellAbi});
+
+  const bnbValue = Number(`${sellGasEstimate}`) / 100000000; // check bnb decimal
+  const ticker = await getBNBPrice();
+  const toUSDT = Number((bnbValue * ticker).toFixed(2));
+  let transferAmt = amount - toUSDT;
+  if (transferAmt < 0) {
+    transferAmt = amount;
+  }
+  const transferWei = web3Utils.toWei(`${transferAmt}`, "ether");
+
+  const gasP = await web3.getGasPrice();
+  const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: sellGasEstimate, gasPrice: gasP});
+  // const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: 3000000, gasPrice: gasP});
+  // // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
+  // const amt = web3Utils.toWei(`${amount}`, "ether");
+  const res = await contract.methods.transferFromERC20(USDT_CONTRACT_ADDRESS, fromAddr, toAddr, transferWei).send({from: ADMIN_TRANSACTION_WALLET_ADDRESS});
+  if (res["status"]) {
+    const deductAmount = (transferAmt < 0) ? toUSDT : (toUSDT * -1);
+    await admin.firestore().collection("users").doc(fromUid).update({
+      "admin_fee": admin.firestore.FieldValue.increment(deductAmount),
+    });
+  }
   return res;
 }
 
@@ -1232,7 +1612,7 @@ async function sendGeneralEmail(email: string, subject: string, content: string)
   });
 }
 
-const minABI:AbiItem[] = [
+const minABI: AbiItem[] = [
   {
     "constant": false,
     "inputs": [
@@ -1309,7 +1689,7 @@ const minABI:AbiItem[] = [
   },
 ];
 
-const adminABI:AbiItem[] = [
+const adminABI: AbiItem[] = [
   {
     "inputs": [
       {
@@ -1428,6 +1808,24 @@ const adminABI:AbiItem[] = [
       },
     ],
     "name": "transferToManyERC20",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function",
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256",
+      },
+      {
+        "internalType": "address payable",
+        "name": "destAddr",
+        "type": "address",
+      },
+    ],
+    "name": "withdraw",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function",

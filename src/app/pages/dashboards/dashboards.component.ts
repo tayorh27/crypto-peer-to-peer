@@ -224,7 +224,7 @@ export class DashboardsComponent implements OnInit {
     }
 
     const meta = {
-      'counsumer_id': this.uid,
+      'consumer_id': this.uid,
     }
 
     const paymentData: AsyncPaymentOptions = {
@@ -395,6 +395,10 @@ export class DashboardsComponent implements OnInit {
     const amt = Number(this.withdrawAmount);
     if(amt < 1000) {
       this.toastr.error("Minimum amount to withdraw is ₦1,000");
+      return;
+    }
+    if(amt > this.total_ngn_bal) {
+      this.toastr.error("Insufficient balance.");
       return;
     }
 

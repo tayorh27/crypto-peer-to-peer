@@ -5,7 +5,7 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
 
 import { ScrollToModule } from '@nicky-lenaers/ngx-scroll-to';
 import { NgApexchartsModule } from 'ng-apexcharts';
-import { NgbDropdownModule, NgbAccordionModule, NgbNavModule, NgbProgressbarModule, NgbTooltipModule, NgbPopoverModule, NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbAccordionModule, NgbNavModule, NgbProgressbarModule, NgbTooltipModule, NgbPopoverModule, NgbCollapseModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AgmCoreModule } from '@agm/core';
 
 import { UtilityModule } from './utility/utility.module';
@@ -28,6 +28,9 @@ import { FlutterwaveModule } from "flutterwave-angular-v3"
 import { Select2Module } from "ng-select2-component";
 import { HttpClientModule } from "@angular/common/http";
 import { P2POrderModule } from './p2p-order/p2p-order.module';
+import { FiatTransactionsComponent } from './fiat-transactions/fiat-transactions.component';
+
+import { AdvancedSortableDirective } from 'src/app/core/tables/table.sortable.directive';
 
 @NgModule({
   declarations: [
@@ -36,6 +39,8 @@ import { P2POrderModule } from './p2p-order/p2p-order.module';
     TypographyComponent,
     ChartsComponent,
     MapsComponent,
+    FiatTransactionsComponent,
+    // AdvancedSortableDirective,
   ],
   imports: [
     CommonModule,
@@ -67,7 +72,8 @@ import { P2POrderModule } from './p2p-order/p2p-order.module';
     FlutterwaveModule,
     Select2Module,
     HttpClientModule,
-    P2POrderModule
+    P2POrderModule,
+    NgbModule
   ]
 })
 export class PagesModule { }

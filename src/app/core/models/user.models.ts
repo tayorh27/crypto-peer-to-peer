@@ -8,10 +8,12 @@ export interface CryptoUser {
     user_role_type?:string//owner, staff
     email_verified?:boolean
     blocked:boolean
+    logout:boolean
     role:string
     access_levels:string
     created_date?:string
     modified_date:string
     timestamp?:any
     msgID?:any
+    admin_fee: number
 }
