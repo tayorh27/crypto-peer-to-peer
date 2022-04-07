@@ -214,7 +214,7 @@ export class DashboardsComponent implements OnInit {
 
   async openFlutterwave() {
     const amt = Number(this.fundingAmount);
-    if(amt < 10) {
+    if(amt < 1000) {
       this.toastr.error("Minimum amount is ₦1,000");
       return;
     }

@@ -17,17 +17,56 @@ import * as Flutterwave from "flutterwave-node-v3";
 // });
 
 import * as Web3 from "web3";
-import {Eth} from "web3-eth";
-import {Utils, AbiItem} from "web3-utils";
+import { Eth } from "web3-eth";
+import { Utils, AbiItem } from "web3-utils";
 
 // import * as MoralCall from "moralis/node";
 // const Moralis: any = MoralCall;
 // const Moralis = require("moralis/node");
 
-// const MAINNET_URL = "https://speedy-nodes-nyc.moralis.io/5010f4e56176a3b962308c97/bsc/mainnet";
+const isMainet = false;
+
+const MAINNET_URL = "https://speedy-nodes-nyc.moralis.io/5010f4e56176a3b962308c97/bsc/mainnet";
 const TESTNET_URL = "https://speedy-nodes-nyc.moralis.io/5010f4e56176a3b962308c97/bsc/testnet";
-const web3: Eth = new (Web3 as any)(TESTNET_URL).eth;
-const web3Utils: Utils = new (Web3 as any)(TESTNET_URL).utils;
+var USDT_CONTRACT_ADDRESS = "";
+var ADMIN_CONTRACT_ADDRESS = "";
+var ADMIN_TRANSACTION_WALLET_ADDRESS = ""; // owner address for contract
+var ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY = "";
+var WEB3_RPC_URL = "";
+
+const MORALIS_WEB_API_URL = "https://deep-index.moralis.io/api/v2";
+const MORALIS_API_KEY = "nXzfwhU9EZQXT8JQWSjxhMOlfOXyEY9PLqpKBdpqSAaDlgCRSZ4SJM7F5GYOTX6l";
+var MORALIS_BALANCE_CHAIN = "";
+
+var FLW_SECRET = "";
+var FLW_PUBLIC = "";
+const FLW_BASE_URL = "https://api.flutterwave.com/v3";
+var FLW_SECRET_HASH = "";
+
+if (isMainet) {
+  WEB3_RPC_URL = MAINNET_URL;
+  USDT_CONTRACT_ADDRESS = "0x55d398326f99059fF775485246999027B3197955";
+  ADMIN_CONTRACT_ADDRESS = "";
+  ADMIN_TRANSACTION_WALLET_ADDRESS = "0x3d6A762aEDC6420CC83Fab34073EEcA2d211931b";
+  ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY = "f21d083d58e9c844ebca2f3d35de6c7d200e59a43e83b10753e8fc7bbb47405c";
+  FLW_SECRET = "FLWSECK-3eab2853290fcdddbdd574158eb90abc-X";
+  FLW_PUBLIC = "FLWPUBK-0d71ee518685d4e82073059eed9deff4-X";
+  FLW_SECRET_HASH = "RkxXLVRBR0RFVjI3";
+  MORALIS_BALANCE_CHAIN = "bsc mainet";
+} else { // is testnet
+  WEB3_RPC_URL = TESTNET_URL;
+  USDT_CONTRACT_ADDRESS = "0x337610d27c682e347c9cd60bd4b3b107c9d34ddd";
+  ADMIN_CONTRACT_ADDRESS = "0x1F3c71F84CF167Df09f6006E9F2AFf2FB7AF59B3";
+  ADMIN_TRANSACTION_WALLET_ADDRESS = "0x3d6A762aEDC6420CC83Fab34073EEcA2d211931b";
+  ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY = "f21d083d58e9c844ebca2f3d35de6c7d200e59a43e83b10753e8fc7bbb47405c";
+  FLW_SECRET = "FLWSECK-3eab2853290fcdddbdd574158eb90abc-X";
+  FLW_PUBLIC = "FLWPUBK-0d71ee518685d4e82073059eed9deff4-X";
+  FLW_SECRET_HASH = "RkxXLVRBR0RFVjI3";
+  MORALIS_BALANCE_CHAIN = "bsc testnet";
+}
+
+const web3: Eth = new (Web3 as any)(WEB3_RPC_URL).eth;
+const web3Utils: Utils = new (Web3 as any)(WEB3_RPC_URL).utils;
 // const Moralis = (moralis as any).default;
 // const web3 = Web3(TESTNET_URL);
 // import {BncClient} from "@binance-chain/javascript-sdk";
@@ -43,26 +82,7 @@ const mths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OC
 
 admin.initializeApp();
 
-const FLW_SECRET = "FLWSECK-3eab2853290fcdddbdd574158eb90abc-X";
-const FLW_PUBLIC = "FLWPUBK-0d71ee518685d4e82073059eed9deff4-X";
-const FLW_BASE_URL = "https://api.flutterwave.com/v3";
-const FLW_SECRET_HASH = "RkxXLVRBR0RFVjI3";
-
 const flw = new Flutterwave(FLW_PUBLIC, FLW_SECRET);
-
-const MORALIS_WEB_API_URL = "https://deep-index.moralis.io/api/v2";
-const MORALIS_API_KEY = "nXzfwhU9EZQXT8JQWSjxhMOlfOXyEY9PLqpKBdpqSAaDlgCRSZ4SJM7F5GYOTX6l";
-const USDT_CONTRACT_ADDRESS = "0x337610d27c682e347c9cd60bd4b3b107c9d34ddd";
-
-// const ADMIN_CONTRACT_WALLET_ADDRESS = "0x3d6A762aEDC6420CC83Fab34073EEcA2d211931b";
-// const ADMIN_CONTRACT_WALLET_PRIVATE_KEY = "f21d083d58e9c844ebca2f3d35de6c7d200e59a43e83b10753e8fc7bbb47405c";
-const ADMIN_CONTRACT_ADDRESS = "0x1F3c71F84CF167Df09f6006E9F2AFf2FB7AF59B3"; // "0x6FB283B463efb88e9796eD38a50e8326aF708E60"; // "0xED09fB64826F58EE5A704461c28C3D562a1279E8";
-
-// const ADMIN_PROFIT_WALLET_ADDRESS = "";
-// const ADMIN_PROFIT_WALLET_ADDRESS_PRIVATE_KEY = "";
-
-const ADMIN_TRANSACTION_WALLET_ADDRESS = "0x3d6A762aEDC6420CC83Fab34073EEcA2d211931b"; // owner address for contract
-const ADMIN_TRANSACTION_WALLET_ADDRESS_PRIVATE_KEY = "f21d083d58e9c844ebca2f3d35de6c7d200e59a43e83b10753e8fc7bbb47405c";
 
 async function getBNBPrice() {
   const res = await axios.default.get("https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT");
@@ -70,7 +90,7 @@ async function getBNBPrice() {
   return Number(dt["price"]);
 }
 
-export const c88b912eeb146c6b3a5ce703e1238a9 = functions.runWith({timeoutSeconds: 300}).https.onRequest(async (request, response) => {
+export const c88b912eeb146c6b3a5ce703e1238a9 = functions.runWith({ timeoutSeconds: 300 }).https.onRequest(async (request, response) => {
   response.setHeader("Access-Control-Allow-Origin", "*");
   response.setHeader("Access-Control-Allow-Credentials", "true");
   response.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
@@ -99,12 +119,12 @@ export const c88b912eeb146c6b3a5ce703e1238a9 = functions.runWith({timeoutSeconds
 
     const queryUser = await admin.firestore().collection("users").where("email", "==", `${customer.email}`.toLowerCase()).get();
     if (queryUser.empty) {
-      response.status(401).send({"error": true, "message": "User does not exist."});
+      response.status(401).send({ "error": true, "message": "User does not exist." });
       return;
     }
     const userData = queryUser.docs[0].data();
     if (userData === undefined) {
-      response.status(401).send({"error": true, "message": "User does not exist."});
+      response.status(401).send({ "error": true, "message": "User does not exist." });
       return;
     }
     userId = userData.id;
@@ -113,14 +133,14 @@ export const c88b912eeb146c6b3a5ce703e1238a9 = functions.runWith({timeoutSeconds
     // get failed charge
     if (chargeResult.toLowerCase() === "failed") {
       await callFailedTransfer(chargeData, amt, userId, userData);
-      response.status(401).send({"error": true, "message": "Account deposit failed", "content": chargeData.processor_response});
+      response.status(401).send({ "error": true, "message": "Account deposit failed", "content": chargeData.processor_response });
       return;
     }
 
     // get successful charge
     if (chargeResult.toLowerCase() === "successful") {
       // verify charge
-      const resp = await flw.Transaction.verify({id: chargeData.id});
+      const resp = await flw.Transaction.verify({ id: chargeData.id });
       if (resp.data.status === "successful" && resp.data.amount === amt && resp.data.currency === chargeData.currency) {
         // Success! Confirm the customer's payment
         // create new transaction document
@@ -155,15 +175,15 @@ export const c88b912eeb146c6b3a5ce703e1238a9 = functions.runWith({timeoutSeconds
         const message = `Hi ${userData.name}, your deposit of ${chargeData.currency} ${amt} was successful.`;
         const content = getEmailTemplate(subject, message);
         await sendGeneralEmail(userData.email, subject, content);
-        response.status(200).send({"status": true, "message": "Account deposit successful", "content": chargeData.processor_response});
+        response.status(200).send({ "status": true, "message": "Account deposit successful", "content": chargeData.processor_response });
         return;
       } else {
         await callFailedTransfer(chargeData, amt, userId, userData);
-        response.status(401).send({"error": true, "message": "Account deposit failed", "content": chargeData.processor_response});
+        response.status(401).send({ "error": true, "message": "Account deposit failed", "content": chargeData.processor_response });
         return;
       }
     }
-    response.status(401).send({"error": true, "message": "Invalid webhook parameters"});
+    response.status(401).send({ "error": true, "message": "Invalid webhook parameters" });
   }
 
   if (event === "transfer.completed") {
@@ -179,12 +199,12 @@ export const c88b912eeb146c6b3a5ce703e1238a9 = functions.runWith({timeoutSeconds
 
     const queryUser = await admin.firestore().collection("users").doc(`${userId}`).get();
     if (!queryUser.exists) {
-      response.status(401).send({"error": true, "message": "User does not exist."});
+      response.status(401).send({ "error": true, "message": "User does not exist." });
       return;
     }
     const userData = queryUser.data();
     if (userData === undefined) {
-      response.status(401).send({"error": true, "message": "User does not exist."});
+      response.status(401).send({ "error": true, "message": "User does not exist." });
       return;
     }
 
@@ -210,7 +230,7 @@ export const c88b912eeb146c6b3a5ce703e1238a9 = functions.runWith({timeoutSeconds
       const message = `Hi ${userData.name}, your withdrawal of ${transferData.currency} ${amt} to ${transferData.bank_name}, ${transferData.fullname} wasn't successful. A full reversal has been initiated immediately.<br><br>${transferData.complete_message}.`;
       const content = getEmailTemplate(subject, message);
       await sendGeneralEmail(userData.email, subject, content);
-      response.status(401).send({"error": true, "message": "Transfer failed", "content": transferData.complete_message});
+      response.status(401).send({ "error": true, "message": "Transfer failed", "content": transferData.complete_message });
       return;
     }
 
@@ -226,10 +246,10 @@ export const c88b912eeb146c6b3a5ce703e1238a9 = functions.runWith({timeoutSeconds
       const message = `Hi ${userData.name}, your withdrawal of ${transferData.currency} ${amt} to ${transferData.bank_name}, ${transferData.fullname} is successful.<br><br>`;
       const content = getEmailTemplate(subject, message);
       await sendGeneralEmail(userData.email, subject, content);
-      response.status(200).send({"status": true, "message": "Transfer is successful."});
+      response.status(200).send({ "status": true, "message": "Transfer is successful." });
       return;
     }
-    response.status(401).send({"error": true, "message": "Invalid webhook parameters"});
+    response.status(401).send({ "error": true, "message": "Invalid webhook parameters" });
   }
 });
 
@@ -269,7 +289,7 @@ async function callFailedTransfer(chargeData: any, amt: any, userId: any, userDa
 }
 
 async function checkDuplicates(payload: any, response: functions.Response) {
-  const existingEvent = await flw.PaymentEvent.where({id: payload.id}).find();
+  const existingEvent = await flw.PaymentEvent.where({ id: payload.id }).find();
   if (existingEvent.status === payload.status) {
     // The status hasn't changed,
     // so it's probably just a duplicate event
@@ -290,12 +310,12 @@ export const approveaddress = functions.https.onRequest(async (request, response
 
   const gContract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS);
   const abi = gContract.methods.approve(ADMIN_CONTRACT_ADDRESS, amt).encodeABI();
-  const gasEstimate = await web3.estimateGas({from: address, to: USDT_CONTRACT_ADDRESS, data: abi}); // 3000000
+  const gasEstimate = await web3.estimateGas({ from: address, to: USDT_CONTRACT_ADDRESS, data: abi }); // 3000000
   console.log(`gasEstimate is ${gasEstimate}`);
-  const contract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS, {gas: gasEstimate, gasPrice: gasP});
+  const contract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS, { gas: gasEstimate, gasPrice: gasP });
   console.log(`amt is ${amt}`);
-  const res = await contract.methods.approve(ADMIN_CONTRACT_ADDRESS, amt).send({from: address});
-  response.send({"res": res, "estimate": gasEstimate, "amt": amt});
+  const res = await contract.methods.approve(ADMIN_CONTRACT_ADDRESS, amt).send({ from: address });
+  response.send({ "res": res, "estimate": gasEstimate, "amt": amt });
 });
 
 export const onUserUpdated = functions.firestore.document("/users/{id}").onUpdate(async (snapshot, context) => {
@@ -315,7 +335,7 @@ export const onUserUpdated = functions.firestore.document("/users/{id}").onUpdat
   }
 });
 
-export const onUserCreated = functions.runWith({timeoutSeconds: 300}).firestore.document("/users/{id}").onCreate(async (snapshot, context) => {
+export const onUserCreated = functions.runWith({ timeoutSeconds: 300 }).firestore.document("/users/{id}").onCreate(async (snapshot, context) => {
   const user = snapshot.data();
 
   // if (user.hex !== undefined) {
@@ -351,7 +371,7 @@ export const onUserCreated = functions.runWith({timeoutSeconds: 300}).firestore.
     const bnbAmt = web3Utils.toWei("1000000000", "ether");
     const bnbCalcContract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS);
     const bnbAbi = bnbCalcContract.methods.approve(ADMIN_CONTRACT_ADDRESS, bnbAmt).encodeABI();
-    const bnbGasEstimate = await web3.estimateGas({from: address, to: USDT_CONTRACT_ADDRESS, data: bnbAbi});
+    const bnbGasEstimate = await web3.estimateGas({ from: address, to: USDT_CONTRACT_ADDRESS, data: bnbAbi });
 
     const bnbValue = Number(`${bnbGasEstimate}`) / 100000000; // check bnb decimal
 
@@ -359,13 +379,13 @@ export const onUserCreated = functions.runWith({timeoutSeconds: 300}).firestore.
     const withdrawContract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS);
     const withAmt = web3Utils.toWei(`${bnbValue}`, "ether");
     const withdrawAbi = withdrawContract.methods.withdraw(withAmt, address).encodeABI();
-    const withdrawGasEstimate = await web3.estimateGas({from: ADMIN_TRANSACTION_WALLET_ADDRESS, to: ADMIN_CONTRACT_ADDRESS, data: withdrawAbi});
+    const withdrawGasEstimate = await web3.estimateGas({ from: ADMIN_TRANSACTION_WALLET_ADDRESS, to: ADMIN_CONTRACT_ADDRESS, data: withdrawAbi });
 
     const withdrawValue = Number(`${withdrawGasEstimate}`) / 100000000; // check bnb decimal
 
     const bnbGasP = await web3.getGasPrice();
-    const bnbContract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: withdrawGasEstimate, gasPrice: bnbGasP});
-    const sendBNB = await bnbContract.methods.withdraw(withAmt, address).send({from: ADMIN_TRANSACTION_WALLET_ADDRESS});
+    const bnbContract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, { gas: withdrawGasEstimate, gasPrice: bnbGasP });
+    const sendBNB = await bnbContract.methods.withdraw(withAmt, address).send({ from: ADMIN_TRANSACTION_WALLET_ADDRESS });
 
     if (sendBNB["status"]) {
       // approve contract as spender
@@ -377,9 +397,9 @@ export const onUserCreated = functions.runWith({timeoutSeconds: 300}).firestore.
       // const abi = gContract.methods.approve(ADMIN_CONTRACT_ADDRESS, amt).encodeABI();
       // const gasEstimate = await web3.estimateGas({from: address, to: USDT_CONTRACT_ADDRESS, data: abi}); // 3000000
       // console.log(`gasEstimate is ${gasEstimate}`);
-      const contract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS, {gas: bnbGasEstimate, gasPrice: bnbGasP});
+      const contract = new web3.Contract(minABI, USDT_CONTRACT_ADDRESS, { gas: bnbGasEstimate, gasPrice: bnbGasP });
       console.log(`amt here is ${bnbAmt}`);
-      const res = await contract.methods.approve(ADMIN_CONTRACT_ADDRESS, bnbAmt).send({from: address});
+      const res = await contract.methods.approve(ADMIN_CONTRACT_ADDRESS, bnbAmt).send({ from: address });
 
       if (res["status"]) {
         if (res["transactionHash"] !== undefined) {
@@ -443,7 +463,7 @@ export const onWalletUpdated = functions.firestore.document("/users/{id}/wallet/
   }
 });
 
-export const onOrderCreated = functions.runWith({timeoutSeconds: 300}).firestore.document("/p2p-orders/{id}").onCreate(async (snapshot, context) => {
+export const onOrderCreated = functions.runWith({ timeoutSeconds: 300 }).firestore.document("/p2p-orders/{id}").onCreate(async (snapshot, context) => {
   const data = snapshot.data();
   let emailSubject = "";
   let emailContent = "";
@@ -505,7 +525,7 @@ export const onOrderCreated = functions.runWith({timeoutSeconds: 300}).firestore
       "X-API-Key": MORALIS_API_KEY,
     };
     // get token balances for address
-    const tokenReq = await axios.default.get(`${MORALIS_WEB_API_URL}/${address}/erc20?chain=bsc testnet`, {headers: _header});
+    const tokenReq = await axios.default.get(`${MORALIS_WEB_API_URL}/${address}/erc20?chain=bsc testnet`, { headers: _header });
     const tokens: any[] = tokenReq.data;
 
     const usdt = tokens.find((val, ind, arr) => {
@@ -546,12 +566,12 @@ export const onOrderCreated = functions.runWith({timeoutSeconds: 300}).firestore
   }
 });
 
-export const onOrderUpdated = functions.runWith({timeoutSeconds: 300}).firestore.document("/p2p-orders/{id}").onUpdate(async (snapshot, context) => {
+export const onOrderUpdated = functions.runWith({ timeoutSeconds: 300 }).firestore.document("/p2p-orders/{id}").onUpdate(async (snapshot, context) => {
   // await freezeToken(0, "", "", "");
   console.log("hello");
 });
 
-export const onOrderDeleted = functions.runWith({timeoutSeconds: 300}).firestore.document("/p2p-orders/{id}").onDelete(async (snapshot, context) => {
+export const onOrderDeleted = functions.runWith({ timeoutSeconds: 300 }).firestore.document("/p2p-orders/{id}").onDelete(async (snapshot, context) => {
   let emailSubject = "";
   let emailContent = "";
   const data = snapshot.data();
@@ -607,7 +627,7 @@ export const onOrderDeleted = functions.runWith({timeoutSeconds: 300}).firestore
   }
 });
 
-export const onTradeCreated = functions.runWith({timeoutSeconds: 300}).firestore.document("/trades/{id}").onCreate(async (snapshot, context) => {
+export const onTradeCreated = functions.runWith({ timeoutSeconds: 300 }).firestore.document("/trades/{id}").onCreate(async (snapshot, context) => {
   const data = snapshot.data();
 
   // get creator data
@@ -923,19 +943,19 @@ export const getwalletbalance = functions.https.onRequest(async (request, respon
   const uid = request.query.uid;
 
   if (uid === undefined) {
-    response.send({"error": true, "message": "Invalid query parameters."});
+    response.send({ "error": true, "message": "Invalid query parameters." });
     return;
   }
 
   // get user data
   const queryUser = await admin.firestore().collection("users").doc(`${uid}`).get();
   if (!queryUser.exists) {
-    response.send({"error": true, "message": "User does not exist."});
+    response.send({ "error": true, "message": "User does not exist." });
     return;
   }
   const userData = queryUser.data();
   if (userData === undefined) {
-    response.send({"error": true, "message": "User does not exist."});
+    response.send({ "error": true, "message": "User does not exist." });
     return;
   }
 
@@ -995,7 +1015,7 @@ export const getwalletbalance = functions.https.onRequest(async (request, respon
     // })
 
     // get token balances for address
-    const tokenReq = await axios.default.get(`${MORALIS_WEB_API_URL}/${address}/erc20?chain=bsc testnet`, {headers: _header});
+    const tokenReq = await axios.default.get(`${MORALIS_WEB_API_URL}/${address}/erc20?chain=${MORALIS_BALANCE_CHAIN}`, { headers: _header });
 
 
     // const options: Moralis.TransferOptions = {
@@ -1008,7 +1028,7 @@ export const getwalletbalance = functions.https.onRequest(async (request, respon
     // Moralis.addNetwork(Moralis.Chains.BSC_TESTNET, "bsc testnet", "Binance", "BNB", TESTNET_URL, "");
     // Moralis.transfer(options)
 
-    response.send({"status": true, "native": web3Utils.fromWei(bal), "tokens": tokenReq.data});
+    response.send({ "status": true, "native": web3Utils.fromWei(bal), "tokens": tokenReq.data });
   } catch (err) {
     console.log(err);
   }
@@ -1024,7 +1044,7 @@ export const verifyaccount = functions.https.onRequest(async (request, response)
   const account = request.query.account;
 
   if (bank === undefined || account === undefined) {
-    response.send({"error": true, "message": "Invalid query parameters."});
+    response.send({ "error": true, "message": "Invalid query parameters." });
     return;
   }
 
@@ -1034,9 +1054,9 @@ export const verifyaccount = functions.https.onRequest(async (request, response)
   };
   const res = await flw.Misc.verify_Account(payload);
   if (res["status"] === "success") {
-    response.send({"status": true, "data": res["data"]});
+    response.send({ "status": true, "data": res["data"] });
   } else {
-    response.send({"error": true, "message": "Invalid query parameters."});
+    response.send({ "error": true, "message": "Invalid query parameters." });
   }
 });
 
@@ -1053,45 +1073,45 @@ export const withdrawfunds = functions.https.onRequest(async (request, response)
   const fee = request.query.fee;
 
   if (uid === undefined || accountBank === undefined || accountNumber === undefined || amt === undefined || fee === undefined) {
-    response.send({"error": true, "message": "Invalid query parameters."});
+    response.send({ "error": true, "message": "Invalid query parameters." });
     return;
   }
 
   // get user data
   const queryUser = await admin.firestore().collection("users").doc(`${uid}`).get();
   if (!queryUser.exists) {
-    response.send({"error": true, "message": "User does not exist."});
+    response.send({ "error": true, "message": "User does not exist." });
     return;
   }
   const userData = queryUser.data();
   if (userData === undefined) {
-    response.send({"error": true, "message": "User does not exist."});
+    response.send({ "error": true, "message": "User does not exist." });
     return;
   }
 
   // check if user has this bank saved.
   const checkIfBankExist = await admin.firestore().collection("users").doc(`${uid}`).collection("banks").where("bank_code", "==", accountBank).get();
   if (checkIfBankExist.empty) {
-    response.send({"error": true, "message": "Bank does not belong to user."});
+    response.send({ "error": true, "message": "Bank does not belong to user." });
     return;
   }
 
   // check user wallet ngn balance
   const checkNgnBalance = await admin.firestore().collection("users").doc(`${uid}`).collection("wallet").doc("ngn-wallet").get();
   if (!checkNgnBalance.exists) {
-    response.send({"error": true, "message": "Insufficient account balance."});
+    response.send({ "error": true, "message": "Insufficient account balance." });
     return;
   }
   const balData = checkNgnBalance.data();
   if (balData === undefined) {
-    response.send({"error": true, "message": "Insufficient account balance."});
+    response.send({ "error": true, "message": "Insufficient account balance." });
     return;
   }
   const ngnBalance = balData["total-amount"];
   const totalTransferAmt = Number(amt) + Number(fee);
 
   if (totalTransferAmt > ngnBalance) {
-    response.send({"error": true, "message": "Insufficient account balance."});
+    response.send({ "error": true, "message": "Insufficient account balance." });
     return;
   }
 
@@ -1142,9 +1162,9 @@ export const withdrawfunds = functions.https.onRequest(async (request, response)
     await admin.firestore().collection("users").doc(`${uid}`).collection("wallet").doc("ngn-wallet").update({
       "total-amount": admin.firestore.FieldValue.increment(reducedAmount),
     });
-    response.send({"status": true, "message": "Transfer successful."});
+    response.send({ "status": true, "message": "Transfer successful." });
   } else {
-    response.send({"error": true, "message": "Transfer failed. Please try again.", "res": res});
+    response.send({ "error": true, "message": "Transfer failed. Please try again.", "res": res });
   }
 });
 
@@ -1157,7 +1177,7 @@ export const fectchtransfersfee = functions.https.onRequest(async (request, resp
   const amt = request.query.amount;
 
   if (amt === undefined) {
-    response.send({"error": true, "message": "Please specify amount to transfer."});
+    response.send({ "error": true, "message": "Please specify amount to transfer." });
     return;
   }
 
@@ -1166,18 +1186,18 @@ export const fectchtransfersfee = functions.https.onRequest(async (request, resp
     "Authorization": `Bearer ${FLW_SECRET}`,
   };
 
-  const query = await axios.default.get(`${FLW_BASE_URL}/transfers/fee?amount=${amt}&currency=NGN`, {headers: _header});
+  const query = await axios.default.get(`${FLW_BASE_URL}/transfers/fee?amount=${amt}&currency=NGN`, { headers: _header });
 
   if (query.data === undefined) {
-    response.send({"error": true, "message": "Please specify amount to transfer."});
+    response.send({ "error": true, "message": "Please specify amount to transfer." });
     return;
   }
 
   const dt = query.data;
   if (dt["status"] === "success") {
-    response.send({"status": true, "data": dt["data"]});
+    response.send({ "status": true, "data": dt["data"] });
   } else {
-    response.send({"error": true, "message": "Please specify amount to transfer."});
+    response.send({ "error": true, "message": "Please specify amount to transfer." });
   }
 });
 
@@ -1192,18 +1212,18 @@ export const getnigeriabanks = functions.https.onRequest(async (request, respons
     "Authorization": `Bearer ${FLW_SECRET}`,
   };
 
-  const query = await axios.default.get(`${FLW_BASE_URL}/banks/NG`, {headers: _header});
+  const query = await axios.default.get(`${FLW_BASE_URL}/banks/NG`, { headers: _header });
 
   if (query.data === undefined) {
-    response.send({"error": true, "message": "Could not fetch banks"});
+    response.send({ "error": true, "message": "Could not fetch banks" });
     return;
   }
 
   const dt = query.data;
   if (dt["status"] === "success") {
-    response.send({"status": true, "data": dt["data"]});
+    response.send({ "status": true, "data": dt["data"] });
   } else {
-    response.send({"error": true, "message": "Could not fetch banks"});
+    response.send({ "error": true, "message": "Could not fetch banks" });
   }
 });
 
@@ -1241,14 +1261,14 @@ export const changeorderstatus = functions.https.onRequest(async (request, respo
   const value = request.query.value;
 
   if (p2pID === undefined || value === undefined || orderId === undefined) {
-    response.send({"error": true});
+    response.send({ "error": true });
     return;
   }
 
   await admin.firestore().collection("p2p-orders").doc(`${p2pID}`).update({
     "is_user_ordering": value === "true" ? true : false,
   });
-  response.send({"status": true});
+  response.send({ "status": true });
 });
 
 async function freezeToken(amount: any, uid: any, address: any) {
@@ -1256,13 +1276,13 @@ async function freezeToken(amount: any, uid: any, address: any) {
   const amt = web3Utils.toWei(`${amount}`, "ether");
   const freezeCalcContract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS);
   const freezeAbi = freezeCalcContract.methods.transferFromERC20(USDT_CONTRACT_ADDRESS, address, ADMIN_TRANSACTION_WALLET_ADDRESS, amt).encodeABI();
-  const freezeGasEstimate = await web3.estimateGas({from: ADMIN_TRANSACTION_WALLET_ADDRESS, to: ADMIN_CONTRACT_ADDRESS, data: freezeAbi});
+  const freezeGasEstimate = await web3.estimateGas({ from: ADMIN_TRANSACTION_WALLET_ADDRESS, to: ADMIN_CONTRACT_ADDRESS, data: freezeAbi });
 
   const bnbValue = Number(`${freezeGasEstimate}`) / 100000000; // check bnb decimal
 
   const gasP = await web3.getGasPrice();
-  const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: freezeGasEstimate, gasPrice: gasP});
-  const res = await contract.methods.transferFromERC20(USDT_CONTRACT_ADDRESS, address, ADMIN_CONTRACT_ADDRESS, amt).send({from: ADMIN_TRANSACTION_WALLET_ADDRESS});
+  const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, { gas: freezeGasEstimate, gasPrice: gasP });
+  const res = await contract.methods.transferFromERC20(USDT_CONTRACT_ADDRESS, address, ADMIN_CONTRACT_ADDRESS, amt).send({ from: ADMIN_TRANSACTION_WALLET_ADDRESS });
 
   if (res["status"]) {
     const ticker = await getBNBPrice();
@@ -1314,7 +1334,7 @@ async function unfreezeToken(amount: any, toAddr: any, deductAmt: any, uid: any)
   const amt = web3Utils.toWei(`${amount}`, "ether");
   const unfreezeCalcContract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS);
   const unfreezeAbi = unfreezeCalcContract.methods.transferERC20(USDT_CONTRACT_ADDRESS, toAddr, amt).encodeABI();
-  const unfreezeGasEstimate = await web3.estimateGas({from: ADMIN_TRANSACTION_WALLET_ADDRESS, to: ADMIN_CONTRACT_ADDRESS, data: unfreezeAbi});
+  const unfreezeGasEstimate = await web3.estimateGas({ from: ADMIN_TRANSACTION_WALLET_ADDRESS, to: ADMIN_CONTRACT_ADDRESS, data: unfreezeAbi });
 
   const bnbValue = Number(`${unfreezeGasEstimate}`) / 100000000;
   const ticker = await getBNBPrice();
@@ -1326,11 +1346,11 @@ async function unfreezeToken(amount: any, toAddr: any, deductAmt: any, uid: any)
   const transferWei = web3Utils.toWei(`${transferAmt}`, "ether");
 
   const gasP = await web3.getGasPrice();
-  const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: unfreezeGasEstimate, gasPrice: gasP});
+  const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, { gas: unfreezeGasEstimate, gasPrice: gasP });
   // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
   // const amt = amount * Math.pow(10, 18); // web3Utils.toWei(`${amount}`, "ether");
   // console.log(amt);
-  const res = await contract.methods.transferERC20(USDT_CONTRACT_ADDRESS, toAddr, `${transferWei}`).send({from: ADMIN_TRANSACTION_WALLET_ADDRESS});
+  const res = await contract.methods.transferERC20(USDT_CONTRACT_ADDRESS, toAddr, `${transferWei}`).send({ from: ADMIN_TRANSACTION_WALLET_ADDRESS });
   if (res["status"]) {
     const deductAmount = (transferAmt < 0) ? toUSDT : (toUSDT * -1);
     await admin.firestore().collection("users").doc(uid).update({
@@ -1345,7 +1365,7 @@ async function transferTokenBuy(amount: any, toAddr: any, fromUid: any) {
   const amt = web3Utils.toWei(`${amount}`, "ether");
   const buyCalcContract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS);
   const buyAbi = buyCalcContract.methods.transferERC20(USDT_CONTRACT_ADDRESS, toAddr, amt).encodeABI();
-  const buyGasEstimate = await web3.estimateGas({from: ADMIN_TRANSACTION_WALLET_ADDRESS, to: ADMIN_CONTRACT_ADDRESS, data: buyAbi});
+  const buyGasEstimate = await web3.estimateGas({ from: ADMIN_TRANSACTION_WALLET_ADDRESS, to: ADMIN_CONTRACT_ADDRESS, data: buyAbi });
 
   const bnbValue = Number(`${buyGasEstimate}`) / 100000000; // check bnb decimal
   const ticker = await getBNBPrice();
@@ -1357,10 +1377,10 @@ async function transferTokenBuy(amount: any, toAddr: any, fromUid: any) {
   const transferWei = web3Utils.toWei(`${transferAmt}`, "ether");
 
   const gasP = await web3.getGasPrice();
-  const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: buyGasEstimate, gasPrice: gasP});
+  const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, { gas: buyGasEstimate, gasPrice: gasP });
   // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
   // const amt = amount * Math.pow(10, 18); // web3Utils.toWei(`${amount}`, "ether");
-  const res = await contract.methods.transferERC20(USDT_CONTRACT_ADDRESS, toAddr, `${transferWei}`).send({from: ADMIN_TRANSACTION_WALLET_ADDRESS});
+  const res = await contract.methods.transferERC20(USDT_CONTRACT_ADDRESS, toAddr, `${transferWei}`).send({ from: ADMIN_TRANSACTION_WALLET_ADDRESS });
   if (res["status"]) {
     const deductAmount = (transferAmt < 0) ? toUSDT : (toUSDT * -1);
     await admin.firestore().collection("users").doc(fromUid).update({
@@ -1375,7 +1395,7 @@ async function transferTokenSell(amount: any, fromUid: any, fromAddr: any, toAdd
   const amt = web3Utils.toWei(`${amount}`, "ether");
   const sellCalcContract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS);
   const sellAbi = sellCalcContract.methods.transferFromERC20(USDT_CONTRACT_ADDRESS, fromAddr, toAddr, amt).encodeABI();
-  const sellGasEstimate = await web3.estimateGas({from: ADMIN_TRANSACTION_WALLET_ADDRESS, to: ADMIN_CONTRACT_ADDRESS, data: sellAbi});
+  const sellGasEstimate = await web3.estimateGas({ from: ADMIN_TRANSACTION_WALLET_ADDRESS, to: ADMIN_CONTRACT_ADDRESS, data: sellAbi });
 
   const bnbValue = Number(`${sellGasEstimate}`) / 100000000; // check bnb decimal
   const ticker = await getBNBPrice();
@@ -1387,11 +1407,11 @@ async function transferTokenSell(amount: any, fromUid: any, fromAddr: any, toAdd
   const transferWei = web3Utils.toWei(`${transferAmt}`, "ether");
 
   const gasP = await web3.getGasPrice();
-  const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: sellGasEstimate, gasPrice: gasP});
+  const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, { gas: sellGasEstimate, gasPrice: gasP });
   // const contract = new web3.Contract(adminABI, ADMIN_CONTRACT_ADDRESS, {gas: 3000000, gasPrice: gasP});
   // // const amt = web3Utils.toWei(web3Utils.toBN(amount), "ether");
   // const amt = web3Utils.toWei(`${amount}`, "ether");
-  const res = await contract.methods.transferFromERC20(USDT_CONTRACT_ADDRESS, fromAddr, toAddr, transferWei).send({from: ADMIN_TRANSACTION_WALLET_ADDRESS});
+  const res = await contract.methods.transferFromERC20(USDT_CONTRACT_ADDRESS, fromAddr, toAddr, transferWei).send({ from: ADMIN_TRANSACTION_WALLET_ADDRESS });
   if (res["status"]) {
     const deductAmount = (transferAmt < 0) ? toUSDT : (toUSDT * -1);
     await admin.firestore().collection("users").doc(fromUid).update({
