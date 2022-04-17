@@ -60,13 +60,13 @@ contract FeeCollector  {
         emit TransferSent(from, to, amount);
     }
 
-    function transferToManyERC20(IERC20 token, address toAddr, address adminAddr, uint256 totalAmount, uint256 receiverAmount, uint256 adminProfit) public {
+    function transferToManyERC20(IERC20 token, address fromAddr, address toAddr, address adminAddr, uint256 totalAmount, uint256 receiverAmount, uint256 adminProfit) public {
         require(msg.sender == owner, "Only owner can withdraw funds");
-        uint256 erc20balance = token.balanceOf(msg.sender);
+        uint256 erc20balance = token.balanceOf(fromAddr);
         require(totalAmount <= erc20balance, "balance is low");
-        token.transferFrom(msg.sender, toAddr, receiverAmount);
-        token.transferFrom(msg.sender, adminAddr, adminProfit);
-        emit TransferSent(msg.sender, toAddr, totalAmount);
+        token.transferFrom(fromAddr, toAddr, receiverAmount);
+        token.transferFrom(fromAddr, adminAddr, adminProfit);
+        emit TransferSent(fromAddr, toAddr, totalAmount);
         emit TransferReceived(toAddr, receiverAmount);
         // uint256 i = 0;
         // while (i < to.length) {

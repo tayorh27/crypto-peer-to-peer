@@ -22,6 +22,7 @@ export class SteptwoverificationComponent implements OnInit {
   // set the currenr year
   year: number = new Date().getFullYear();
   email = "";
+  username = "";
   error = "";
   otpcode = "";
   inputcode = "";
@@ -43,6 +44,7 @@ export class SteptwoverificationComponent implements OnInit {
     }
     var json = JSON.parse(data);
     this.email = json.email;
+    // this.username = json.name;
 
     this.sendOtpCode()
   }
@@ -73,8 +75,16 @@ export class SteptwoverificationComponent implements OnInit {
   async sendOtpCode() {
     const header = "EMAIL VERIFICATION"
     const msg = `Your verification code is ${this.otpcode}.`
+    const content = `Hi ${this.username},<br><br>${msg}<br><br>Best wishes.`;
 
-    await this.config.sendGeneralEmail(this.email, header, msg);
+    // await this.config.sendGeneralEmail(this.email, header, msg);
+    await firebase.firestore().collection("mail").add({
+      to: this.email,
+      message: {
+          subject: header,
+          html: content,
+      },
+    });
     this.toastr.success("Verification code sent.")
   }
 

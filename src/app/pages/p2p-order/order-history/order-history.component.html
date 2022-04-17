@@ -44,8 +44,8 @@
                                     <tbody *ngFor="let table of tables$ | async;let i=index">
                                         <tr>
                                             <td>
-                                                <span *ngIf="table.listed_as === 'buy'" class="badge bg-danger ms-1">SELL</span>
-                                                <span *ngIf="table.listed_as === 'sell'"class="badge bg-success ms-1">BUY</span>
+                                                <span *ngIf="table.listed_as === 'buy'" class="badge bg-success ms-1">BUY</span>
+                                                <span *ngIf="table.listed_as === 'sell'"class="badge bg-danger ms-1">SELL</span>
                                                 <!-- <ngb-highlight [result]="table.listed_as" [term]="service.searchTerm">
                                                 </ngb-highlight> -->
                                             </td>

@@ -121,6 +121,21 @@ export class CreateOrderComponent implements OnInit {
       }
     }
 
+    if(Number(this.f.limit_min.value) <= 0) {
+      this.toastr.error("Minimum limit order cannot be less than or equals to 0.");
+      return;
+    }
+
+    if(Number(this.f.limit_max.value) <= 0) {
+      this.toastr.error("Maximum limit order cannot be less than or equals to 0.");
+      return;
+    }
+
+    if(Number(this.f.order_price.value) <= 0) {
+      this.toastr.error("Order price cannot be less than or equals to 0.");
+      return;
+    }
+
     if(Number(this.f.limit_max.value) > Number(this.f.total.value)) {
       this.toastr.error("Maximum limit order cannot be more than total amount.");
       return;

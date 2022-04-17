@@ -12,6 +12,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { NavigationStart, Router } from '@angular/router';
+import { AppConfig } from 'src/app/core/services/global.service';
 
 @Component({
   selector: 'app-p2p-order',
@@ -48,6 +49,7 @@ export class P2POrderComponent implements OnInit, OnDestroy {
 
   selectedOrderId = "";
   selectedP2P: any;
+  config = new AppConfig();
 
   public isCollapsed = true;
   constructor(private router:Router, public service: AdvancedService, private http: HttpClient, private modalService: NgbModal, private toastr: ToastrService, private authService: AuthenticationService) {
@@ -307,17 +309,17 @@ export class P2POrderComponent implements OnInit, OnDestroy {
 
   async submitSellToken() {
     if(Number(this.sell_parameter_token) > this.total_usdt_bal) {
-      this.toastr.error(`Your USDT frozen account balance is insufficient to perform this trade.`);
+      this.toastr.error(`Your USDT account balance is insufficient to perform this trade.`);
       return;
     }
 
     if(Number(this.sell_parameter_ngn) < this.selectedP2P.order_limit_min) { //Number(this.sell_parameter_ngn) < (this.selectedP2P.order_limit_min * this.selectedP2P.order_price)
-      this.toastr.error(`Amount is below limit of ${this.selectedP2P.order_limit_min} ${this.selectedP2P.order_asset.toUpperCase()}`);
+      this.toastr.error(`Amount is below limit of ${this.config.getFormattedAmount("NGN", this.selectedP2P.order_limit_min)}`); // ${this.selectedP2P.order_asset.toUpperCase()}`);
       return;
     }
 
     if(Number(this.sell_parameter_ngn) > this.selectedP2P.order_limit_max) { // Number(this.sell_parameter_ngn) > (this.selectedP2P.order_limit_max * this.selectedP2P.order_price)
-      this.toastr.error(`Amount is above limit of ${this.selectedP2P.order_limit_max} ${this.selectedP2P.order_asset.toUpperCase()}`);
+      this.toastr.error(`Amount is above limit of ${this.config.getFormattedAmount("NGN", this.selectedP2P.order_limit_max)}`);
       return;
     }
 

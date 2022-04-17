@@ -3,7 +3,7 @@
 <!-- end page title -->
 
 <div class="row">
-    <div class="col-md-6 col-xl-3">
+    <div class="col-md-6 col-xl-3" *ngIf="show">
         <div class="card">
             <div class="card-body">
                 <div class="float-end">
@@ -106,6 +106,35 @@
                 </div>
                 <div>
                     <p class="text-muted text-uppercase fw-semibold">Processed Orders</p>
+                    <h4 *ngIf="proccess_orders === 0">0</h4>
+                    <h4 class="mb-1 mt-1"><span class="counter-value" [CountTo]="proccess_orders" [from]="0"
+                            [duration]="1"></span></h4>
+                </div>
+                <p class="text-muted mt-3 mb-0">
+                    <a href="javascript:void(0);" (click)="viewOrders()"><span
+                            class="badge badge-soft-success me-1">View all</span></a>
+                    <a href="javascript:void(0);" (click)="createOrder()"><span
+                            class="badge badge-soft-success me-1">Create new order</span></a>
+                            <a href="javascript:void(0);" (click)="ViewMyOrders()"><span
+                                class="badge badge-soft-primary me-1">View my orders</span></a>
+                </p>
+            </div>
+        </div>
+    </div> <!-- end col-->
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="float-end">
+                    <div class="avatar-sm mx-auto mb-4">
+                        <span class="avatar-title rounded-circle bg-light font-size-24">
+                            <!-- <i class="mdi mdi-account-group text-primary"></i> -->
+                            <i class="mdi mdi-cart-check text-success"></i>
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-muted text-uppercase fw-semibold">Total Tr</p>
                     <h4 *ngIf="proccess_orders === 0">0</h4>
                     <h4 class="mb-1 mt-1"><span class="counter-value" [CountTo]="proccess_orders" [from]="0"
                             [duration]="1"></span></h4>

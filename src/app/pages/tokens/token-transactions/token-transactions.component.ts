@@ -39,7 +39,7 @@ export class TokenTransactionsComponent implements OnInit {
       { label: 'Tokens' },
       { label: 'Transactions', active: true }
     ];
-    // this.getTokenTransactions();
+    this.getTokenTransactions();
   }
 
   async getTokenTransactions() {

@@ -35,7 +35,7 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">Select Token</label>
                                                     <select class="form-select" [(ngModel)]="selectedToken">
-                                                        <option value="bnb">BNB</option>
+                                                        <!-- <option value="bnb">BNB</option> -->
                                                         <option value="usdt">USDT</option>
                                                     </select>
                                                 </div>
@@ -74,7 +74,7 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">Select Token</label>
                                                     <select class="form-select" [(ngModel)]="selectedToken" [ngModelOptions]="{standalone: true}">
-                                                        <option value="bnb">BNB</option>
+                                                        <!-- <option value="bnb">BNB</option> -->
                                                         <option value="usdt">USDT</option>
                                                     </select>
                                                 </div>
@@ -88,7 +88,7 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">Amount</label>
                                                     <div class="input-group bg-light rounded">
-                                                        <input class="form-control" formControlName="amount" type="number" [ngClass]="{ 'is-invalid': submitted && f.amount.errors }" placeholder="Enter Amount" id="example-number-inputw">
+                                                        <input class="form-control" (change)="setTokenAmount($event)" formControlName="amount" type="number" [ngClass]="{ 'is-invalid': submitted && f.amount.errors }" placeholder="Enter Amount" id="example-number-inputw">
                                                         <button (click)="setMaxToken()" class="btn btn-warning" type="button" id="button-addon2">
                                                             MAX {{selectedToken | uppercase}}
                                                         </button>
@@ -102,9 +102,10 @@
                                                 <div class="mb-3">
                                                     <div class="card bg-success text-white-50">
                                                         <div class="card-body">
-                                                            <p class="card-text">Receive amount</p>
-                                                            <h5>{{f.amount.value}} {{selectedToken | uppercase}}</h5>
-                                                            <p class="card-text">Network fee: 0 {{selectedToken | uppercase}}</p>
+                                                            <p class="card-text">Receiver amount</p>
+                                                            <h5>{{receiver_amount}} {{selectedToken | uppercase}}</h5>
+                                                            <p class="card-text">Network fee: {{network_fee}} {{selectedToken | uppercase}}</p>
+                                                            <h5>{{network_fee}} {{selectedToken | uppercase}}</h5>
                                                         </div>
                                                     </div>
                                                 </div>
